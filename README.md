@@ -4,6 +4,6 @@
 - This project is a **dynamic data management API**. It saves time on your projects
 ### By yddod_
 ## Installtion
-1. install dependencies:
+- install dependencies:
 ```sh
 npm install
