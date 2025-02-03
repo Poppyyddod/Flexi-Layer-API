@@ -2,10 +2,10 @@
 *.log
 
 # Ignore ไฟล์ .log ใน src/Store/logs/
-src/Store/logs/*.log
+# src/Store/logs/*.log
 
 # Ignore ไฟล์ .log ใน src/Store/logs/
-src/Auth/logs/*.log
+# src/Auth/logs/*.log
 
 # Ignore โฟลเดอร์ node_modules
 node_modules/
