@@ -1,4 +1,4 @@
-import { AuthSignInController, AuthSignUpController } from "./features";
+import { AuthSignInController, AuthSignUpController, AuthSignOutController } from "./features";
 
 export type AuthControllerKeyRoutes = '/auth/sign-up' | '/auth/sign-in' | '/auth/sign-out';
 
@@ -16,6 +16,6 @@ export const authControllerMethods: AuthControllerMethodsModel = {
     },
 
     '/auth/sign-out': (helpers: any) => {
-        return AuthSignUpController(helpers);
+        return AuthSignOutController(helpers);
     },
 }

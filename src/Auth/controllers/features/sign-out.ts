@@ -6,15 +6,29 @@
  * @returns Object
  */
 
+
 export const AuthSignOutController = (helpers: any) => async (reqBodyData: any) => {
     try {
         console.log('AuthSignOutController :', reqBodyData);
 
-        const { } = helpers;
+        const { db_type, store_code, where } = reqBodyData;
 
-        return reqBodyData;
-    } catch (error) {
+        if (!db_type || !store_code || !where || (where && !where.user_id)) {
+            throw { kind: 'incomplete_request' };
+        }
+
+        // const { } = helpers;
+
+        console.log('AuthSignOutController (validRequestFormat) : ', reqBodyData);
+
+        const dataToCenterController = {
+            data: reqBodyData,
+            feature: 'sign-out'
+        }
+
+        return dataToCenterController;
+    } catch (error: any) {
         console.log('AuthSignOutController (Error):', error);
-        throw error;
+        throw { ...error, feature: 'sign-out' };
     }
 }

@@ -170,7 +170,7 @@ export const clientError: ClientErrorModel = {
 
     'invalid_field_name': {
         more: {
-            message: 'The fields not found!',
+            message: 'The field is not found!',
             read_me: 'Please check the request fields name in `set` and `where` keys!!',
             'allowed': ({ systemName, feature }: System) => {
                 return storeFields[systemName][feature];

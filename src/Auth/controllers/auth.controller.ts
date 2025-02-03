@@ -28,7 +28,7 @@ const AuthCenterController = async (req: any, res: any) => {
         const dataFromCenterService: any = await AuthCenterService(res, data, feature);
 
         Logger('Auth', 'info', {
-            more: dataFromCenterService.response.data[0],
+            more: dataFromCenterService.response.data?.[0] || dataFromCenterService.response,
             feature
         });
 

@@ -1,5 +1,4 @@
-import { AuthSignInService } from "./features";
-import { AuthSignUpService } from "./features/sign-up";
+import { AuthSignUpService, AuthSignInService, AuthSignOutService } from "./features";
 
 
 export type AuthServiceKey = 'sign-up' | 'sign-in' | 'sign-out';
@@ -16,6 +15,6 @@ export const authServiceMethod: AuthServiceMethodModel = {
         return AuthSignInService(helpers);
     },
     'sign-out': (helpers: any) => {
-        return;
+        return AuthSignOutService(helpers);
     }
 }

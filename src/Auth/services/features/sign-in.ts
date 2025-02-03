@@ -54,7 +54,23 @@ export const AuthSignInService = (helpers: any) => async (httpResponse: any, val
 
         dataFromServiceCenter[0]['token'] = generatedToken;
 
-        await SetCookieForJwtToken(httpResponse, generatedToken);
+        // await SetCookieForJwtToken(httpResponse, generatedToken);
+
+        const dataToCreateSignInHistory = {
+            db_type,
+            store_code: 'user_signin_history',
+            set: {
+                already_signed_in: true,
+                last_online_at: new Date(),
+                last_signed_in: new Date()
+            },
+            where: {
+                user_id: parseInt(dataFromServiceCenter[0]['user_id'])
+            }
+        };
+
+        const dataUserSignInHistory = await StoreService(dataToCreateSignInHistory, 'edit');
+        console.log('AuthSignUpService (dataUserSignInHistory) : ', dataUserSignInHistory);
 
         const dataToAuthServiceCenter = {
             response: {

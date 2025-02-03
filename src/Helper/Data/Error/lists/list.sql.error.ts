@@ -135,12 +135,7 @@ export const storeFields: any = {
                 db_type: "###### (postgresql | mysql)",
                 store_code: "###### (#store_code)",
                 where: {
-                    case_1: {
-                        email: "user_email@gmail.com"
-                    },
-                    case_2: {
-                        id: "#user_id"
-                    }
+                    user_id: "#user_id"
                 }
             },
         }

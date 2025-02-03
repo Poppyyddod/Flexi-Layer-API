@@ -39,6 +39,17 @@ export const AuthSignUpService = (helpers: any) => async (httpResponse: any, val
         // ລົບ secretword (password) ອອກກ່ອນທີ່ຈະສົ່ງກັບໄປທີ່ Center Service
         delete dataFromCenterServiceCreate[0]['secretword'];
 
+        const dataToCreateSignInHistory = {
+            db_type,
+            store_code: 'user_signin_history',
+            set: {
+                user_id: parseInt(dataFromCenterServiceCreate[0]['user_id'])
+            }
+        };
+
+        const dataUserSignInHistory = await StoreService(dataToCreateSignInHistory, 'create');
+        console.log('AuthSignUpService (dataUserSignInHistory) : ', dataUserSignInHistory);
+
         const dataToCenterService = {
             response: {
                 message: "Successfully signed up !!",
