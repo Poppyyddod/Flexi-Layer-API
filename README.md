@@ -7,3 +7,5 @@
 - **Step 1 :** Install dependencies:
 ```sh
 npm install
+```sh
+npm start
