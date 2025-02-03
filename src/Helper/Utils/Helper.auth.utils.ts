@@ -1,4 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import argon2 from 'argon2';
+import jwt from 'jsonwebtoken';
 
 export const ArgonHashPassword = async (password: string): Promise<string> => {
     try {
@@ -28,3 +31,54 @@ export const ArgonComparePassword = async (password: string, hashedPassword: str
         throw error;
     }
 };
+
+
+export const JwtGenerateToken = async (userId: string | number) => {
+    try {
+        console.log('JwtGenerateToken (parameter) : ', userId);
+
+        const token = jwt.sign({ userId }, `${process.env.SECRET_KEY}`);
+        console.log('JwtGenerateToken (token) : ', token);
+
+        return token;
+    } catch (error) {
+        console.log('JwtGenerateToken (Error):', error);
+        throw error;
+    }
+}
+
+export const JwtCompareToken = async (token: string) => {
+    try {
+        console.log('JwtCompareToken (parameter) : ', token);
+
+        const decoded = jwt.verify(token, `${process.env.SECRET_KEY}`);
+        console.log('JwtCompareToken (decoded) : ', decoded);
+
+        return decoded;
+    } catch (error) {
+        console.log('JwtCompareToken (Error):', error);
+        throw error;
+    }
+}
+
+
+export const SetCookieForJwtToken = async (res: any, token: string) => {
+    try {
+        console.log('SetCookieForJwtToken (token) : ', token);
+
+        const expiryDate = new Date(9999, 0, 1);
+
+        await res.cookie('jwt_token', token, {
+            httpOnly: true,
+            secure: true,
+            expires: expiryDate,
+        });
+
+        const cookie = res.getHeaders()['set-cookie'];
+
+        console.log('SetCookieForJwtToken (cookies): ', cookie);
+    } catch (error) {
+        console.log('SetCookieForJwtToken (Error):', error);
+        throw error;
+    }
+}
