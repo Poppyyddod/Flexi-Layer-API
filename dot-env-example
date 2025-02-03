@@ -14,7 +14,7 @@ MYSQL_PASSWORD=''
 # MySQL database name
 MYSQL_DATABASE=''
 # MySQL/Tables
-MYSQL_STORE_MAPPING="#category:category"
+MYSQL_STORE_MAPPING="#store_code:table_name,..."
 
 # PostgreSQL username
 PGSQL_USER=''
@@ -25,14 +25,14 @@ PGSQL_DATABASE='slience_arts'
 # PostgreSQL port
 PGSQL_PORT=5432
 # PostgreSQL/Tables
-POSTGRESQL_STORE_MAPPING="#user_privacy:user_privacy"
+POSTGRESQL_STORE_MAPPING="#store_code:table_name,..."
 
 # MongoDB URI
 MONGODB_URI='mongodb://127.0.0.1:27017/database_name'
 # MongoDB database name
 MONGODB_DATABASE=''
 # MongoDB/Collections
-MONGODB_STORE_MAPPING="#gameplay_details:gameplay_details"
+MONGODB_STORE_MAPPING="#store_code:collection_name,..."
 
 # JWT
 SECRET_KEY='access'
