@@ -1,2 +1,2 @@
 # Flexi-Layer-API
-This project is a dynamic data management API. Save time on your projects
+This project is a dynamic data management API. it save time on your projects
