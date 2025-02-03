@@ -12,7 +12,10 @@ export const DeleteNosqlStoreService = (helper: any) => async (validRequestData:
         const { nosql_supporter, feature } = validRequestData;
 
         if (nosql_supporter) {
-            await ValidateNosqlSupporter(nosql_supporter, feature);
+            const validNoSqlSupporter = await ValidateNosqlSupporter(nosql_supporter, feature);
+            // console.log('EditNosqlStoreService (validNoSqlSupporter) : ', validNoSqlSupporter);
+
+            validRequestData['nosql_supporter'] = validNoSqlSupporter;
         }
 
         const fixedRequestFormatData = await FixWhereRequestFormat(validRequestData);

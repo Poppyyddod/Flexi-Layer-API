@@ -1,4 +1,4 @@
-import { isLengthZero } from "@Helper/Utils";
+
 
 
 /**
@@ -8,6 +8,8 @@ import { isLengthZero } from "@Helper/Utils";
  * @param res - Response HTTP
  * @returns Response HTTP
  */
+
+import { isLengthZero } from "@Helper/Utils";
 
 /**
  * @function isLengthZero
@@ -47,7 +49,7 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
             delete req.body['set'];
         }
 
-        if (!store_code || (where && isLengthZero(where)) || !db_type) {
+        if (!store_code || !db_type) {
             Logger('Store', 'error', {
                 message: 'Incomplete request!',
                 system: 'Store',
@@ -57,6 +59,10 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
             });
 
             throw { kind: 'incomplete_request' };
+        }
+
+        if (where && isLengthZero(where)) {
+            delete req.body['where'];
         }
 
         const dataFromServiceCenter = await StoreService(req.body, 'fetch');
@@ -72,7 +78,7 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
         }
 
         Logger('Store', 'info', {
-            message: `Got ${where ? 'some' : 'all'} row data`,
+            message: `Successfully fetch ${where && !isLengthZero(where) ? 'some' : 'all'} row!!`,
             system: 'Store',
             store: store_code,
             feature: 'fetch'
@@ -80,10 +86,13 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
 
         const dataToControllerCenter = {
             response: {
-                message: dataFromServiceCenter.kind ? `No row in the store!!` : `Got ${where ? 'some' : 'all'} row data!!`,
+                message: dataFromServiceCenter.kind === "null_data" ?
+                    `No row in the store!!`
+                    :
+                    `Successfully fetch ${where && !isLengthZero(where) ? 'some' : 'all'} row!!`,
                 system: 'Store',
                 feature: 'fetch',
-                data: dataFromServiceCenter.kind ? [] : dataFromServiceCenter
+                data: dataFromServiceCenter.kind === "null_data" ? [] : dataFromServiceCenter
             },
             status_code: 200
         }

@@ -17,6 +17,14 @@ export const FetchNosqlStoreRespo = (helper: any) => async (validRequestData: an
 
         console.log('FetchNosqlStoreRespo (dataFromMongoDB) : ', dataFromMongoDB);
 
+        if (dataFromMongoDB.length === 0) {
+            if (where) {
+                throw { kind: 'not_found_data' };
+            }
+
+            return { kind: 'null_data' };
+        }
+
         return dataFromMongoDB;
     } catch (error) {
         console.log('FetchNosqlStoreRespo (Error):', error);

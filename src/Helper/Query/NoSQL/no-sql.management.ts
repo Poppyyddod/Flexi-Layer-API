@@ -1,6 +1,6 @@
 
 
-type NoSQLmanagementFeature = 'fetchAll' | 'fetchById' | 'create' | 'editById' | 'editManyDoc' | 'removeById' | 'removeManyDoc'
+type NoSQLmanagementFeature = 'find' | 'insertMany' | 'updateMany' | 'deleteMany';
 
 
 export const NoSQLmanagement = async (validRequestData: any, feature: NoSQLmanagementFeature) => {

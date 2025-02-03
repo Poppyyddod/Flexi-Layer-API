@@ -7,7 +7,7 @@ import { CheckResponseMySqlData, CheckResponsePosgreSqlData } from "../../checki
 export const dbTypeSqlManagement: any = {
     postgresql: async (data: any) => {
         const response = await pgsql.query(data.cmd, data.params);
-        console.log('SQLmanagement (response) : ', response);
+        // console.log('SQLmanagement (response) : ', response);
 
         const checkReturnData = await CheckResponsePosgreSqlData(data.params, response, data.isReturn);
         // console.log('checkReturnData (SQLmanagement)(PostgreSQL) : ', checkReturnData);

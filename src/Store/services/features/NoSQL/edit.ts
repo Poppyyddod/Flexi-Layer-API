@@ -12,13 +12,13 @@ export const EditNosqlStoreService = (helper: any) => async (validRequestData: a
 
         if (nosql_supporter) {
             const validNoSqlSupporter = await ValidateNosqlSupporter(nosql_supporter, feature);
-            console.log('EditNosqlStoreService (validNoSqlSupporter) : ', validNoSqlSupporter);
+            // console.log('EditNosqlStoreService (validNoSqlSupporter) : ', validNoSqlSupporter);
 
             validRequestData['nosql_supporter'] = validNoSqlSupporter;
         }
 
         const fixedRequestFormatData = await FixWhereRequestFormat(validRequestData);
-        console.log('DeleteNosqlStoreService (fixedRequestFormatData) : ', fixedRequestFormatData);
+        // console.log('DeleteNosqlStoreService (fixedRequestFormatData) : ', fixedRequestFormatData);
 
         return fixedRequestFormatData;
     } catch (error) {

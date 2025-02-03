@@ -81,7 +81,7 @@ const dbTypeService: any = {
 
             return dataFromResposCenter;
         } catch (error) {
-            // console.log('StoreService (dbTypeService)(SQL) : ', error);
+            console.log('StoreService (dbTypeService)(SQL) : ', error);
             throw error;
         }
     },
@@ -91,18 +91,18 @@ const dbTypeService: any = {
             console.log('StoreService (dbTypeService)(NoSQL) : ', theFeature, reqBodyData);
 
             const validData = await CheckCollectionDataStructure({ ...reqBodyData, feature: theFeature });
-            console.log('StoreService (validData)(NoSQL) : ', validData);
+            // console.log('StoreService (validData)(NoSQL) : ', validData);
 
             const serviceMappedMethod = NoSqlServiceMethods[theFeature];
             const dataFromtheService = await serviceMappedMethod(NoSqlHelperFunction)({ ...validData });
-            console.log('StoreService (dataFromtheService)(NoSQL) : ', dataFromtheService);
+            // console.log('StoreService (dataFromtheService)(NoSQL) : ', dataFromtheService);
 
             const dataFromResposCenter = await StoreRespository(dbRelationshipType, theFeature, dataFromtheService);
             // console.log('StoreService (dataFromResposCenter)(NoSQL) : ', dataFromResposCenter);
 
             return dataFromResposCenter;
         } catch (error) {
-            // console.log('StoreService (dbTypeService)(NoSQL) : ', error);
+            console.log('StoreService (dbTypeService)(NoSQL) : ', error);
             throw error;
         }
     }

@@ -33,13 +33,13 @@ export const CheckResponsePosgreSqlData = async (params: any, sqlData: any, isRe
             }
 
             if (isReturn) {
-                console.log('CheckResponsePosgreSqlData (Rows count):', sqlData.rows.length);
+                // console.log('CheckResponsePosgreSqlData (Rows count):', sqlData.rows.length);
                 return sqlData.rows;
             }
         }
 
         if (isReturn && listCmdType.affect.includes(sqlData.command)) {
-            console.log('CheckResponsePosgreSqlData (affectedRows):', sqlData.rowCount);
+            // console.log('CheckResponsePosgreSqlData (affectedRows):', sqlData.rowCount);
             return { affectedRows: sqlData.rowCount };
         }
 
