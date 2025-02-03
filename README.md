@@ -11,6 +11,7 @@ npm install
 - **Step 2 :** Fix `.env` file
 ```sh
 # You need to fix the `.env` file first for your server.
+# You could fix it follow the `.env-example-file`.
 ```
 - **Step 3 :** Run the server
 ```sh
