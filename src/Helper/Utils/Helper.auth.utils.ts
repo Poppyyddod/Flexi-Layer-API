@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
+
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 
@@ -43,20 +44,6 @@ export const JwtGenerateToken = async (userId: string | number) => {
         return token;
     } catch (error) {
         console.log('JwtGenerateToken (Error):', error);
-        throw error;
-    }
-}
-
-export const JwtCompareToken = async (token: string) => {
-    try {
-        console.log('JwtCompareToken (parameter) : ', token);
-
-        const decoded = jwt.verify(token, `${process.env.SECRET_KEY}`);
-        console.log('JwtCompareToken (decoded) : ', decoded);
-
-        return decoded;
-    } catch (error) {
-        console.log('JwtCompareToken (Error):', error);
         throw error;
     }
 }

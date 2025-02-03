@@ -12,7 +12,7 @@ export const CreateNosqlStoreService = (helper: any) => async (validRequestData:
 
         if (nosql_supporter) {
             const validNoSqlSupporter = await ValidateNosqlSupporter(nosql_supporter, feature);
-            console.log('CreateNosqlStoreService (validNoSqlSupporter) : ', validNoSqlSupporter);
+            // console.log('CreateNosqlStoreService (validNoSqlSupporter) : ', validNoSqlSupporter);
 
             validRequestData['nosql_supporter'] = validNoSqlSupporter;
         }

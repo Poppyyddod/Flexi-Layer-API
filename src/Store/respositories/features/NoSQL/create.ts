@@ -29,7 +29,7 @@ export const CreateNosqlStoreRespo = (helper: any) => async (validRequestData: a
 
         if (!result.acknowledged) {
             await mongodb.client.close();
-            throw { kind: 'mongodb_insert_failed' };
+            throw { kind: 'mongodb_query_failed' };
         }
 
         const insertedData = await mongodb.db.collection(store)

@@ -7,7 +7,7 @@ export const FetchNosqlStoreService = (helper: any) => async (validRequestData: 
         const { FixWhereRequestFormat } = helper;
 
         const fixedRequestFormatData = await FixWhereRequestFormat(validRequestData);
-        console.log('FetchNosqlStoreService (fixedRequestFormatData) : ', fixedRequestFormatData);
+        // console.log('FetchNosqlStoreService (fixedRequestFormatData) : ', fixedRequestFormatData);
 
         return fixedRequestFormatData;
     } catch (error) {

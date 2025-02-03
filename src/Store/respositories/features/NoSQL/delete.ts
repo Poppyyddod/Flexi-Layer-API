@@ -15,7 +15,7 @@ export const DeleteNosqlStoreRespo = (helper: any) => async (validRequestData: a
         await mongodb.client.close();
 
         if (!result.acknowledged) {
-            throw { kind: 'mongodb_delete_failed' };
+            throw { kind: 'mongodb_query_failed' };
         }
 
         if (result.deletedCount === 0) {
