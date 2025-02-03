@@ -1,0 +1,20 @@
+# Ignore ไฟล์ทั้งหมดที่เป็น log
+*.log
+
+# Ignore โฟลเดอร์ node_modules
+node_modules/
+
+# Ignore ไฟล์ .env
+.env
+
+# Ignore ไฟล์ที่อยู่ในโฟลเดอร์ build/
+build/
+
+# Ignore ไฟล์ที่ขึ้นต้นด้วย temp
+temp*
+
+# Ignore ไฟล์ที่สร้างจาก IDE หรือ editor เช่น VS Code
+.vscode/
+
+# Ignore ไฟล์ของ OS เช่น .DS_Store (macOS)
+.DS_Store
