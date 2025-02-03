@@ -8,10 +8,11 @@
 ```sh
 npm install
 ```
+- **Step 2 :** Fix `dot-env` file
 ```sh
-# You need to fix the `.env` file for your server.
+# You need to fix the `.env` file first for your server.
 ```
-- **Step 2 :** Run the server
+- **Step 3 :** Run the server
 ```sh
 npm start
 ```
