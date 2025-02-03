@@ -1,0 +1,39 @@
+# Project environment
+NODE_ENV=''
+
+# Server port
+SERVER_PORT=5000
+
+# Hostname
+HOST='localhost'
+
+# MySQL username
+MYSQL_USER=''
+# MySQL password
+MYSQL_PASSWORD=''
+# MySQL database name
+MYSQL_DATABASE=''
+# MySQL/Tables
+MYSQL_STORE_MAPPING="#category:category"
+
+# PostgreSQL username
+PGSQL_USER=''
+# PostgreSQL password
+PGSQL_PASSWORD=''
+# PostgreSQL database name
+PGSQL_DATABASE='slience_arts'
+# PostgreSQL port
+PGSQL_PORT=5432
+# PostgreSQL/Tables
+POSTGRESQL_STORE_MAPPING="#user_privacy:user_privacy"
+
+# MongoDB URI
+MONGODB_URI='mongodb://127.0.0.1:27017/database_name'
+# MongoDB database name
+MONGODB_DATABASE=''
+# MongoDB/Collections
+MONGODB_STORE_MAPPING="#gameplay_details:gameplay_details"
+
+# JWT
+SECRET_KEY='access'
+REFRESH_KEY='refresh'
