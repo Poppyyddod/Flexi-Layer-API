@@ -8,7 +8,7 @@ const helperFunctions = {
 }
 
 
-const AuthCenterService = async (validRequestData: any, feature: string) => {
+const AuthCenterService = async (httpResponse: any, validRequestData: any, feature: string) => {
     try {
         console.log('> AuthCenterService : ', validRequestData);
 
@@ -18,7 +18,7 @@ const AuthCenterService = async (validRequestData: any, feature: string) => {
         // console.log('AuthCenterService (validDataStructure) : ', validDataStructure);
 
         const service = authServiceMethod[theFeature];
-        const dataFromTheService = await service(helperFunctions)(validRequestData, feature);
+        const dataFromTheService = await service(helperFunctions)(httpResponse, validRequestData, feature);
         console.log('AuthCenterService (dataFromTheService) : ', dataFromTheService);
 
         return dataFromTheService;

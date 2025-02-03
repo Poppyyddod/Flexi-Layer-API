@@ -1,4 +1,4 @@
-import { ArgonComparePassword } from "@Helper/Utils/Helper.auth.utils";
+import { ArgonComparePassword, JwtGenerateToken, SetCookieForJwtToken } from "@Helper/Utils/Helper.auth.utils";
 
 
 
@@ -20,7 +20,7 @@ import { ArgonComparePassword } from "@Helper/Utils/Helper.auth.utils";
  * ສຳຫຼັບການກວດສອບ Hashed `Secretword` ຫຼື `Password` ແລ້ວກັບທີ່ສົ່ງມາກວດສອບ
  */
 
-export const AuthSignInService = (helpers: any) => async (validRequestData: any, feature: string) => {
+export const AuthSignInService = (helpers: any) => async (httpResponse: any, validRequestData: any, feature: string) => {
     try {
         console.log('AuthSignInService :', validRequestData);
 
@@ -48,6 +48,13 @@ export const AuthSignInService = (helpers: any) => async (validRequestData: any,
         }
 
         delete dataFromServiceCenter[0]['secretword'];
+
+        const generatedToken = await JwtGenerateToken(dataFromServiceCenter[0]?.user_id);
+        console.log('AuthSignInService (generatedToken) : ', generatedToken);
+
+        dataFromServiceCenter[0]['token'] = generatedToken;
+
+        await SetCookieForJwtToken(httpResponse, generatedToken);
 
         const dataToAuthServiceCenter = {
             response: {

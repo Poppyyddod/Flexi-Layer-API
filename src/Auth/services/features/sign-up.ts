@@ -20,7 +20,7 @@ import { ArgonHashPassword } from "@Helper/Utils/Helper.auth.utils";
  * ສຳຫຼັບການເອີ້ນໃຊ້ Store System ເພື່ອສົ່ງ Request ໄປເພື່ອສ້າງບັນຊີຜູ້ໃຊ້
  */
 
-export const AuthSignUpService = (helpers: any) => async (validRequestData: any, feature: string) => {
+export const AuthSignUpService = (helpers: any) => async (httpResponse: any, validRequestData: any, feature: string) => {
     try {
         console.log('AuthSignUpService :', validRequestData);
 
