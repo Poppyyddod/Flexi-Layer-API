@@ -8,7 +8,7 @@
 ```sh
 npm install
 ```
-- **Step 2 :**
+- **Step 2 :** Run the server
 ```sh
 npm start
 ```
