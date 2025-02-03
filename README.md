@@ -7,5 +7,7 @@
 - **Step 1 :** Install dependencies:
 ```sh
 npm install
+## Run server
+- **Step 1 :**
 ```sh
 npm start
