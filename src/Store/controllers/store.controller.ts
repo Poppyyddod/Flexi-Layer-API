@@ -37,9 +37,31 @@ const helperFunction = {
  * Model ສຳຫຼັບ Route Keys
  */
 
+const CheckDbConnection = async (reqBodyData: any) => {
+    try {
+        console.log('- StoreController (CheckDbConnection) : ', reqBodyData);
+        const { db_type } = reqBodyData;
+
+        const theDatabaseDetails = supportForDbTypes[db_type];
+
+        if (!theDatabaseDetails) {
+            throw { kind: 'cannot_support_the_database_type' }
+        }
+
+        if (!theDatabaseDetails.connect_state) {
+            throw { kind: 'we_disconnect_the_database' };
+        }
+    } catch (error) {
+        console.log('StoreController (CheckDbConnection)(error) : ', error);
+        throw error;
+    }
+}
+
 const StoreController = async (req: any, res: any) => {
     try {
         console.log('> Store Controller : ', req.body);
+
+        await CheckDbConnection(req.body);
 
         const theRoute = req.path as ControllerMethodRouteKeys;
         console.log(`- Request route : ${theRoute}`);

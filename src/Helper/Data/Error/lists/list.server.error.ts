@@ -1,3 +1,5 @@
+import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
+
 type ServerErrorModel = {
     [key: string]: {
         more: {
@@ -56,6 +58,22 @@ export const serverError: ServerErrorModel = {
         more: {
             message: 'The code is not supported!',
             read_me: 'Please check server side.'
+        },
+
+        code: 500
+    },
+
+    'we_disconnect_the_database': {
+        more: {
+            message: "We disconnect the database!",
+            read_me: "Change the database connect state on server side first.",
+            support_for: `${Object.entries(supportForDbTypes).map(([key, value]) => {
+                if (value.connect_state) {
+                    return key;
+                } else {
+                    return `${key}(disconnected)`;
+                }
+            })}`
         },
 
         code: 500
