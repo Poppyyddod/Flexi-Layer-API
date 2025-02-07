@@ -22,8 +22,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/v1', routes(router));
 app.set('json spaces', 2);
 
-app.get('/dynamic_store', (req: any, res: any) => {
-    res.json({ message: "Welcome to Dynamic Store!!" });
+app.get('/flexi-layer-api', (req: any, res: any) => {
+    res.json({ message: "Welcome to Flexi Layer API!!" });
 })
 
 app.listen(PORT, () => {
