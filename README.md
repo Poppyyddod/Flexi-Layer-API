@@ -18,4 +18,4 @@ npm install
 ```sh
 npm start
 ```
-## Enjoy my project!
+## Enjoy the project!
