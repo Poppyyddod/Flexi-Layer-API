@@ -2,6 +2,7 @@ import ErrorHandles from "@Helper/Data/Error";
 import Logger from "@Helper/Logger";
 import { authControllerMethods, AuthControllerKeyRoutes } from "./method";
 import AuthCenterService from "../services/auth.service";
+import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 
 
 const helperFunctions = {
@@ -9,9 +10,31 @@ const helperFunctions = {
 }
 
 
+const CheckDbConnection = async (reqBodyData: any) => {
+    try {
+        console.log('- StoreController (CheckDbConnection) : ', reqBodyData);
+        const { db_type } = reqBodyData;
+
+        const theDatabaseDetails = supportForDbTypes[db_type];
+
+        if (!theDatabaseDetails) {
+            throw { kind: 'cannot_support_the_database_type' }
+        }
+
+        if (!theDatabaseDetails.connect_state) {
+            throw { kind: 'we_disconnect_the_database' };
+        }
+    } catch (error) {
+        console.log('StoreController (CheckDbConnection)(error) : ', error);
+        throw error;
+    }
+}
+
 const AuthCenterController = async (req: any, res: any) => {
     try {
         console.log('> AuthCenterController : ', req.body);
+
+        await CheckDbConnection(req.body);
 
         const theRoute = req.path as AuthControllerKeyRoutes;
         console.log(`- Request route : ${theRoute}`);

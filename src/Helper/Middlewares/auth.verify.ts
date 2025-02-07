@@ -4,7 +4,7 @@ export const JwtVerifyToken = async (req: any, res: any, next: any) => {
     try {
         console.log('> JwtCompareToken : ');
 
-        const useAuthToken = true;
+        const useAuthToken = false;
 
         if (!useAuthToken) {
             return next();
