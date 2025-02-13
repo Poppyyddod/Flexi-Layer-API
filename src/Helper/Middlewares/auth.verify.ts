@@ -4,7 +4,7 @@ export const JwtVerifyToken = async (req: any, res: any, next: any) => {
     try {
         console.log('> JwtCompareToken : ');
 
-        const useAuthToken = false;
+        const useAuthToken = true;
 
         if (!useAuthToken) {
             return next();
@@ -28,7 +28,6 @@ export const JwtVerifyToken = async (req: any, res: any, next: any) => {
 
         req.user = decoded;
         next();
-        // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzNCIsImlhdCI6MTczODU4ODQ1NH0.zpWFTx-YBYmstXCoLNJP0suATgYdOwPxx7xZhLFJ6J0
     } catch (error: any) {
         console.log('JwtCompareToken (Error):', error);
         return res.status(400).json({

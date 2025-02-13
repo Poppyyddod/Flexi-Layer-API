@@ -24,7 +24,7 @@ app.set('json spaces', 2);
 
 app.get('/flexi_layer_api', (req: any, res: any) => {
     res.json({ message: "Welcome to Flexi Layer API!!" });
-})
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

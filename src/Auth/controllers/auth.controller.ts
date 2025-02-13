@@ -49,6 +49,7 @@ const AuthCenterController = async (req: any, res: any) => {
         const { data, feature } = dataFromTheController;
 
         const dataFromCenterService: any = await AuthCenterService(res, data, feature);
+        console.log('AuthCenterController : ', dataFromCenterService);
 
         Logger('Auth', 'info', {
             more: dataFromCenterService.response.data?.[0] || dataFromCenterService.response,
