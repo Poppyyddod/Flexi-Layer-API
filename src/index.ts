@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/v1', routes(router));
 app.set('json spaces', 2);
 
-app.get('/flexi_layer_api', (req: any, res: any) => {
+app.get('/flexi-layer-api', (req: any, res: any) 
     res.json({ message: "Welcome to Flexi Layer API!!" });
 });
 
