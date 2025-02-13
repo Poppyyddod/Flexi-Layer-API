@@ -60,6 +60,7 @@ const CheckDbConnection = async (reqBodyData: any) => {
 const StoreController = async (req: any, res: any) => {
     try {
         console.log('> Store Controller : ', req.body);
+        console.log('Request user (Verify token) : ', req?.user);
 
         await CheckDbConnection(req.body);
 
@@ -68,6 +69,18 @@ const StoreController = async (req: any, res: any) => {
 
         if (!Object.keys(supportForDbTypes).includes(req.body.db_type)) {
             throw { kind: 'cannot_support_the_database_type' };
+        }
+
+        if(req.body.where && req.user){
+            console.log('* Check and modify id value `my self`!');
+            Object.entries(req.body.where).map((key: any, value: any) => {
+                console.log("req body where (modify my self) : ", key);
+                if(key[1] === "my self"){
+                    console.log("Store Controller (Decoded token data) : ", req.user);
+                    req.body.where[key[0]] = parseInt(req.user.userId);
+                    return;
+                }
+            });
         }
 
         const controller = StoreControllerMethods[theRoute];
