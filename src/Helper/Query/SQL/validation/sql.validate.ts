@@ -54,28 +54,36 @@ export const ValidateTableMapper = async (dbPositionData: any) => {
 
 export const ValidateFieldsBeforeInsert = async (tableFields: any, data: any) => {
     try {
-        const requestField = [...Object.keys(data)];
+        console.log('* ValidateFieldsBeforeInsert (data) : ', data);
+        const requestFields = data;
         // console.log('CheckRequiredFieldsToInsert (requestField):', requestField);
 
-        const primaryKeyField = await CheckFieldComment(requestField, tableFields, 'primary key');
-        // console.log('CheckRequiredFieldsToInsert (primaryKeyField):', primaryKeyField);
+        const primaryKeyFieldInReq = await CheckFieldComment(requestFields, tableFields, 'primary key');
+        // console.log('CheckRequiredFieldsToInsert (primaryKeyFieldInReq):', primaryKeyField);
 
-        if (primaryKeyField.length === 0) {
+        if (primaryKeyFieldInReq.length > 0) {
             throw { kind: 'cannot_insert_data_with_primary_key' };
         }
 
-        const emptyCommentField = tableFields.filter((field: any) => field.comment === '');
-        // console.log('CheckRequiredFieldsToInsert (emptyCommentField):', emptyCommentField);
+        const emptyCommentFieldInReq = tableFields.filter((field: any) => field.comment === '');
+        // console.log('CheckRequiredFieldsToInsert (emptyCommentFieldInReq):', emptyCommentField);
 
-        if (emptyCommentField.length > 0) {
-            console.log('\x1b[33m[ERROR] : Missing comment field!! : \x1b[0m', emptyCommentField);
+        if (emptyCommentFieldInReq.length > 0) {
+            // console.log('\x1b[33m[ERROR] : Missing comment field!! : \x1b[0m', emptyCommentFieldInReq);
             throw { kind: 'missing_comment_field' };
         }
 
-        const missingRequiredFields = await CheckFieldComment(requestField, tableFields, 'required');
-        // console.log('CheckRequiredFieldsToInsert (missingRequiredFields):', missingRequiredFields);
+        const checkRequiredFieldInTheTable = tableFields.some((field: any) => field.comment === "required");
+        // console.log('CheckRequiredFieldsToInsert (checkRequiredFieldInTheTable):', checkRequiredFieldInTheTable);
+        const requiredFieldInReq = await CheckFieldComment(requestFields, tableFields, 'required');
+        // console.log('CheckRequiredFieldsToInsert (requiredFieldInReq):', missingRequiredFields);
 
-        if (missingRequiredFields.length > 0) {
+        const checkForeignKeyFieldInTheTable = tableFields.some((field: any) => field.comment === "foreign key");
+        // console.log('CheckRequiredFieldsToInsert (checkForeignKeyFieldInTheTable):', checkForeignKeyFieldInTheTable);
+        const foreignKeyFieldInReq = await CheckFieldComment(requestFields, tableFields, 'foreign key');
+        // console.log('CheckRequiredFieldsToInsert (foreignKeyFieldInReq):', missingRequiredFields);
+
+        if ((checkRequiredFieldInTheTable && requiredFieldInReq.length === 0) || (checkForeignKeyFieldInTheTable && foreignKeyFieldInReq.length === 0)) {
             throw { kind: 'missing_required_field' };
         }
     } catch (error) {
@@ -99,13 +107,14 @@ export const ValidateFieldsBeforeInsert = async (tableFields: any, data: any) =>
  */
 
 const CheckFieldComment = (requestFields: any, tableFields: any, comment: string) => {
+    console.log(`* CheckFieldComment (comment) : ${comment}`, requestFields);
     const theCommentFieldsArr = tableFields
         .filter((field: any) => field.comment === comment)
         .map((field: any) => field.field);
-    // console.log('CheckFieldComment (theCommentFieldsArr):', theCommentFieldsArr);
+    console.log('CheckFieldComment (theCommentFieldsArr):', theCommentFieldsArr);
 
-    const filteredFields = theCommentFieldsArr.filter((field: any) => !requestFields.includes(field));
-    // console.log('CheckFieldComment (filteredFields):', filteredFields);
+    const filteredFields = theCommentFieldsArr.filter((field: string) => field in requestFields);
+    console.log('CheckFieldComment (filteredFields):', filteredFields);
 
     return filteredFields;
 }
@@ -156,6 +165,8 @@ export const ValidateFieldsAndType = async (fields: any[], data: object) => {
                 console.log('Invalid string for field:', dataKey);
                 throw { kind: 'invalid_data_type' };
             }
+
+            // if(sqlDateTimeType.includes(fieldType) && )
         }
 
         return true;
