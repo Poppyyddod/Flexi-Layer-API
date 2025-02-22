@@ -43,7 +43,7 @@ export const AuthSignUpService = (helpers: any) => async (httpResponse: any, val
             db_type,
             store_code: 'user_signin_history',
             set: {
-                user_id: parseInt(dataFromCenterServiceCreate[0]['user_id'])
+                user_signin_history_id: parseInt(dataFromCenterServiceCreate[0]['user_id'])
             }
         };
 
