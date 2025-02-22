@@ -57,6 +57,34 @@ const CheckDbConnection = async (reqBodyData: any) => {
     }
 }
 
+const CheckMyIdValue = async (req: any) => {
+    console.log('* Check and modify id value `myId`!');
+    const { where, set } = req.body;
+
+    if (where) {
+        Object.entries(where).map((key: any, value: any) => {
+            console.log("req body where (modify myId) : ", key);
+            if (key[1] === "myId") {
+                console.log("Store Controller (Decoded token data) : ", req.user);
+                where[key[0]] = parseInt(req.user.userId);
+                return;
+            }
+        });
+    }
+
+
+    if (set) {
+        Object.entries(set).map((key: any, value: any) => {
+            console.log("req body set (modify myId) : ", key);
+            if (key[1] === "myId") {
+                console.log("Store Controller (Decoded token data) : ", req.user);
+                set[key[0]] = parseInt(req.user.userId);
+                return;
+            }
+        });
+    }
+}
+
 const StoreController = async (req: any, res: any) => {
     try {
         console.log('> Store Controller : ', req.body);
@@ -71,16 +99,8 @@ const StoreController = async (req: any, res: any) => {
             throw { kind: 'cannot_support_the_database_type' };
         }
 
-        if(req.body.where && req.user){
-            console.log('* Check and modify id value `my self`!');
-            Object.entries(req.body.where).map((key: any, value: any) => {
-                console.log("req body where (modify my self) : ", key);
-                if(key[1] === "my self"){
-                    console.log("Store Controller (Decoded token data) : ", req.user);
-                    req.body.where[key[0]] = parseInt(req.user.userId);
-                    return;
-                }
-            });
+        if (req.user) {
+            await CheckMyIdValue(req);
         }
 
         const controller = StoreControllerMethods[theRoute];

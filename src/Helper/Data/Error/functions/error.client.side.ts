@@ -27,7 +27,7 @@ import { clientError } from '../lists/list.client.error';
 
 const ClientSideError = (Logger: any) => async (err: any, res: any, system: any) => {
     try {
-        console.log('* Client side check error type worked');
+        console.log('* Client side check error type worked : ', err);
         const { systemName, feature } = system;
         const hasClientError = clientError[err.kind];
 
@@ -49,15 +49,19 @@ const ClientSideError = (Logger: any) => async (err: any, res: any, system: any)
             });
         }
 
-        const theAllowed = await more.allowed({ systemName, feature });
+        const theAllowed = await more.allowed(err, systemName, feature);
         console.log('Allowed', theAllowed);
 
-        return res.status(code).json({
+        const errorDataToClient = {
             ...more,
             system: systemName,
             feature,
             ...theAllowed
-        });
+        }
+
+        console.log('ClientSideError (errorDataToClient) : ', errorDataToClient);
+
+        return res.status(code).json(errorDataToClient);
     } catch (error) {
         console.log('ClientSideError (Error) : ', error);
         throw error;

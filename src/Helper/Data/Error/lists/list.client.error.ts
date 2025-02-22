@@ -6,10 +6,11 @@ import { storeFields } from "./list.sql.error";
 type Features = 'fetch' | 'create' | 'edit' | 'remove';
 type StoreFieldNames = keyof typeof storeFields;
 
-type System = {
-    systemName: StoreFieldNames;
-    feature: Features;
-};
+// type ErrorSystem = {
+//     error: any,
+//     systemName: StoreFieldNames;
+//     feature: Features;
+// };
 
 type ClientErrorModel = {
     [key: string]: {
@@ -86,7 +87,7 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Invalid `nosql_supporter` feature name!',
             read_me: 'Please check the request key `nosql_supporter`. Provide the valid feature name for `nosql_supporter` the feature.',
-            allowed: ({ systemName, feature }: System) => {
+            allowed: (error: any, systemName: string, feature: string) => {
                 return {
                     list_nosql_supporter: {
                         [`${feature}_feature`]: { ...noSqlSupporterList[feature], ...noSqlSupporterList['global'] }
@@ -102,7 +103,7 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Invalid `nosql_supporter` key data type!',
             read_me: 'Please check the request key `nosql_supporter`. Provide the valid data type for `nosql_supporter` the feature.',
-            allowed: ({ systemName, feature }: System) => {
+            allowed: (error: any, systemName: string, feature: string) => {
                 return {
                     list_nosql_supporter: {
                         [`${feature}_feature`]: { ...noSqlSupporterList[feature], ...noSqlSupporterList['global'] }
@@ -134,6 +135,25 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
+    'unique_row_data': {
+        more: {
+            message: 'Duplicate key value violates unique constraint!',
+            read_me: 'The request data already has a row in the table.',
+            allowed: (error: any, systemName: string, feature: string) => {
+                console.log('allowed (unique_row_data)', error);
+
+                return {
+                    error: {
+                        kind: error?.kind,
+                        detail: error?.detail,
+                    }
+                }
+            }
+        },
+
+        code: 409
+    },
+
     'cannot_insert_data_with_primary_key': {
         more: {
             message: 'Cannot insert data with primary-key field!',
@@ -160,7 +180,7 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Incomplete request!',
             read_me: 'Please provide the valid request format.',
-            allowed: ({ systemName, feature }: System) => {
+            allowed: (error: any, systemName: string, feature: string) => {
                 return storeFields[systemName][feature];
             }
         },
@@ -172,7 +192,7 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'The field is not found!',
             read_me: 'Please check the request fields name in `set` and `where` keys!!',
-            'allowed': ({ systemName, feature }: System) => {
+            'allowed': (error: any, systemName: string, feature: string) => {
                 return storeFields[systemName][feature];
             },
         },
