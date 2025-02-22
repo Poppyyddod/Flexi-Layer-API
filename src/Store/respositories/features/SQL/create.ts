@@ -51,6 +51,7 @@ const dbTypeCreateStoreRespository: any = {
         
 
         const fixForAuth = store === "user_signin_history" ? "user_signin_history_id" : "user_id";
+        console.log('CreateStoreRespo (fixForAuth) : ', fixForAuth);
 
         const selectCMD = `SELECT * FROM ?? WHERE ${fixForAuth} = ?`;
         const newData = await SQLmanagement(db_type, { cmd: selectCMD, params: [store, newRecord.insertId], isReturn: true });
