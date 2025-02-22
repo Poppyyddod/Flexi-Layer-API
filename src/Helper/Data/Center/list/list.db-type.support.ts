@@ -1,3 +1,5 @@
+type DbListKey = 'postgresql' | 'mysql' | 'mongodb';
+
 type DbTypeModel = {
     [key: string]: {
         name: string,
@@ -10,18 +12,18 @@ export const supportForDbTypes: DbTypeModel = {
     postgresql: {
         name: 'PostgreSQL',
         type: 'sql',
-        connect_state: true
+        connect_state: false
     },
 
     mysql: {
         name: 'MySQL',
         type: 'sql',
-        connect_state: false
+        connect_state: true
     },
 
     mongodb: {
         name: 'MongoDB',
         type: 'nosql',
-        connect_state: true
+        connect_state: false
     }
 }

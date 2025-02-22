@@ -2,19 +2,28 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { Client } from 'pg';
+import { supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
 
 const { HOST, PGSQL_USER, PGSQL_PASSWORD, PGSQL_DATABASE, PGSQL_PORT } = process.env;
 
-const client = new Client({
-    host: HOST,
-    port: Number(PGSQL_PORT),
-    user: PGSQL_USER,
-    password: PGSQL_PASSWORD,
-    database: PGSQL_DATABASE
-});
 
-client.connect()
-    .then(() => console.log('* PostgreSQL connected successfully!'))
-    .catch(err => console.error('* (Error): PostgreSQL connection error', err));
+let client;
 
-export default client;
+if (supportForDbTypes.postgresql.connect_state) {
+    client = new Client({
+        host: HOST,
+        port: Number(PGSQL_PORT),
+        user: PGSQL_USER,
+        password: PGSQL_PASSWORD,
+        database: PGSQL_DATABASE
+    });
+
+    client.connect()
+        .then(() => console.log('* PostgreSQL connected successfully!'))
+        .catch(err => console.error('* (Error): PostgreSQL connection error', err));
+} else {
+    console.log('\x1b[33m [WARNING] The Database setting have disconnect `PostgreSQL` Database! It cannot send the request for `PostgreSQL` database now. \x1b[0m');
+    client = {};
+}
+
+export default client as any;
