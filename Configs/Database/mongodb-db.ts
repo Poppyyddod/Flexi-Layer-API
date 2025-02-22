@@ -5,7 +5,7 @@ import { supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support
 
 const uri = `${process.env.MONGODB_URI}`;
 const mongoDbDatabaseName = process.env.MONGODB_DATABASE;
-const client = new MongoClient(uri);
+let client: any;
 
 const connectToMongoDB = async () => {
     try {
@@ -13,6 +13,8 @@ const connectToMongoDB = async () => {
             console.log('\x1b[33m [WARNING] The Database setting have disconnect `MongoDB` Database! It cannot send the request for `MongoDB` database now. \x1b[0m');
             return;
         }
+
+        client = new MongoClient(uri);
 
         await client.connect();
 
@@ -27,7 +29,7 @@ const connectToMongoDB = async () => {
 
 const obj = {
     client: client,
-    db: client.db(mongoDbDatabaseName),
+    db: client?.db(mongoDbDatabaseName),
     testConnection: connectToMongoDB
 }
 
