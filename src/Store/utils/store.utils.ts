@@ -57,14 +57,15 @@ export const StoreMapping = async (db_type: string, code: string) => {
         // console.log('StoreMapping : ', mapping[code]);
 
         const trimmedCode = code.trim();
-        const theStore = mapping[trimmedCode];
         // console.log('Trimmed Code:', trimmedCode);
-        // console.log('StoreMapping : ', theStore);
-        // console.log('CheckStoreLength : ', theStore.length);
 
         if (!(trimmedCode in mapping)) {
             throw { kind: 'invalid_store_code' };
         }
+
+        const theStore = mapping[trimmedCode];
+        // console.log('StoreMapping : ', theStore);
+        // console.log('CheckStoreLength : ', theStore.length);
 
         return theStore;
     } catch (error) {

@@ -49,7 +49,7 @@ const dbTypeCreateStoreRespository: any = {
         const newRecord = await SQLmanagement(db_type, { cmd: insertCMD, params: [store, ...params], isReturn: true });
         console.log('CreateStoreRespo (newRecordId): ', newRecord);
         
-        const selectCMD = `SELECT * FROM ?? WHERE id = ?`;
+        const selectCMD = `SELECT * FROM ?? WHERE user_id = ?`;
         const newData = await SQLmanagement(db_type, { cmd: selectCMD, params: [store, newRecord.insertId], isReturn: true });
         console.log('CreateStoreRespo (new record data): ', newData);
 
