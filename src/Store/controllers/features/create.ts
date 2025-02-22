@@ -88,7 +88,7 @@ export const CreateStoreController = (helpers: any) => async (req: any, res: any
     } catch (error: any) {
         console.log('CreateStoreController (Error):', error);
 
-        if (error?.code === '23505') {
+        if (error?.code === '23505' || error?.code === '23000') {
             throw { kind: 'unique_row_data', detail: error?.detail, feature: 'create' };
         }
 

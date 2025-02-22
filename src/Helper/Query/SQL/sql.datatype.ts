@@ -27,17 +27,17 @@ export const sqlStringType = [
     'date',
     'datetime',
     'timestamp',
-    'time',
-    'year',
+    'timestamp without time zone',
+    'time'
 ];
 
-export const sqlDateTimeType = [
-    'date',
-    'datetime',
-    'timestamp',
-    'timestamp without time zone',
-    'time',
-];
+// export const sqlDateTimeType = [
+//     'date',
+//     'datetime',
+//     'timestamp',
+//     'timestamp without time zone',
+//     'time',
+// ];
 
 export const safeSQLCommands = [
     "CURRENT_TIMESTAMP()",   // ให้วันที่และเวลาปัจจุบัน

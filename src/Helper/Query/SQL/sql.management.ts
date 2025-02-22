@@ -40,6 +40,7 @@ export const StartValidateSqlRequestDataStructure = async (dbPositionData: any, 
         console.log('StartCheckRequestDataStructure :', dbPositionData, data);
 
         const tableDataStructure = await ValidateTableMapper(dbPositionData);
+        console.log('StartValidateSqlRequestDataStructure (tableDataStructure):', tableDataStructure);
 
         if (dbPositionData.feature === 'create') {
             await ValidateFieldsBeforeInsert(tableDataStructure, data);

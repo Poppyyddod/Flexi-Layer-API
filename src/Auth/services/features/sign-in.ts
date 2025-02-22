@@ -60,9 +60,9 @@ export const AuthSignInService = (helpers: any) => async (httpResponse: any, val
             db_type,
             store_code: 'user_signin_history',
             set: {
-                already_signed_in: true,
-                last_online_at: new Date(),
-                last_signed_in: new Date()
+                already_signed_in: 1,
+                last_online_at: new Date().toISOString(),
+                last_signed_in: new Date().toISOString()
             },
             where: {
                 user_id: parseInt(dataFromServiceCenter[0]['user_id'])

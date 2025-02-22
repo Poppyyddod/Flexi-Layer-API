@@ -50,7 +50,10 @@ const dbTypeCreateStoreRespository: any = {
         console.log('CreateStoreRespo (newRecordId): ', newRecord);
         
 
-        const fixForAuth = store === "user_signin_history" ? "user_signin_history_id" : "user_id";
+        // const fixForAuth = store === "user_signin_history" ? "user_signin_history_id" : "user_id";
+        // console.log('CreateStoreRespo (fixForAuth) : ', fixForAuth);
+
+        const fixForAuth = store === "user_privacy" ? "user_id" : `${store}_id`;
         console.log('CreateStoreRespo (fixForAuth) : ', fixForAuth);
 
         const selectCMD = `SELECT * FROM ?? WHERE ${fixForAuth} = ?`;
