@@ -28,13 +28,13 @@ import { ValidAllDataFromService } from "@Store/models/store.respository.model";
 
 const dbTypeCreateStoreRespository: any = {
     postgresql: async (data: any) => {
-        const {SQLmanagement, set, params, store, db_type} = data;
+        const { SQLmanagement, set, params, store, db_type } = data;
 
         const fields = set.split(', ').map((pair: any) => pair.split(' = ')[0]).join(', ');
         const placeholders = set.split(', ').map((pair: any) => pair.split(' = ')[1]).join(', ');
 
         const cmd = `INSERT INTO ${store} (${fields}) VALUES (${placeholders}) RETURNING *;`;
-        console.log ('CreateStoreRespo (PostgreSQL)(cmd) : ', cmd);
+        console.log('CreateStoreRespo (PostgreSQL)(cmd) : ', cmd);
 
         const newRecordData = await SQLmanagement(db_type, { cmd, params, isReturn: true });
         console.log('CreateStoreRespo (PostgreSQL)(newRecord): ', newRecordData);
@@ -43,20 +43,39 @@ const dbTypeCreateStoreRespository: any = {
     },
 
     mysql: async (data: any) => {
-        const {SQLmanagement, set, params, store, db_type} = data;
+        try {
+            const { SQLmanagement, set, params, store, db_type } = data;
 
-        const insertCMD = `INSERT INTO ?? SET ${set}`;
-        const newRecord = await SQLmanagement(db_type, { cmd: insertCMD, params: [store, ...params], isReturn: true });
-        console.log('CreateStoreRespo (newRecordId): ', newRecord);
+            const insertCMD = `INSERT INTO ?? SET ${set}`;
+            const newRecord = await SQLmanagement(db_type, { cmd: insertCMD, params: [store, ...params], isReturn: true });
+            console.log('CreateStoreRespo (newRecordId): ', newRecord);
 
-        const fixForPrimaryKey = store === "user_privacy" ? "user_id" : `${store}_id`;
-        console.log('CreateStoreRespo (fixForAuth) : ', fixForPrimaryKey);
+            const fixForPrimaryKey = store === "user_privacy" ? "user_id" : `${store}_id`;
+            console.log('CreateStoreRespo (fixForAuth) : ', fixForPrimaryKey);
 
-        const selectCMD = `SELECT * FROM ?? WHERE ${fixForPrimaryKey} = ?`;
-        const newData = await SQLmanagement(db_type, { cmd: selectCMD, params: [store, newRecord.insertId], isReturn: true });
-        console.log('CreateStoreRespo (new record data): ', newData);
+            const getPrimaryKeyfieldnameCmd = `SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?
+            AND COLUMN_KEY = 'PRI'`;
 
-        return newData;
+            const primaryKey = await SQLmanagement(db_type, { cmd: getPrimaryKeyfieldnameCmd, params: [store], isReturn: true });
+            console.log('primaryKey : ', primaryKey);
+
+            const selectCMD = `SELECT * FROM ?? WHERE ${primaryKey[0]?.COLUMN_NAME} = ?`;
+            const newData = await SQLmanagement(db_type, { cmd: selectCMD, params: [store, newRecord.insertId], isReturn: true });
+            console.log('CreateStoreRespo (new record data): ', newData);
+
+            return newData;
+        } catch (error: any) {
+            console.log('CreateStoreRespo (error) : ', error);
+
+            //// Old checking error
+            // if (error?.sqlState === '42S22' && error?.code === 'ER_BAD_FIELD_ERROR') {
+            //     throw { kind: 'mysql_insert_table_name_id_is_not_valid' };
+            // }
+
+            throw error;
+        }
     }
 };
 
@@ -82,7 +101,7 @@ export const CreateSqlStoreRespo = (helpers: any) => async (dataFromResposCenter
         const dataToReturn = await dbTypeCreateStoreRespository[db_type](dataToQuery);
 
         return dataToReturn;
-    } catch (error) {
+    } catch (error: any) {
         console.log('CreateStoreRespo (Error):', error);
         throw error;
     }

@@ -23,28 +23,31 @@ export const storeFields: any = {
                 request_format: {
                     db_type: "#db_type (postgresql | mysql)",
                     store_code: "#store_code",
-                    where: 'Key Object & Valid (Field & Data type)'
+                    field_list: "[#field_name] <- array <- some column || '*' <- string <- get all column. ",
+                    where: 'Key Object & Valid (Field & Data type)',
                 },
                 example: {
                     get_some_row: {
                         db_type: "#db_type",
                         store_code: "#store_code",
-                        field_list: "[#field_name] <- array || '*' <- string ",
+                        field_list: "[#field_name] <- array <- some column || '*' <- string <- get all column. ",
                         where: {
                             user_id: 0
-                        }
+                        },
+                        limit: "#number_type_value <- It's the maximum value to fetch data. It's up to you.",
                     },
                     get_all_row: {
                         db_type: "#db_type",
                         store_code: "#store_code",
-                        field_list: "[#field_name] <- array || '*' <- string ",
-                        where: "*"
+                        field_list: "[#field_name] <- array <- some column || '*' <- string <- get all column. ",
+                        where: "*",
+                        limit: "#number_type_value <- It's the maximum value to fetch data. It's up to you.",
                     },
                     get_last_row: {
                         db_type: "#db_type",
                         store_code: "#store_code",
-                        field_list: ['#field_name', '...'],
-                        where: "#primary_key_field_name:LAST:#limit_data_number"
+                        field_list: "[#field_name] <- array <- some column || '*' <- string <- get all column. ",
+                        where: "#primary_key_field_name:LAST:#limit"
                     }
                 }
             }

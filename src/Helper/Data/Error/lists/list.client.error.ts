@@ -156,8 +156,8 @@ export const clientError: ClientErrorModel = {
 
     'field_list_child_error': {
         more: {
-            message: "Some field names were not found in `field_list`.",
-            read_me: 'Please make sure `field_list` array children name'
+            message: "Unknown the `field_list` child name in the table!",
+            read_me: 'Please make sure `field_list` the array child name is valid same as the table.'
         },
 
         code: 400
@@ -167,6 +167,16 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Cannot insert data with primary-key field!',
             read_me: 'Please delete the primary-key field in the request.'
+        },
+
+        code: 400
+    },
+
+    'mysql_insert_table_name_id_is_not_valid': {
+        more: {
+            message: "The primary key field name isn't valid for `MySQL`!",
+            read_me: "Please check your table primary key field name. You must change the field name.",
+            example: "If you have 'example' table. The primary key field must be 'example_id'."
         },
 
         code: 400
