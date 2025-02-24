@@ -48,22 +48,17 @@ const dbTypeCreateStoreRespository: any = {
         const insertCMD = `INSERT INTO ?? SET ${set}`;
         const newRecord = await SQLmanagement(db_type, { cmd: insertCMD, params: [store, ...params], isReturn: true });
         console.log('CreateStoreRespo (newRecordId): ', newRecord);
-        
 
-        // const fixForAuth = store === "user_signin_history" ? "user_signin_history_id" : "user_id";
-        // console.log('CreateStoreRespo (fixForAuth) : ', fixForAuth);
+        const fixForPrimaryKey = store === "user_privacy" ? "user_id" : `${store}_id`;
+        console.log('CreateStoreRespo (fixForAuth) : ', fixForPrimaryKey);
 
-        const fixForAuth = store === "user_privacy" ? "user_id" : `${store}_id`;
-        console.log('CreateStoreRespo (fixForAuth) : ', fixForAuth);
-
-        const selectCMD = `SELECT * FROM ?? WHERE ${fixForAuth} = ?`;
+        const selectCMD = `SELECT * FROM ?? WHERE ${fixForPrimaryKey} = ?`;
         const newData = await SQLmanagement(db_type, { cmd: selectCMD, params: [store, newRecord.insertId], isReturn: true });
         console.log('CreateStoreRespo (new record data): ', newData);
 
         return newData;
     }
 };
-
 
 export const CreateSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: ValidAllDataFromService): Promise<any> => {
     try {

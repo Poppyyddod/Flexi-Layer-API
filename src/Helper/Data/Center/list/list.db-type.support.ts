@@ -9,14 +9,14 @@ type DbTypeModel = {
 }
 
 export const supportForDbTypes: DbTypeModel = {
-    postgresql: {
-        name: 'PostgreSQL',
+    mysql: {
+        name: 'MySQL',
         type: 'sql',
         connect_state: true
     },
 
-    mysql: {
-        name: 'MySQL',
+    postgresql: {
+        name: 'PostgreSQL',
         type: 'sql',
         connect_state: true
     },
@@ -24,6 +24,6 @@ export const supportForDbTypes: DbTypeModel = {
     mongodb: {
         name: 'MongoDB',
         type: 'nosql',
-        connect_state: false
+        connect_state: true
     }
 }

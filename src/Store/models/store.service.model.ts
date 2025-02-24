@@ -34,4 +34,5 @@ export interface FromControllerRequestDataModel {
     feature: string
     set: any
     where: any
+    field_list?: any
 }

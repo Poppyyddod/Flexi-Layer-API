@@ -154,6 +154,15 @@ export const clientError: ClientErrorModel = {
         code: 409
     },
 
+    'field_list_child_error': {
+        more: {
+            message: "Some field names were not found in `field_list`.",
+            read_me: 'Please make sure `field_list` array children name'
+        },
+
+        code: 400
+    },
+
     'cannot_insert_data_with_primary_key': {
         more: {
             message: 'Cannot insert data with primary-key field!',

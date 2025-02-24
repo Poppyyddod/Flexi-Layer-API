@@ -1,6 +1,7 @@
 import { sqlNumberType, sqlStringType } from '../sql.datatype';
 import { mappingMethodTableDataStructure } from '../mapping/table-data-structure/sql.method';
 import { dataStructureQueryCmd } from '../mapping/table-data-structure/sql.secretdata';
+import { isString } from '@Helper/Utils';
 
 
 
@@ -17,10 +18,10 @@ import { dataStructureQueryCmd } from '../mapping/table-data-structure/sql.secre
 export const ValidateTableMapper = async (dbPositionData: any) => {
     try {
         const cmd = await dataStructureQueryCmd[dbPositionData.db_type];
-        // console.log('StartCheckRequestDataStructure (cmd) :', cmd);
+        // console.log('ValidateTableMapper (cmd) :', cmd);
 
         const tableDataStructure = await mappingMethodTableDataStructure[dbPositionData.db_type](dbPositionData, cmd);
-        console.log('Table data structure (ValidateTableMapper): ', dbPositionData.db_type, tableDataStructure);
+        // console.log('ValidateTableMapper (tableDataStructure) : ', dbPositionData.db_type, tableDataStructure);
 
         // Ensure that 'fields' is an array of objects
         if (!Array.isArray(tableDataStructure) || tableDataStructure.length === 0) {
@@ -106,7 +107,7 @@ export const ValidateFieldsBeforeInsert = async (tableFields: any, data: any) =>
  * @returns 
  */
 
-const CheckFieldComment = (requestFields: any, tableFields: any, comment: string) => {
+export const CheckFieldComment = (requestFields: any, tableFields: any, comment: string) => {
     console.log(`* CheckFieldComment (comment) : ${comment}`, requestFields);
     const theCommentFieldsArr = tableFields
         .filter((field: any) => field.comment === comment)
@@ -142,10 +143,59 @@ const CheckFieldComment = (requestFields: any, tableFields: any, comment: string
  * It's array to keep `string` data type for check request data type
  */
 
-export const ValidateFieldsAndType = async (fields: any[], data: object) => {
+const CheckForFetchLastRow = async (whereData: any) => {
+    if (!isString(whereData)) return;
+
+    console.log('ValidateFieldsAndType (where is string type):', whereData);
+
+    const splittedWhere = whereData.split(':');
+    console.log('ValidateFieldsAndType (splittedWhere):', splittedWhere);
+
+    if (splittedWhere.length !== 3 || splittedWhere[1] !== 'LAST') {
+        throw { kind: 'incomplete_request' };
+    }
+
+    const primaryKeyField = splittedWhere[0];
+    const value = splittedWhere[1];
+
+    const newWhereData = {
+        [primaryKeyField]: 0
+    }
+    console.log('ValidateFieldsAndType (newWhereData):', newWhereData);
+
+    return newWhereData;
+}
+
+
+export const ValidateFieldsAndType = async (tableDataStructure: any[], data: any) => {
     try {
+        console.log('> ValidateFieldsAndType : ', tableDataStructure, data);
+
+        if (data.where && isString(data.where)) {
+            const dataFromCheckForFetchLastRow = await CheckForFetchLastRow(data.where);
+            console.log('* ValidateFieldsAndType (dataFromCheckForFetchLastRow):', dataFromCheckForFetchLastRow);
+
+            if (dataFromCheckForFetchLastRow){
+                data = { ...data, ...dataFromCheckForFetchLastRow };
+            }
+        } else {
+            console.log('# ValidateFieldsAndType (data.where is not string):', data.where);
+
+            // const testFixData = { ...data, ...data.where };
+            // console.log('# ValidateFieldsAndType (testFixData):', testFixData);
+
+            data = { ...data, ...data.where };
+
+            console.log('* ValidateFieldsAndType (current data):', data);
+        }
+
+        delete data['where'];
+
         for (const [dataKey, dataValue] of Object.entries(data)) {
-            const matchingField = fields.find(fieldObj => fieldObj.field === dataKey);
+            console.log('* ValidateFieldsAndType (loop data):', dataKey, dataValue);
+
+            const matchingField = tableDataStructure.find(tableData => tableData.field === dataKey);
+            console.log('* ValidateFieldsAndType (matchingField):', matchingField);
 
             if (!matchingField) {
                 console.error(`* Field '${dataKey}' not found in store.`);

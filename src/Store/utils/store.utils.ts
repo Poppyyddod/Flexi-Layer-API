@@ -3,7 +3,9 @@ dotenv.config();
 
 import {
     convertStringToJson,
-    isArray
+    isArray,
+    isObject,
+    isString
 } from '@Helper/Utils';
 import { ObjectId } from 'mongodb';
 
@@ -83,6 +85,7 @@ export const StoreMapping = async (db_type: string, code: string) => {
  */
 
 
+
 export const FixRequestFormat = async (request: any) => {
     try {
         console.log('> FixRequestFormat : ');
@@ -92,30 +95,66 @@ export const FixRequestFormat = async (request: any) => {
             return { params: [], fields: null };
         }
 
+        const dataToReturn: any = {};
         request['params'] = [];
-        const { set, where, db_type } = request;
+        const { set, where, db_type, field_list } = request;
 
-        if (set) {
+        if (set && isObject(set)) {
             const fixedSet = createFieldsAndParams(db_type, set, 0, 'set');
-            // console.log('Fixed Set : ', fixedSet);
+            // console.log('* Fixed Set : ', fixedSet);
 
             request['set'] = fixedSet.fields;
             request['params'] = [...request.params, ...fixedSet.params];
+            dataToReturn['set'] = request['set'];
         }
 
-        if (where) {
+        if (where && isObject(where)) {
             const setDataLength = !set ? 0 : Object.keys(set).length;
             const fixedWhere = createFieldsAndParams(db_type, where, setDataLength, 'where');
-            // console.log('Fixed Where : ', fixedWhere);
+            // console.log('* Fixed Where : ', fixedWhere);
 
             request['where'] = fixedWhere.fields;
             request['params'] = [...request.params, ...fixedWhere.params];
+            dataToReturn['where'] = request['where'];
+            console.log('* FixedRequestFormat (dataToReturn) : ', dataToReturn);
+        }
+
+        if (where && isString(where)) {
+            const splittedWhere = where.split(':');
+            console.log('* Splitted Where : ', splittedWhere);
+
+            const primaryKeyField = splittedWhere[0];
+            const paramValue = splittedWhere[1];
+            const limitNumber = splittedWhere[2];
+
+            if (paramValue !== "LAST") {
+                throw { kind: 'incomplete_request' };
+            }
+
+            dataToReturn['where'] = `ORDER BY ${primaryKeyField} DESC LIMIT ${limitNumber}`;
+        }
+
+        if (field_list) {
+            if (isArray(field_list)) {
+                const fixedFormatFieldList = field_list.join(', ');
+                console.log('* Fixed Field List : ', fixedFormatFieldList);
+
+                request['field_list'] = fixedFormatFieldList;
+                dataToReturn['field_list'] = request['field_list'];
+            }
+
+            if (isString(field_list)) {
+                dataToReturn['field_list'] = field_list;
+            }
         }
 
         console.log('* FixedRequestFormat (return) : ', request);
-        return request;
+        return {
+            params: request['params'],
+            ...dataToReturn
+        };
     } catch (error: any) {
-        console.log('fixResponsitory (Error): ', error.message);
+        console.log('FixRequestFormat (Error): ', error.message);
         throw error;
     }
 }

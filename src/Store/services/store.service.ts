@@ -63,16 +63,16 @@ const dbTypeService: any = {
     sql: async (reqBodyData: FromControllerRequestDataModel, dbRelationshipType: string, theFeature: ServiceKeys) => {
         try {
             const validData = await CheckTableDataStructure({ ...reqBodyData, feature: theFeature });
+            console.log('StoreService (validData)(SQL) : ', validData);
 
             const serviceMappedMethod = SqlServiceMethods[theFeature];
-            const dataFromtheService = await serviceMappedMethod(SqlHelperFunctions)({ ...validData });
+            const dataFromtheService = await serviceMappedMethod(SqlHelperFunctions)(validData);
             // console.log('StoreService (dataFromtheService)(SQL) : ', dataFromtheService);
 
             const { db_type, store, fixedFormat } = dataFromtheService;
 
             const dataToResposCenter = {
-                db_type,
-                store,
+                ...validData,
                 fixedFormat
             };
 

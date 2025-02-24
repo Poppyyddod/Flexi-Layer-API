@@ -4,6 +4,7 @@ import StoreService from '@Store/services';
 import { StoreControllerMethods } from './features/methods';
 import { ControllerMethodRouteKeys } from '@Store/models/store.controller.model';
 import { supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
+import { isObject } from '@Helper/Utils';
 
 
 /**
@@ -61,7 +62,7 @@ const CheckMyIdValue = async (req: any) => {
     console.log('* Check and modify id value `myId`!');
     const { where, set } = req.body;
 
-    if (where) {
+    if (where && isObject(where)) {
         Object.entries(where).map((key: any, value: any) => {
             console.log("req body where (modify myId) : ", key);
             if (key[1] === "myId") {
@@ -73,7 +74,7 @@ const CheckMyIdValue = async (req: any) => {
     }
 
 
-    if (set) {
+    if (set && isObject(set)) {
         Object.entries(set).map((key: any, value: any) => {
             console.log("req body set (modify myId) : ", key);
             if (key[1] === "myId") {
@@ -83,6 +84,9 @@ const CheckMyIdValue = async (req: any) => {
             }
         });
     }
+
+    if(!isObject(set) || !isObject(where))
+        console.log('* - set or where is not object!');
 }
 
 const StoreController = async (req: any, res: any) => {
