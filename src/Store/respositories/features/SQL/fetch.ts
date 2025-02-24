@@ -29,12 +29,12 @@ import { ValidAllDataFromService } from "@Store/models/store.respository.model";
 
 const dbTypeRespository: any = {
     postgresql: (data: any) => {
-        const cmd = data.where === undefined ?
-            `SELECT ${data.field_list} FROM ${data.store}`
-            : data.where.includes('ORDER BY') ?
-            `SELECT ${data.field_list} FROM ${data.store} ${data.where}`
-            :
-            `SELECT ${data.field_list} FROM ${data.store} WHERE ${data.where}`;
+        const cmd = data.where === undefined ? // Get all row
+            `SELECT ${data.field_list} FROM ${data.store} ${data.limit && `LIMIT ${data.limit}`}`
+            : data.where.includes('ORDER BY') ? // Get the last row
+            `SELECT ${data.field_list} FROM ${data.store} ${data.where} ${data.limit ? `LIMIT ${data.limit}` : 'LIMIT 1'}`
+            : // Get some row
+            `SELECT ${data.field_list} FROM ${data.store} WHERE ${data.where} ${data.limit && `LIMIT ${data.limit}`}`;
 
         const paramsToQuery = [...data.params];
 
@@ -47,12 +47,12 @@ const dbTypeRespository: any = {
     },
 
     mysql: (data: any) => {
-        const cmd = data.where === undefined ?
-            `SELECT ${data.field_list} FROM ??`
-            : data.where.includes('ORDER BY') ?
-            `SELECT ${data.field_list} FROM ${data.store} ${data.where}`
-            :
-            `SELECT ${data.field_list} FROM ?? WHERE ${data.where}`;
+        const cmd = data.where === undefined ? // Get all row
+            `SELECT ${data.field_list} FROM ?? ${data.limit && `LIMIT ${data.limit}`}`
+            : data.where.includes('ORDER BY') ? // Get the last row
+            `SELECT ${data.field_list} FROM ${data.store} ${data.where} ${data.limit ? `LIMIT ${data.limit}` : 'LIMIT 1'}`
+            : // Get some row
+            `SELECT ${data.field_list} FROM ?? WHERE ${data.where} ${data.limit && `LIMIT ${data.limit}`}`;
 
         const paramsToQuery = [data.store, ...data.params];
 
@@ -65,15 +65,18 @@ const dbTypeRespository: any = {
     }
 }
 
-export const FetchSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: ValidAllDataFromService): Promise<any> => {
+export const FetchSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: any): Promise<any> => {
     try {
         const { SQLmanagement } = helpers;
-        const { db_type, store, fixedFormat } = dataFromResposCenter;
+        const { db_type, store, fixedFormat, limit } = dataFromResposCenter;
 
         console.log('- FetchStoreRespo : ', store, fixedFormat);
 
+        delete dataFromResposCenter['where'];
+
         const dataToDbTypeMapping = {
             store,
+            limit,
             ...fixedFormat
         };
 

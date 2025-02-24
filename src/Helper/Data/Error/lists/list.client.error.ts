@@ -99,6 +99,18 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
+    'limit_must_be_number': {
+        more: {
+            message: "`limit` feature key error!",
+            read_me: {
+                rule_1: "Please check `limit` key in the request. `limit` must be number type.",
+                rule_2: "It must be greater than 0."
+            },
+        },
+
+        code: 400
+    },
+
     'invalid_nosql_supporter_data_type': {
         more: {
             message: 'Invalid `nosql_supporter` key data type!',

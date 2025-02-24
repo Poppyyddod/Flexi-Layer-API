@@ -10,7 +10,7 @@
  */
 
 import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
-import { isArray, isLengthZero } from "@Helper/Utils";
+import { isArray, isLengthZero, isNumber } from "@Helper/Utils";
 
 /**
  * @function isLengthZero
@@ -37,7 +37,7 @@ import { isArray, isLengthZero } from "@Helper/Utils";
 export const FetchStoreController = (helpers: any) => async (req: any, res: any) => {
     try {
         const { StoreService, Logger } = helpers; // Helper functions
-        const { set, where, store_code, db_type, field_list } = req.body; // Request
+        const { set, where, store_code, db_type, field_list, limit } = req.body; // Request
 
         if (set) {
             Logger('Store', 'warn', {
@@ -50,7 +50,7 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
             delete req.body['set'];
         }
 
-        if (!store_code 
+        if (!store_code
             || !db_type
             || (where && isLengthZero(where))
             || (supportForDbTypes[db_type].type === 'sql' && !field_list)
@@ -67,8 +67,13 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
             throw { kind: 'incomplete_request' };
         }
 
+
+        if (limit in req.body && !isNumber(limit) || limit <= 0) {
+            throw { kind: 'limit_must_be_number' };
+        }
+
         if (where) {
-            if(where === "*")
+            if (where === "*")
                 delete req.body['where'];
         }
 

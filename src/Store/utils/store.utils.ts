@@ -131,7 +131,7 @@ export const FixRequestFormat = async (request: any) => {
                 throw { kind: 'incomplete_request' };
             }
 
-            dataToReturn['where'] = `ORDER BY ${primaryKeyField} DESC LIMIT ${limitNumber}`;
+            dataToReturn['where'] = `ORDER BY ${primaryKeyField} DESC`;
         }
 
         if (field_list) {
