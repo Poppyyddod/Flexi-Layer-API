@@ -69,7 +69,7 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
 
 
         if (limit in req.body && !isNumber(limit) || limit <= 0) {
-            throw { kind: 'limit_must_be_number' };
+            throw { kind: 'fetch_limit_feature_error' };
         }
 
         if (where) {
