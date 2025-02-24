@@ -151,7 +151,7 @@ const CheckForFetchLastRow = async (whereData: any) => {
     const splittedWhere = whereData.split(':');
     console.log('ValidateFieldsAndType (splittedWhere):', splittedWhere);
 
-    if (splittedWhere.length !== 3 || splittedWhere[1] !== 'LAST') {
+    if (splittedWhere.length !== 2 || splittedWhere[1] !== 'LAST') {
         throw { kind: 'incomplete_request' };
     }
 
