@@ -99,7 +99,7 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
-    'limit_must_be_number': {
+    'fetch_limit_feature_error': {
         more: {
             message: "`limit` feature key error!",
             read_me: {
