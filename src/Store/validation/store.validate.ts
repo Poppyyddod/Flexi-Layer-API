@@ -4,6 +4,8 @@ import { StartValidateSqlRequestDataStructure } from '@Helper/Query/SQL';
 import { FromControllerRequestDataModel } from '@Store/models/store.service.model';
 import { ValidateCollectionMapper } from '@Helper/Query/NoSQL/validation';
 import { StartValidateNoSqlRequestDataStructure } from '@Helper/Query/NoSQL/no-sql.management';
+import { isArray, isObject, isString } from '@Helper/Utils';
+import { ValidateTableMapper } from '@Helper/Query/SQL/validation';
 
 
 /**
@@ -26,11 +28,32 @@ import { StartValidateNoSqlRequestDataStructure } from '@Helper/Query/NoSQL/no-s
  */
 
 
+const CheckFieldListFieldName = async (tableDataStructure: any, field_list: any) => {
+    try {
+        console.log('> CheckFieldListFieldName :', tableDataStructure, field_list);
+
+        // ดึงเฉพาะชื่อ field จาก tableDataStructure
+        const existingFields = new Set(tableDataStructure.map((data: any) => data.field));
+
+        // ตรวจสอบ field_list ว่ามีอยู่ใน tableDataStructure หรือไม่
+        const invalidFields = field_list.filter((field: any) => !existingFields.has(field));
+
+        if (invalidFields.length > 0) {
+            console.log(`❌ Field(s) not found in table structure:`, invalidFields);
+            throw { kind: 'field_list_child_error' };
+        }
+    } catch (error) {
+        console.log('CheckFieldListFieldName (Error):', error);
+        throw error;
+    }
+}
+
+
 export const CheckTableDataStructure = async (dataFromServiceCenter: FromControllerRequestDataModel) => {
     try {
         console.log('CheckTableDataStructure :', dataFromServiceCenter);
 
-        const { db_type, store_code, feature, set, where } = dataFromServiceCenter;
+        const { db_type, store_code, feature, set, where, field_list } = dataFromServiceCenter;
 
         const theStore = await StoreMapping(db_type, store_code);
         console.log('* Store (Mapped) : ', theStore);
@@ -41,7 +64,19 @@ export const CheckTableDataStructure = async (dataFromServiceCenter: FromControl
             feature
         };
 
-        const isValidFieldsAndType = await StartValidateSqlRequestDataStructure(dbPositionData, { ...where, ...set });
+        const dataToCheckFieldAndType = {
+            where: isObject(where) ? { ...where } : where,
+            ...set
+        }
+
+        const tableDataStructure = await ValidateTableMapper(dbPositionData);
+        console.log('StartValidateSqlRequestDataStructure (tableDataStructure):', tableDataStructure);
+
+        if (field_list && isArray(field_list)) {
+            await CheckFieldListFieldName(tableDataStructure, field_list);
+        }
+
+        const isValidFieldsAndType = await StartValidateSqlRequestDataStructure(dbPositionData, tableDataStructure, dataToCheckFieldAndType);
         console.log('* Checked data key and data type : ', isValidFieldsAndType);
 
         if (!isValidFieldsAndType) {
@@ -50,9 +85,7 @@ export const CheckTableDataStructure = async (dataFromServiceCenter: FromControl
 
         const dataToService = {
             store: theStore,
-            where,
-            set,
-            db_type
+            ...dataFromServiceCenter
         };
 
         return dataToService;
@@ -63,6 +96,20 @@ export const CheckTableDataStructure = async (dataFromServiceCenter: FromControl
 }
 
 
+
+/**
+ * @function CheckCollectionDataStructure - ສຳຫຼັບການກວດສອບຄວາມຖືກຕ້ອງຂອງ Store/Table name, Fields, Data Type ຂອງ Request
+ * @param request - Request Body
+ * @returns Object
+ * @throws {Error}
+ */
+
+/**
+ * 
+ * @function ValidateCollectionMapper
+ * ສຳຫຼັບການກວດສອບ Store/Table name
+ * ຄືນຄ່າເປັນ String (ຊື່ຂອງ collection)
+ */
 
 export const CheckCollectionDataStructure = async (dataFromServiceCenter: any) => {
     try {

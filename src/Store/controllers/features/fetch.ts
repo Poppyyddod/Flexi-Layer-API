@@ -9,7 +9,8 @@
  * @returns Response HTTP
  */
 
-import { isLengthZero } from "@Helper/Utils";
+import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
+import { isArray, isLengthZero } from "@Helper/Utils";
 
 /**
  * @function isLengthZero
@@ -36,7 +37,7 @@ import { isLengthZero } from "@Helper/Utils";
 export const FetchStoreController = (helpers: any) => async (req: any, res: any) => {
     try {
         const { StoreService, Logger } = helpers; // Helper functions
-        const { set, where, store_code, db_type } = req.body; // Request
+        const { set, where, store_code, db_type, field_list } = req.body; // Request
 
         if (set) {
             Logger('Store', 'warn', {
@@ -49,7 +50,12 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
             delete req.body['set'];
         }
 
-        if (!store_code || !db_type) {
+        if (!store_code 
+            || !db_type
+            || (where && isLengthZero(where))
+            || (supportForDbTypes[db_type].type === 'sql' && !field_list)
+            || (field_list && !isArray(field_list) && field_list !== "*")
+        ) {
             Logger('Store', 'error', {
                 message: 'Incomplete request!',
                 system: 'Store',
@@ -61,8 +67,9 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
             throw { kind: 'incomplete_request' };
         }
 
-        if (where && isLengthZero(where)) {
-            delete req.body['where'];
+        if (where) {
+            if(where === "*")
+                delete req.body['where'];
         }
 
         const dataFromServiceCenter = await StoreService(req.body, 'fetch');

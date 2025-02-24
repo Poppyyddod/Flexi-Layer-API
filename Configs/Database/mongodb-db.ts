@@ -10,7 +10,11 @@ let client: any;
 const connectToMongoDB = async () => {
     try {
         if (!supportForDbTypes.mongodb.connect_state) {
-            console.log('\x1b[33m [WARNING] The Database setting have disconnect `MongoDB` Database! It cannot send the request for `MongoDB` database now. \x1b[0m');
+            console.log(
+                '\x1b[33m [WARNING] `MongoDB` disconnected! \x1b[0m \n',
+                '\x1b[33m > The settings has disconnected `MongoDB` database. \x1b[0m \n', 
+                '\x1b[33m > It cannot send the request for `MongoDB` database now. \x1b[0m',
+            );
             return;
         }
 

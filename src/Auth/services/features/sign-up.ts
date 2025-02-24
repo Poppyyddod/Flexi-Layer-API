@@ -60,10 +60,6 @@ export const AuthSignUpService = (helpers: any) => async (httpResponse: any, val
 
         return dataToCenterService;
     } catch (error: any) {
-        if ((error?.table === 'user_privacy' && error?.code === '23505') || error?.sqlState === '23000') {
-            throw { kind: 'email_already_exist', feature: 'sign-up' };
-        }
-
         console.log('AuthSignUpService (Error):', error);
         throw error;
     }

@@ -29,13 +29,22 @@ export const storeFields: any = {
                     get_some_row: {
                         db_type: "#db_type",
                         store_code: "#store_code",
+                        field_list: "[#field_name] <- array || '*' <- string ",
                         where: {
                             user_id: 0
                         }
                     },
                     get_all_row: {
                         db_type: "#db_type",
-                        store_code: "#store_code"
+                        store_code: "#store_code",
+                        field_list: "[#field_name] <- array || '*' <- string ",
+                        where: "*"
+                    },
+                    get_last_row: {
+                        db_type: "#db_type",
+                        store_code: "#store_code",
+                        field_list: ['#field_name', '...'],
+                        where: "#primary_key_field_name:LAST:#limit_data_number"
                     }
                 }
             }

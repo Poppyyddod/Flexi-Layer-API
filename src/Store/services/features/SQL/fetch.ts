@@ -26,15 +26,14 @@ export const FetchSqlStoreService = (helpers: any) => async (validRequestData: a
         const { FixRequestFormat, Supplier } = helpers;
 
         // Checked Data Structure
-        const { db_type, store, where } = validRequestData;
+        const { db_type, store, where, field_list } = validRequestData;
 
         // Fixed Request format to SQL query format
-        const fixedFormat = await FixRequestFormat({ db_type, where });
+        const fixedFormat = await FixRequestFormat(validRequestData);
         // console.log('FetchStoreService (fixedFormat) : ', fixedFormat);
 
         const dataToServiceCenter = {
-            db_type,
-            store,
+            ...validRequestData,
             fixedFormat,
         };
         // console.log('FetchStoreService (dataToServiceCenter) :', dataToServiceCenter);

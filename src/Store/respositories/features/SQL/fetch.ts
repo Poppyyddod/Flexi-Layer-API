@@ -30,9 +30,11 @@ import { ValidAllDataFromService } from "@Store/models/store.respository.model";
 const dbTypeRespository: any = {
     postgresql: (data: any) => {
         const cmd = data.where === undefined ?
-            `SELECT * FROM ${data.store}`
+            `SELECT ${data.field_list} FROM ${data.store}`
+            : data.where.includes('ORDER BY') ?
+            `SELECT ${data.field_list} FROM ${data.store} ${data.where}`
             :
-            `SELECT * FROM ${data.store} WHERE ${data.where}`;
+            `SELECT ${data.field_list} FROM ${data.store} WHERE ${data.where}`;
 
         const paramsToQuery = [...data.params];
 
@@ -46,9 +48,11 @@ const dbTypeRespository: any = {
 
     mysql: (data: any) => {
         const cmd = data.where === undefined ?
-            "SELECT * FROM ??"
+            `SELECT ${data.field_list} FROM ??`
+            : data.where.includes('ORDER BY') ?
+            `SELECT ${data.field_list} FROM ${data.store} ${data.where}`
             :
-            `SELECT * FROM ?? WHERE ${data.where}`;
+            `SELECT ${data.field_list} FROM ?? WHERE ${data.where}`;
 
         const paramsToQuery = [data.store, ...data.params];
 
@@ -68,10 +72,9 @@ export const FetchSqlStoreRespo = (helpers: any) => async (dataFromResposCenter:
 
         console.log('- FetchStoreRespo : ', store, fixedFormat);
 
-        const { where, params } = fixedFormat;
-
         const dataToDbTypeMapping = {
-            where, params, store
+            store,
+            ...fixedFormat
         };
 
         const mappedData = dbTypeRespository[db_type](dataToDbTypeMapping);

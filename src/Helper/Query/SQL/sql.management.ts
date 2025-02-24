@@ -1,5 +1,5 @@
 import { SQLmanagementModel } from './sql.model';
-import { ValidateFieldsAndType, ValidateTableMapper, ValidateFieldsBeforeInsert } from './validation';
+import { ValidateFieldsAndType, ValidateFieldsBeforeInsert } from './validation';
 import { dbTypeSqlManagement } from './mapping/management';
 
 
@@ -16,13 +16,6 @@ import { dbTypeSqlManagement } from './mapping/management';
 
 /**
  * 
- * @function ValidateTableMapper
- * For check store. is it mapped with the table? or The table does exist?.
- * @returns {Key}
- */
-
-/**
- * 
  * @function ValidateFieldsBeforeInsert
  * For check `request field`. is it valid as the `table structure` before `insert` query to database
  * @returns {Key}
@@ -35,19 +28,16 @@ import { dbTypeSqlManagement } from './mapping/management';
  * @returns {Boolean}
  */
 
-export const StartValidateSqlRequestDataStructure = async (dbPositionData: any, data: any): Promise<any> => {
+export const StartValidateSqlRequestDataStructure = async (dbPositionData: any, tableDataStructure: any, data: any): Promise<any> => {
     try {
-        console.log('StartCheckRequestDataStructure :', dbPositionData, data);
-
-        const tableDataStructure = await ValidateTableMapper(dbPositionData);
-        console.log('StartValidateSqlRequestDataStructure (tableDataStructure):', tableDataStructure);
+        console.log('StartValidateSqlRequestDataStructure :', dbPositionData, data);
 
         if (dbPositionData.feature === 'create') {
             await ValidateFieldsBeforeInsert(tableDataStructure, data);
         }
 
-        const isValidDataKeyAndType = await ValidateFieldsAndType(tableDataStructure, data);
-        console.log('isValidDataStructure (StartCheckRequestDataStructure):', isValidDataKeyAndType);
+        const isValidDataKeyAndType = await ValidateFieldsAndType(tableDataStructure, { ...data });
+        console.log('StartValidateSqlRequestDataStructure (isValidDataKeyAndType):', isValidDataKeyAndType);
 
         return isValidDataKeyAndType;
         // return true;

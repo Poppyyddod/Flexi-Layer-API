@@ -40,7 +40,11 @@ if (supportForDbTypes.mysql.connect_state) {
             process.exit(1);
         });
 } else {
-    console.log('\x1b[33m [WARNING] The Database setting have disconnect `MySQL` Database! It cannot send the request for `MySQL` database now. \x1b[0m');
+    console.log(
+        '\x1b[33m [WARNING] `MySQL` disconnected! \x1b[0m \n',
+        '\x1b[33m > The settings has disconnected `MySQL` database. \x1b[0m \n', 
+        '\x1b[33m > It cannot send the request for `MySQL` database now. \x1b[0m',
+    );
     connection = {};
 }
 
