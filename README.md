@@ -3,6 +3,8 @@
 - This is **NodeJS** and **Express** for make **REST API**
 - This project is a **dynamic data management API**. It saves time on your projects
 - Support for `PostgreSQL`, `MySQL` and `MongoDB` now.
+- Support `Auth system` -> `PostgreSQL` and `MySQL`.
+- Don't forget read `READEME` file enjoy!.
 ### By yddod_
 ## Installtion, ENV Config & Run the server
 - **Step 1 :** Install dependencies:
