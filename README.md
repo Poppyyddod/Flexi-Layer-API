@@ -4,6 +4,8 @@
 - This project is a **dynamic data management API**. It saves time on your projects
 - Support for `PostgreSQL`, `MySQL` and `MongoDB` now.
 - Support `Auth system` -> `PostgreSQL` and `MySQL`.
+- We have 2 systems: `Store` and `Auth` now.
+- The next system is `One-Time Password (OTP)` (sms & email).
 - Don't forget read `READE ME` file.
 ### By yddod_
 ## Installtion, ENV Config & Run the server
