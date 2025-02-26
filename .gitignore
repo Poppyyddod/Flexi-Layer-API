@@ -12,6 +12,7 @@ node_modules/
 
 # Ignore ไฟล์ .env
 .env
+.env-example-file
 
 # Ignore ไฟล์ที่อยู่ในโฟลเดอร์ build/
 build/
