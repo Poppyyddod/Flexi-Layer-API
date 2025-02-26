@@ -1,7 +1,7 @@
 # Flexi Layer API
 ## About Project
-- This is **NodeJS** and **Express** for make **REST API**
-- This project is a **dynamic data management API**. It saves time on your projects
+- This is `NodeJS` + `Express` for make **REST API**
+- This project is a `Dynamic data management API`. It saves time on your projects
 - Support for `PostgreSQL`, `MySQL` and `MongoDB` now.
 - Support `Auth system` -> `PostgreSQL` and `MySQL`.
 - We have 2 systems: `Store` and `Auth` now.
