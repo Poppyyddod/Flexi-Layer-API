@@ -8,7 +8,7 @@ import AuthCenterController from "../controllers/auth.controller";
 
 
 const authRoutes = (app: any) => {
-    const authController = require('../controllers/auth.controller');
+    // console.log('Auth Route');
 
     app.post('/auth/sign-up', AuthCenterController);
     app.post('/auth/sign-in', AuthCenterController);
