@@ -125,7 +125,6 @@ export const FixRequestFormat = async (request: any) => {
 
             const primaryKeyField = splittedWhere[0];
             const paramValue = splittedWhere[1];
-            const limitNumber = splittedWhere[2];
 
             if (paramValue !== "LAST") {
                 throw { kind: 'incomplete_request' };

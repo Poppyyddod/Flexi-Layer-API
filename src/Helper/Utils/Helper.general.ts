@@ -1,5 +1,5 @@
 export const isLengthZero = (obj: any) => {
-    return Object.keys(obj).length === 0 || obj.length === 0;
+    return (obj && Object.keys(obj).length === 0) || (Array.isArray(obj) && obj.length === 0);
 }
 
 export const isArray = (obj: any) => {
@@ -11,7 +11,7 @@ export const isString = (obj: any) => {
 }
 
 export const isObject = (obj: any) => {
-    return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
+    return obj && typeof obj === 'object' && !Array.isArray(obj);
 }
 
 export const isNumber = (obj: any) => {

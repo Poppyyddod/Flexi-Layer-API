@@ -1,4 +1,4 @@
-import { ArgonComparePassword, JwtGenerateToken, SetCookieForJwtToken } from "@Helper/Utils/Helper.auth.utils";
+import { ArgonComparePassword, JwtGenerateAccessToken } from "@Helper/Utils/Helper.auth.utils";
 
 
 
@@ -49,10 +49,10 @@ export const AuthSignInService = (helpers: any) => async (httpResponse: any, val
 
         delete dataFromServiceCenter[0]['secretword'];
 
-        const generatedToken = await JwtGenerateToken(dataFromServiceCenter[0]?.user_id);
-        console.log('AuthSignInService (generatedToken) : ', generatedToken);
+        const generatedAccessToken = await JwtGenerateAccessToken(dataFromServiceCenter[0]?.user_id);
+        console.log('AuthSignInService (generatedToken) : ', generatedAccessToken);
 
-        dataFromServiceCenter[0]['token'] = generatedToken;
+        dataFromServiceCenter[0]['token'] = generatedAccessToken;
 
         // await SetCookieForJwtToken(httpResponse, generatedToken);
 

@@ -63,6 +63,15 @@ export const serverError: ServerErrorModel = {
         code: 500
     },
 
+    'cmd_is_not_match_the_condition': {
+        more: {
+            message: "Command line is not match the condition!",
+            read_me: "Please check your server side coding any `respositories` file in the system."
+        },
+
+        code: 500
+    },
+
     'we_disconnect_the_database': {
         more: {
             message: "We disconnect the database!",

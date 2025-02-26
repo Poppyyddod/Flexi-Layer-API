@@ -7,6 +7,7 @@
  */
 
 import { ValidAllDataFromService } from "@Store/models/store.respository.model";
+import { FetchQueryForMySQL, FetchQueryForPostgreSQL } from "./Databases";
 
 /**
  * 
@@ -26,43 +27,9 @@ import { ValidAllDataFromService } from "@Store/models/store.respository.model";
  * ເປັນ Array Object ທີ່ເກັບຄ່າທີ່ມາຈາກ Request ເພື່ອໄປໃຊ້ກັບ Placeholder
  */
 
-
-const dbTypeRespository: any = {
-    postgresql: (data: any) => {
-        const cmd = data.where === undefined ? // Get all row
-            `SELECT ${data.field_list} FROM ${data.store} ${data.limit && `LIMIT ${data.limit}`}`
-            : data.where.includes('ORDER BY') ? // Get the last row
-            `SELECT ${data.field_list} FROM ${data.store} ${data.where} ${data.limit ? `LIMIT ${data.limit}` : 'LIMIT 1'}`
-            : // Get some row
-            `SELECT ${data.field_list} FROM ${data.store} WHERE ${data.where} ${data.limit && `LIMIT ${data.limit}`}`;
-
-        const paramsToQuery = [...data.params];
-
-        const dataToReturn = {
-            cmd,
-            paramsToQuery
-        }
-
-        return dataToReturn;
-    },
-
-    mysql: (data: any) => {
-        const cmd = data.where === undefined ? // Get all row
-            `SELECT ${data.field_list} FROM ?? ${data.limit && `LIMIT ${data.limit}`}`
-            : data.where.includes('ORDER BY') ? // Get the last row
-            `SELECT ${data.field_list} FROM ${data.store} ${data.where} ${data.limit ? `LIMIT ${data.limit}` : 'LIMIT 1'}`
-            : // Get some row
-            `SELECT ${data.field_list} FROM ?? WHERE ${data.where} ${data.limit && `LIMIT ${data.limit}`}`;
-
-        const paramsToQuery = [data.store, ...data.params];
-
-        const dataToReturn = {
-            cmd,
-            paramsToQuery
-        }
-
-        return dataToReturn;
-    }
+const MappingQueryForSQL: any = {
+    postgresql: FetchQueryForPostgreSQL,
+    mysql: FetchQueryForMySQL
 }
 
 export const FetchSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: any): Promise<any> => {
@@ -80,16 +47,8 @@ export const FetchSqlStoreRespo = (helpers: any) => async (dataFromResposCenter:
             ...fixedFormat
         };
 
-        const mappedData = dbTypeRespository[db_type](dataToDbTypeMapping);
+        const mappedData = MappingQueryForSQL[db_type](dataToDbTypeMapping);
         const { cmd, paramsToQuery } = mappedData;
-
-        // const cmd = where === undefined ?
-        //     "SELECT * FROM ??"
-        //     :
-        //     `SELECT * FROM ?? WHERE ${where}`;
-
-        // const paramsQuery = [store, ...params];
-        // console.log('paramsQuery (EditStoreRespo) : ', paramsQuery);
 
         const response = await SQLmanagement(db_type, { cmd, params: paramsToQuery, isReturn: true });
         // console.log('FetchStoreRespo (response): ', response);
