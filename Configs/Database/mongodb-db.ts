@@ -31,10 +31,16 @@ const connectToMongoDB = async () => {
     }
 }
 
-const obj = {
+interface mongoDbObj {
+    client: any,
+    db: any,
+    testConnection: any
+}
+
+const obj: mongoDbObj = {
     client: client,
     db: client?.db(mongoDbDatabaseName),
     testConnection: connectToMongoDB
 }
 
-export default obj;
+export default obj as any;

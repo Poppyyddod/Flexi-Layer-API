@@ -115,26 +115,26 @@ export const storeFields: any = {
             request_format: {
                 case_1: {
                     db_type: "###### (postgresql | mysql)",
-                    store_code: "###### (#store_code)",
+                    store_code: "user_privacy",
                     where: {
                         email: "example@gmail.com",
                         secretword: "#password"
                     },
                 },
-                case_2: {
-                    db_type: "###### (postgresql | mysql)",
-                    store_code: "###### (#store_code)",
-                    where: {
-                        user_name: "#username",
-                        secretword: "#password"
-                    }
-                }
+                // case_2: {
+                //     db_type: "###### (postgresql | mysql)",
+                //     store_code: "user_privacy",
+                //     where: {
+                //         user_name: "#username",
+                //         secretword: "#password"
+                //     }
+                // }
             },
         },
         'sign-up': {
             request_format: {
                 db_type: "###### (postgresql | mysql)",
-                store_code: "###### (#store_code)",
+                store_code: "user_privacy",
                 set: {
                     email: "example@gmail.com",
                     user_name: "#username",
@@ -145,7 +145,7 @@ export const storeFields: any = {
         'sign-out': {
             request_format: {
                 db_type: "###### (postgresql | mysql)",
-                store_code: "###### (#store_code)",
+                store_code: "user_privacy",
                 where: {
                     user_id: "#user_id"
                 }

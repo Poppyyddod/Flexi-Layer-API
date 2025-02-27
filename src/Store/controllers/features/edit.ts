@@ -1,5 +1,5 @@
 import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
-import { isLengthZero } from "@Helper/Utils";
+import { isLengthZero, isObject, isString } from "@Helper/Utils";
 
 
 /**
@@ -46,7 +46,7 @@ export const EditStoreController = (helpers: any) => async (req: any, res: any) 
             }
         }
 
-        if (!db_type || !set || !where || !store_code || isLengthZero(set) || isLengthZero(where)) {
+        if (!db_type || !set || !where || !isObject(where) || !store_code || isLengthZero(set) || isLengthZero(where)) {
             Logger('Store', 'error', {
                 message: 'Incomplete request!',
                 system: 'Store',

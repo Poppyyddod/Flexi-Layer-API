@@ -97,7 +97,7 @@ export const FixRequestFormat = async (request: any) => {
 
         const dataToReturn: any = {};
         request['params'] = [];
-        const { set, where, db_type, field_list } = request;
+        const { set, where, db_type, field_list, feature } = request;
 
         if (set && isObject(set)) {
             const fixedSet = createFieldsAndParams(db_type, set, 0, 'set');
@@ -119,7 +119,7 @@ export const FixRequestFormat = async (request: any) => {
             console.log('* FixedRequestFormat (dataToReturn) : ', dataToReturn);
         }
 
-        if (where && isString(where)) {
+        if (where && isString(where) && feature === 'fetch') {
             const splittedWhere = where.split(':');
             console.log('* Splitted Where : ', splittedWhere);
 
@@ -130,6 +130,7 @@ export const FixRequestFormat = async (request: any) => {
                 throw { kind: 'incomplete_request' };
             }
 
+            // For fetch the last row
             dataToReturn['where'] = `ORDER BY ${primaryKeyField} DESC`;
         }
 

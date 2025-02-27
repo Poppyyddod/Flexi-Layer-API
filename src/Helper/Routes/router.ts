@@ -8,11 +8,11 @@ import authRoutes from 'src/Auth/routes/auth.route';
  * @returns 
  */
 
-const MainRoutes = (app: Router) => {
+const GuiderRoutes = (app: Router) => {
     storeRoute(app);
     authRoutes(app);
 
     return app;
 }
 
-export default MainRoutes;
+export default GuiderRoutes;

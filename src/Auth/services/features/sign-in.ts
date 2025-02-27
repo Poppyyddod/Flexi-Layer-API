@@ -32,6 +32,7 @@ export const AuthSignInService = (helpers: any) => async (httpResponse: any, val
         const dataToStoreServiceCenter = {
             db_type,
             store_code,
+            field_list: "*",
             where: {
                 email
             }

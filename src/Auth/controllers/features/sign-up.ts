@@ -33,11 +33,6 @@ export const AuthSignUpController = (helpers: any) => async (reqBodyData: any) =
         return dataToCenterController;
     } catch (error: any) {
         console.log('AuthSignUpController (Error):', error);
-
-        if ((error?.table === 'user_privacy' && error?.code === '23505') || (reqBodyData.store_code === "user_privacy" && error?.sqlState === '23000')) {
-            throw { kind: 'email_already_exist', feature: 'sign-up' };
-        }
-
         throw { ...error, feature: 'sign-up' };
     }
 }
