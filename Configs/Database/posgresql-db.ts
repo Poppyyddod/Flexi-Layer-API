@@ -20,11 +20,15 @@ if (supportForDbTypes.postgresql.connect_state) {
 
     client.connect()
         .then(() => console.log('* PostgreSQL connected successfully!'))
-        .catch(err => console.error('* (Error): PostgreSQL connection error', err));
+        .catch(err => {
+            console.error('* (Error): PostgreSQL connection error', err)
+            process.exit(1);
+        }
+        );
 } else {
     console.log(
         '\x1b[33m [WARNING] `PostgreSQL` disconnected! \x1b[0m \n',
-        '\x1b[33m > The settings has disconnected `PostgreSQL` database. \x1b[0m \n', 
+        '\x1b[33m > The settings has disconnected `PostgreSQL` database. \x1b[0m \n',
         '\x1b[33m > It cannot send the request for `PostgreSQL` database now. \x1b[0m',
     );
     client = {};

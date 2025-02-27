@@ -5,7 +5,35 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon -r tsconfig-paths/register src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/src/Testing/Auth/**/**/*.test.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ],
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.json"
+      }
+    },
+    "setupFiles": [
+      "tsconfig-paths/register"
+    ],
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/src/$1",
+      "^@Helper/(.*)$": "<rootDir>/src/Helper/$1",
+      "^@Configs/(.*)$": "<rootDir>/Configs/$1",
+      "^@Store/(.*)$": "<rootDir>/src/Store/$1",
+      "^@Testing/(.*)$": "<rootDir>/src/Testing/$1"
+    }
   },
   "keywords": [],
   "author": "",
@@ -16,13 +44,16 @@
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/node": "^22.5.5",
     "@types/pg": "^8.11.10",
+    "@types/supertest": "^6.0.2",
     "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.6",
-    "ts-node": "^10.9.2",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.6",
     "typescript": "^5.7.3"
   },
   "dependencies": {

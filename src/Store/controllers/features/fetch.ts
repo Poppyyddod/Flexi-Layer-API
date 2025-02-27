@@ -10,7 +10,7 @@
  */
 
 import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
-import { isArray, isLengthZero, isNumber } from "@Helper/Utils";
+import { isArray, isLengthZero, isNumber, isObject, isString } from "@Helper/Utils";
 
 /**
  * @function isLengthZero
@@ -52,10 +52,10 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
 
         if (!store_code
             || !db_type
-            || (where && isLengthZero(where))
             || (supportForDbTypes[db_type].type === 'sql' && !field_list)
             || (field_list && !isArray(field_list) && field_list !== "*")
         ) {
+
             Logger('Store', 'error', {
                 message: 'Incomplete request!',
                 system: 'Store',
@@ -67,14 +67,21 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
             throw { kind: 'incomplete_request' };
         }
 
+        if (req.body.hasOwnProperty('where')) {
+            if (!isObject(where) && where !== "*" && !(isString(where) && where.split(':').length === 2)) {
+                console.log('Invalid "where" value');
+                throw { kind: 'incomplete_request', where };
+            }
+        }
+        
+
 
         if (limit in req.body && !isNumber(limit) || limit <= 0) {
             throw { kind: 'fetch_limit_feature_error' };
         }
 
-        if (where) {
-            if (where === "*")
-                delete req.body['where'];
+        if (where !== undefined && where === "*") {
+            delete req.body['where'];
         }
 
         const dataFromServiceCenter = await StoreService(req.body, 'fetch');
@@ -82,7 +89,7 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
 
         if (dataFromServiceCenter.kind === 'null_data') {
             Logger('Store', 'info', {
-                message: `No row in the store!!`,
+                message: `No row in the store!`,
                 system: 'Store',
                 store: store_code,
                 feature: 'fetch'
@@ -90,7 +97,7 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
         }
 
         Logger('Store', 'info', {
-            message: `Successfully fetch ${where && !isLengthZero(where) ? 'some' : 'all'} row!!`,
+            message: `Successfully fetch ${where !== undefined && !isLengthZero(where) && where !== "*" ? 'some' : 'all'} row!!`,
             system: 'Store',
             store: store_code,
             feature: 'fetch'
@@ -99,9 +106,9 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
         const dataToControllerCenter = {
             response: {
                 message: dataFromServiceCenter.kind === "null_data" ?
-                    `No row in the store!!`
+                    `No row in the store!`
                     :
-                    `Successfully fetch ${where && !isLengthZero(where) ? 'some' : 'all'} row!!`,
+                    `Successfully fetch ${where !== undefined && !isLengthZero(where) && where !== "*" ? 'some' : 'all'} row!!`,
                 system: 'Store',
                 feature: 'fetch',
                 data: dataFromServiceCenter.kind === "null_data" ? [] : dataFromServiceCenter
