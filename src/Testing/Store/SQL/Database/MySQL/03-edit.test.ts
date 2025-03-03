@@ -1,5 +1,6 @@
 import { EditSuccessDataResponseHttp } from '@Testing/tester.model';
 import { TestStoreRoute, server, request } from '@Testing/tester.config';
+import { format } from 'date-fns';
 
 beforeAll(async () => {
     if (server) {
@@ -18,10 +19,10 @@ tester(`Test ${dbBrand}/Store/${feature}`, () => {
             db_type: dbBrand,
             store_code: "testing_table",
             set: {
-                string_field: new Date().toISOString(),
+                timestamp_field: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
             },
             where: {
-                test_id: 69
+                test_id: 0
             }
         }
 

@@ -1,5 +1,6 @@
 import { CreateSuccessDataResponseHttp } from '@Testing/tester.model';
 import { TestStoreRoute, server, request } from '@Testing/tester.config';
+import { format } from 'date-fns';
 
 beforeAll(async () => {
     if (server) {
@@ -24,7 +25,7 @@ tester(`Test ${dbBrand}/Store/${feature}`, () => {
             set: {
                 string_field: `Success testing`,
                 number_field: 1,
-                timestamp_field: new Date(),
+                timestamp_field: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
                 boolean_field: 1
             }
         }
