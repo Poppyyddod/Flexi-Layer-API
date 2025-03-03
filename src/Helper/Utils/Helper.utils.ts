@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 const ENV = process.env as any;
 
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import exp from 'constants';
 
