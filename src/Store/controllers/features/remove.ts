@@ -1,4 +1,4 @@
-import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
+import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isLengthZero } from "@Helper/Utils";
 
 
@@ -42,11 +42,11 @@ export const RemoveStoreController = (helpers: any) => async (req: any, res: any
             delete req.body['set'];
         }
 
-        if (supportForDbTypes[db_type].type === 'nosql') {
+        if (supportForDbTypes[db_type as DbTypeListKey].type === 'nosql') {
             if (!nosql_supporter)
                 throw { kind: 'incomplete_request' };
 
-            if (!nosql_supporter.request_confirmed)
+            if (!nosql_supporter.request_confirmed && !nosql_supporter.ignore_supporter)
                 throw { kind: 'missing_supporter_confirmed_feature' };
         }
 

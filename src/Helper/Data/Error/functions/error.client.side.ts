@@ -49,7 +49,14 @@ const ClientSideError = (Logger: any) => async (err: any, res: any, system: any)
             });
         }
 
-        const theAllowed = await more.allowed(err, systemName, feature);
+        const errorOn = {
+            err,
+            systemName,
+            db_type: err.db_type,
+            feature
+        }
+
+        const theAllowed = await more.allowed(errorOn);
         console.log('Allowed', theAllowed);
 
         const errorDataToClient = {

@@ -8,23 +8,24 @@ export const ValidateCollectionMapper = async (db_type: string, store_code: stri
     try {
         console.log('ValidateCollectionMapper :', db_type, store_code);
 
-        await mongodb.client.connect();
+        await mongodb.client?.connect();
 
-        const collectionsFromMongoDB = await mongodb.db.listCollections().toArray();
-        await mongodb.client.close();
+        const collectionsFromMongoDB = await mongodb.db?.listCollections().toArray();
+        await mongodb.client?.close();
 
-        const collections = collectionsFromMongoDB.map((collection: any) => collection.name);
+        const collections = collectionsFromMongoDB?.map((collection: any) => collection.name);
         console.log('ValidateCollectionMapper (collections) :', collections);
 
-        const theCollectionIndex = collections.indexOf(store_code);
+        const theCollectionIndex = collections?.indexOf(store_code);
+        console.log('ValidateCollecetionMapper (theCollectionIndex) :', theCollectionIndex);
 
-        if (theCollectionIndex === -1) {
-            throw { kind: 'invalid_store_code' };
+        if (theCollectionIndex !== -1) {
+            const theCollection = collections?.[theCollectionIndex];
+
+            return theCollection;
         }
 
-        const theCollection = collections[theCollectionIndex];
-
-        return theCollection;
+        throw { kind: 'invalid_store_code' };
     } catch (error) {
         console.log('ValidateCollectionMapper (Error):', error);
         throw error;
