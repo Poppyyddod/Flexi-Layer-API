@@ -88,11 +88,15 @@ export const clientError: ClientErrorModel = {
             message: 'Invalid `nosql_supporter` feature name!',
             read_me: 'Please check the request key `nosql_supporter`. Provide the valid feature name for `nosql_supporter` the feature.',
             allowed: (errorOn: any) => {
-                return {
-                    list_nosql_supporter: {
-                        [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
-                    }
-                };
+                try {
+                    return {
+                        list_nosql_supporter: {
+                            [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
+                        }
+                    };
+                } catch (error) {
+                    console.log("[invalid_nosql_supporter_feature] ERROR : ", error);
+                }
             },
         },
 
@@ -116,11 +120,15 @@ export const clientError: ClientErrorModel = {
             message: 'Invalid `nosql_supporter` key data type!',
             read_me: 'Please check the request key `nosql_supporter`. Provide the valid data type for `nosql_supporter` the feature.',
             allowed: (errorOn: any) => {
-                return {
-                    list_nosql_supporter: {
-                        [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
-                    }
-                };
+                try {
+                    return {
+                        list_nosql_supporter: {
+                            [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
+                        }
+                    };
+                } catch (error) {
+                    console.log("[invalid_nosql_supporter_feature] ERROR : ", error);
+                }
             },
         },
 
@@ -140,25 +148,55 @@ export const clientError: ClientErrorModel = {
     'cannot_support_the_database_type': {
         more: {
             message: 'Cannot support the database type!',
-            read_me: 'Please check `db_type` in the request.',
+            read_me: {
+                case_1: '`db_type` is not valid name',
+                case_2: 'Forgot provide `db_type` key in the request'
+            },
             support_for: `${Object.keys(supportForDbTypes)?.join(", ")}`
         },
 
         code: 400
     },
 
-    'unique_row_data': {
+    'unique_create_row_data': {
         more: {
             message: 'Duplicate key value violates unique constraint!',
-            read_me: 'The request data already has a row in the table.',
+            read_me: 'The request data already has a row in the table. You cannot create a new row !',
             allowed: (errorOn: any) => {
-                console.log('allowed (unique_row_data)', errorOn);
+                try {
+                    console.log('allowed (unique_create_row_data)', errorOn);
 
-                return {
-                    error: {
-                        kind: errorOn.err?.kind,
-                        detail: errorOn.err?.detail,
+                    return {
+                        error: {
+                            kind: errorOn.err?.kind,
+                            detail: errorOn.err?.detail,
+                        }
                     }
+                } catch (error) {
+                    console.log("[unique_create_row_data] ERROR : ", error);
+                }
+            }
+        },
+
+        code: 409
+    },
+
+    'unique_edit_row_data': {
+        more: {
+            message: 'Duplicate key value violates unique constraint!',
+            read_me: 'The request data already has a row in the table. You cannot edit the row !',
+            allowed: (errorOn: any) => {
+                try {
+                    console.log('allowed (unique_edit_row_data)', errorOn);
+
+                    return {
+                        error: {
+                            kind: errorOn.err?.kind,
+                            detail: errorOn.err?.detail,
+                        }
+                    }
+                } catch (error) {
+                    console.log("[unique_edit_row_data] ERROR : ", error);
                 }
             }
         },
@@ -212,9 +250,22 @@ export const clientError: ClientErrorModel = {
             message: 'Incomplete request!',
             read_me: 'Please provide the valid request format.',
             allowed: (errorOn: any) => {
-                const theDbType = supportForDbTypes[errorOn.db_type as DbTypeListKey];
-                return storeFields[errorOn.systemName][theDbType?.type][errorOn.feature];
+                try {
+                    console.log(errorOn);
+                    const theDbType = supportForDbTypes[errorOn.db_type as DbTypeListKey];
+                    return storeFields[errorOn.systemName][theDbType?.type][errorOn?.feature];
+                } catch (error) {
+                    console.log("[incomplete_request] ERROR : ", error);
+                }
             }
+        },
+
+        code: 400
+    },
+
+    'forget_send_db_type': {
+        more: {
+            message: "forget_send_db_type"
         },
 
         code: 400
@@ -225,7 +276,11 @@ export const clientError: ClientErrorModel = {
             message: 'The field is not found!',
             read_me: 'Please check the request fields name in `set` and `where` keys!!',
             'allowed': (errorOn: any) => {
-                return storeFields[errorOn.systemName][errorOn.feature];
+                try {
+                    return storeFields[errorOn.systemName][errorOn.feature] || { allowed: "Allow is not found!" };
+                } catch (error) {
+                    console.log("[invalid_field_name] ERROR : ", error);
+                }
             },
         },
 

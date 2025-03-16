@@ -46,7 +46,7 @@ export const EditStoreController = (helpers: any) => async (req: any, res: any) 
             }
         }
 
-        if (!db_type || !set || !where || !isObject(where) || !store_code || isLengthZero(set) || isLengthZero(where)) {
+        if (db_type === undefined || !set || !isObject(req.body.where) || !store_code || isLengthZero(set) || isLengthZero(req.body.where)) {
             Logger('Store', 'error', {
                 message: 'Incomplete request!',
                 system: 'Store',
@@ -84,6 +84,11 @@ export const EditStoreController = (helpers: any) => async (req: any, res: any) 
         return dataToControllerCenter;
     } catch (error: any) {
         console.log('EditStoreController (Error):', error);
-        throw { ...error, feature: 'edit' };
+
+        if (error?.code === '23505' || error?.sqlState === '23000') {
+            throw { kind: 'unique_edit_row_data', detail: error?.detail, feature: 'create' };
+        }
+
+        throw { ...error, feature: 'edit', db_type: req.body.db_type };
     }
 }

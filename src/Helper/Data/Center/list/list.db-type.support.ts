@@ -12,7 +12,7 @@ export const supportForDbTypes: DbTypeModel = {
     mysql: {
         name: 'MySQL',
         type: 'sql',
-        connect_state: false
+        connect_state: true
     },
 
     postgresql: {

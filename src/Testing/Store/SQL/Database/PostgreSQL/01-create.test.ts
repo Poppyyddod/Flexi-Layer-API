@@ -5,8 +5,10 @@ import { format } from 'date-fns';
 beforeAll(async () => {
     if (server) {
         await server.close();
+    } else {
+        await server.connect();
     }
-})
+});
 
 const dbBrand = 'postgresql';
 const feature = 'create';
