@@ -11,7 +11,7 @@
     "preset": "ts-jest",
     "testEnvironment": "node",
     "testMatch": [
-      "**/src/Testing/Store/**/MySQL/*.test.ts"
+      "**/src/Testing/Store/**/PostgreSQL/*.test.ts"
     ],
     "moduleFileExtensions": [
       "ts",

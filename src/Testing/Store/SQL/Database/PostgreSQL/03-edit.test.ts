@@ -4,8 +4,10 @@ import { TestStoreRoute, server, request } from '@Testing/tester.config';
 beforeAll(async () => {
     if (server) {
         await server.close();
+    } else {
+        await server.connect();
     }
-})
+});
 
 const dbBrand = 'postgresql';
 const feature = 'edit';
@@ -36,7 +38,7 @@ tester(`Test ${dbBrand}/Store/${feature}`, () => {
         console.log(`# [OBJECT] : Store/${dbBrand}/${feature} : `, obj);
 
         expect(
-            obj.affectedRows > 0 
+            obj.affectedRows > 0
             || obj.message === "Data's not found!"
         ).toBe(true);
     });

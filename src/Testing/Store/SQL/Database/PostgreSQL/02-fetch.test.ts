@@ -16,8 +16,10 @@ const tester = describe;
 beforeAll(async () => {
     if (server) {
         await server.close();
+    } else {
+        await server.connect();
     }
-})
+});
 
 /**
  * @Fetch `all row` & `all column` + limit(1)
@@ -43,7 +45,7 @@ tester(`> Test ${dbBrand}/Store/${feature} + all row + all column + limit`, () =
         console.log(`# [OBJECT] : ${feature}/All Row/${dbBrand} : `, obj);
 
         expect(
-            obj.data.length > 0 
+            obj.data.length > 0
             || obj.message === "No row in the store!"
         ).toBe(true);
     });
@@ -77,7 +79,7 @@ tester(`> Test ${dbBrand}/Store/${feature} + some row + some column + limit`, ()
         console.log(`# [OBJECT] : ${feature}/Some Row/${dbBrand} : `, obj);
 
         expect(
-            obj.data.length === 1 
+            obj.data.length === 1
             || obj.message === "No row in the store!"
         ).toBe(true);
     });
@@ -110,7 +112,7 @@ tester(`> Test ${dbBrand}/Store/${feature} + the last row + some column + limit`
         console.log(`# [OBJECT] : ${feature}/The last row/${dbBrand} : `, obj);
 
         expect(
-            obj.data.length === 1 
+            obj.data.length === 1
             || obj.message === "No row in the store!"
         ).toBe(true);
     });

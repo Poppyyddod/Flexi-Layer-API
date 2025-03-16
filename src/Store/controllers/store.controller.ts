@@ -41,17 +41,19 @@ const helperFunction = {
 const CheckDbConnection = async (reqBodyData: any) => {
     try {
         console.log('- StoreController (CheckDbConnection) : ', reqBodyData);
+
+        if (reqBodyData.db_type === undefined)
+            throw { kind: 'incomplete_request' };
+
         const { db_type } = reqBodyData;
 
         const theDatabaseDetails = supportForDbTypes[db_type as DbTypeListKey];
 
-        if (!theDatabaseDetails) {
-            throw { kind: 'cannot_support_the_database_type' }
-        }
+        if (theDatabaseDetails === undefined)
+            throw { kind: 'cannot_support_the_database_type' };
 
-        if (!theDatabaseDetails.connect_state) {
+        if (!theDatabaseDetails.connect_state)
             throw { kind: 'we_disconnect_the_database' };
-        }
     } catch (error) {
         console.log('StoreController (CheckDbConnection)(error) : ', error);
         throw error;
@@ -85,7 +87,7 @@ const CheckMyIdValue = async (req: any) => {
         });
     }
 
-    if(!isObject(set) || !isObject(where))
+    if (!isObject(set) || !isObject(where))
         console.log('* - set or where is not object!');
 }
 

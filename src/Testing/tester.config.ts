@@ -22,17 +22,17 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+    if (server) {
+        server.close();
+        console.log('## Server connection closed.');
+    }
+
     if (mysql) {
         await mysql.end();
     }
 
     if (pgsql) {
         await pgsql.end();
-    }
-
-    if (server) {
-        server.close();
-        console.log('## Server connection closed.');
     }
 });
 

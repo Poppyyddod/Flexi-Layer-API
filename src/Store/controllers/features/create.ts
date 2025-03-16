@@ -88,8 +88,8 @@ export const CreateStoreController = (helpers: any) => async (req: any, res: any
     } catch (error: any) {
         console.log('CreateStoreController (Error):', error);
 
-        if (error?.code === '23505' || error?.code === '23000') {
-            throw { kind: 'unique_row_data', detail: error?.detail, feature: 'create' };
+        if (error?.code === '23505' || error?.sqlState === '23000') {
+            throw { kind: 'unique_create_row_data', detail: error?.detail, feature: 'create' };
         }
 
         throw { ...error, feature: 'create', db_type: req.body.db_type };
