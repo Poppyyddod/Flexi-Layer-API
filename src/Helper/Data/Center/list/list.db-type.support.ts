@@ -1,18 +1,18 @@
-type DbListKey = 'postgresql' | 'mysql' | 'mongodb';
+export type DbTypeListKey = 'postgresql' | 'mysql' | 'mongodb';
 
 type DbTypeModel = {
-    [key: string]: {
-        name: string,
-        type: string,
-        connect_state: boolean
-    }
-}
+    [key in DbTypeListKey]: {
+        name: string;
+        type: string;
+        connect_state: boolean;
+    };
+};
 
 export const supportForDbTypes: DbTypeModel = {
     mysql: {
         name: 'MySQL',
         type: 'sql',
-        connect_state: true
+        connect_state: false
     },
 
     postgresql: {

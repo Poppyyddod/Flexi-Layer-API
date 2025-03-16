@@ -4,7 +4,7 @@ import { FixRequestFormat, FixWhereRequestFormat } from '@Store/utils';
 import { CheckCollectionDataStructure, CheckTableDataStructure } from '@Store/validation';
 import { SqlServiceMethods, NoSqlServiceMethods } from './features/methods';
 import { FromControllerRequestDataModel, ServiceKeys } from '@Store/models/store.service.model';
-import { supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
+import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
 
 
 /**
@@ -118,7 +118,7 @@ const StoreService = async (reqBodyData: FromControllerRequestDataModel, feature
 
         const { db_type } = reqBodyData;
 
-        const dbRelationshipType = supportForDbTypes[db_type].type;
+        const dbRelationshipType = supportForDbTypes[db_type as DbTypeListKey].type;
         const dataFromResposCenter = await dbTypeService[dbRelationshipType](reqBodyData, dbRelationshipType, theFeature);
         console.log('StoreService (dataFromResposCenter) : ', dataFromResposCenter);
 

@@ -9,7 +9,7 @@
  * @returns Response HTTP
  */
 
-import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
+import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isArray, isLengthZero, isNumber, isObject, isString } from "@Helper/Utils";
 
 /**
@@ -52,7 +52,7 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
 
         if (!store_code
             || !db_type
-            || (supportForDbTypes[db_type].type === 'sql' && !field_list)
+            || (supportForDbTypes[db_type as DbTypeListKey].type === 'sql' && !field_list)
             || (field_list && !isArray(field_list) && field_list !== "*")
         ) {
 
@@ -119,6 +119,6 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
         return dataToControllerCenter;
     } catch (error: any) {
         console.log('FetchStoreController (Error):', error);
-        throw { ...error, feature: 'fetch' };
+        throw { ...error, feature: 'fetch', db_type: req.body.db_type };
     }
 }

@@ -1,4 +1,4 @@
-import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
+import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isLengthZero, isObject, isString } from "@Helper/Utils";
 
 
@@ -37,7 +37,7 @@ export const EditStoreController = (helpers: any) => async (req: any, res: any) 
         const { StoreService, Logger } = helpers; // Helper functions
         const { set, where, store_code, db_type, nosql_supporter } = req.body; // Request
 
-        if (supportForDbTypes[db_type].type === 'nosql') {
+        if (supportForDbTypes[db_type as DbTypeListKey].type === 'nosql') {
             if (!nosql_supporter)
                 throw { kind: 'incomplete_request' };
 

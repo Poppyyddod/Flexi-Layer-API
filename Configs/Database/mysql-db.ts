@@ -43,7 +43,7 @@ if (supportForDbTypes.mysql.connect_state) {
     console.log(
         '\x1b[33m [WARNING] `MySQL` disconnected! \x1b[0m \n',
         '\x1b[33m > The settings has disconnected `MySQL` database. \x1b[0m \n', 
-        '\x1b[33m > It cannot send the request for `MySQL` database now. \x1b[0m',
+        '\x1b[33m > It cannot send the request for `MySQL` database now. \x1b[0m\n',
     );
     connection = {};
 }

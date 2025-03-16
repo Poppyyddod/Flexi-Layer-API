@@ -3,7 +3,7 @@ import Logger from '@Helper/Logger';
 import StoreService from '@Store/services';
 import { StoreControllerMethods } from './features/methods';
 import { ControllerMethodRouteKeys } from '@Store/models/store.controller.model';
-import { supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
+import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
 import { isObject } from '@Helper/Utils';
 
 
@@ -43,7 +43,7 @@ const CheckDbConnection = async (reqBodyData: any) => {
         console.log('- StoreController (CheckDbConnection) : ', reqBodyData);
         const { db_type } = reqBodyData;
 
-        const theDatabaseDetails = supportForDbTypes[db_type];
+        const theDatabaseDetails = supportForDbTypes[db_type as DbTypeListKey];
 
         if (!theDatabaseDetails) {
             throw { kind: 'cannot_support_the_database_type' }

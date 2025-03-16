@@ -1,4 +1,4 @@
-import { supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
+import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isLengthZero } from "@Helper/Utils";
 
 
@@ -52,7 +52,7 @@ export const CreateStoreController = (helpers: any) => async (req: any, res: any
             delete req.body['where'];
         }
 
-        if (!db_type || !store_code || !set || isLengthZero(set) || (supportForDbTypes[db_type].type === 'nosql' && !nosql_supporter)) {
+        if (!db_type || !store_code || !set || isLengthZero(set) || (supportForDbTypes[db_type as DbTypeListKey].type === 'nosql' && !nosql_supporter)) {
             Logger('Store', 'error', {
                 message: 'Incomplete request!',
                 system: 'Store',
@@ -92,6 +92,6 @@ export const CreateStoreController = (helpers: any) => async (req: any, res: any
             throw { kind: 'unique_row_data', detail: error?.detail, feature: 'create' };
         }
 
-        throw { ...error, feature: 'create' };
+        throw { ...error, feature: 'create', db_type: req.body.db_type };
     }
 }

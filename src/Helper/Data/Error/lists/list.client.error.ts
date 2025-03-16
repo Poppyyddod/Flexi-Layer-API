@@ -1,4 +1,4 @@
-import { supportForDbTypes } from "../../Center/list/list.db-type.support";
+import { DbTypeListKey, supportForDbTypes } from "../../Center/list/list.db-type.support";
 import { noSqlSupporterList } from "../../Center/list/list.nosql-supporter";
 import { storeFields } from "./list.sql.error";
 
@@ -87,10 +87,10 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Invalid `nosql_supporter` feature name!',
             read_me: 'Please check the request key `nosql_supporter`. Provide the valid feature name for `nosql_supporter` the feature.',
-            allowed: (error: any, systemName: string, feature: string) => {
+            allowed: (errorOn: any) => {
                 return {
                     list_nosql_supporter: {
-                        [`${feature}_feature`]: { ...noSqlSupporterList[feature], ...noSqlSupporterList['global'] }
+                        [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
                     }
                 };
             },
@@ -115,10 +115,10 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Invalid `nosql_supporter` key data type!',
             read_me: 'Please check the request key `nosql_supporter`. Provide the valid data type for `nosql_supporter` the feature.',
-            allowed: (error: any, systemName: string, feature: string) => {
+            allowed: (errorOn: any) => {
                 return {
                     list_nosql_supporter: {
-                        [`${feature}_feature`]: { ...noSqlSupporterList[feature], ...noSqlSupporterList['global'] }
+                        [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
                     }
                 };
             },
@@ -151,13 +151,13 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Duplicate key value violates unique constraint!',
             read_me: 'The request data already has a row in the table.',
-            allowed: (error: any, systemName: string, feature: string) => {
-                console.log('allowed (unique_row_data)', error);
+            allowed: (errorOn: any) => {
+                console.log('allowed (unique_row_data)', errorOn);
 
                 return {
                     error: {
-                        kind: error?.kind,
-                        detail: error?.detail,
+                        kind: errorOn.err?.kind,
+                        detail: errorOn.err?.detail,
                     }
                 }
             }
@@ -211,8 +211,9 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Incomplete request!',
             read_me: 'Please provide the valid request format.',
-            allowed: (error: any, systemName: string, feature: string) => {
-                return storeFields[systemName][feature];
+            allowed: (errorOn: any) => {
+                const theDbType = supportForDbTypes[errorOn.db_type as DbTypeListKey];
+                return storeFields[errorOn.systemName][theDbType?.type][errorOn.feature];
             }
         },
 
@@ -223,8 +224,8 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'The field is not found!',
             read_me: 'Please check the request fields name in `set` and `where` keys!!',
-            'allowed': (error: any, systemName: string, feature: string) => {
-                return storeFields[systemName][feature];
+            'allowed': (errorOn: any) => {
+                return storeFields[errorOn.systemName][errorOn.feature];
             },
         },
 
