@@ -6,12 +6,6 @@ import { storeFields } from "./list.sql.error";
 type Features = 'fetch' | 'create' | 'edit' | 'remove';
 type StoreFieldNames = keyof typeof storeFields;
 
-// type ErrorSystem = {
-//     error: any,
-//     systemName: StoreFieldNames;
-//     feature: Features;
-// };
-
 type ClientErrorModel = {
     [key: string]: {
         more: {
