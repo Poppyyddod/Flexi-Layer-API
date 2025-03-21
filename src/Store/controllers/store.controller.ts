@@ -81,7 +81,7 @@ const CheckMyIdValue = async (req: any) => {
         } else if (isArray(obj)) {
             obj.forEach((item: any, itemIndex: number) => {
                 // console.log("Check value myId (item) : ", item, itemIndex);
-                Object.keys(item).forEach((key:any, keyIndex: number) => {
+                Object.keys(item).forEach((key: any, keyIndex: number) => {
                     // console.log("Check value myId (key, index) : ", key, keyIndex);
                     if (obj[itemIndex][key] === "myId") {
                         if (!useAuthToken) {
@@ -94,7 +94,7 @@ const CheckMyIdValue = async (req: any) => {
                     }
                 });
             })
-        }else{
+        } else {
             console.log(`* - ${fieldName} is not object!`);
             return;
         }
@@ -121,7 +121,12 @@ const StoreController = async (req: any, res: any) => {
 
         await CheckMyIdValue(req);
 
+        if (!StoreControllerMethods[theRoute]) {
+            throw { kind: "route_is_not_valid" };
+        }
+
         const controller = StoreControllerMethods[theRoute];
+
         const dataFromTheController = await controller(helperFunction)(req, res);
         // console.log('StoreController (response) : ', response);
         const { response, status_code } = dataFromTheController;
