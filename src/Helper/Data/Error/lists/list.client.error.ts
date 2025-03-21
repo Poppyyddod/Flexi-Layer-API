@@ -226,6 +226,15 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
+    'route_is_not_valid': {
+        more: {
+            message: "Route is not valid !",
+            read_me: "Please make sure the route on client side."
+        },
+
+        code: 404
+    },
+
     'missing_supporter_confirmed_feature': {
         more: {
             message: 'NoSQL database must be confirmed for editing and deleting!',
