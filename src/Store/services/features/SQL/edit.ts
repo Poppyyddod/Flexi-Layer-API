@@ -38,7 +38,7 @@ export const EditSqlStoreService = (helpers: any) => async (validRequestData: an
         const { db_type, store, set, where } = validRequestData;
         console.log('- Request : ', validRequestData);
 
-        const fixedFormat = await FixRequestFormat({ db_type, set, where });
+        const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'update'});
         // console.log('EditStoreService (fixedFormat) : ', fixedFormat);
 
         const dataToServiceCenter = {

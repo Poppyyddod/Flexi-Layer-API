@@ -29,7 +29,7 @@ export const FetchSqlStoreService = (helpers: any) => async (validRequestData: a
         const { db_type, store, where, field_list } = validRequestData;
 
         // Fixed Request format to SQL query format
-        const fixedFormat = await FixRequestFormat(validRequestData);
+        const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'select'});
         // console.log('FetchStoreService (fixedFormat) : ', fixedFormat);
 
         const dataToServiceCenter = {

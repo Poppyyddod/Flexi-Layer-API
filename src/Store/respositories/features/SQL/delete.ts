@@ -7,6 +7,7 @@
  */
 
 import { ValidAllDataFromService } from "@Store/models/store.respository.model";
+import { DeleteQueryForMySQL, DeleteQueryForPostgreSQL } from "./Databases/delete";
 
 /**
  * 
@@ -28,21 +29,8 @@ import { ValidAllDataFromService } from "@Store/models/store.respository.model";
 
 
 const dbTypeDeleteRespository: any = {
-    postgresql: (data: any) => {
-        const {where, params, store} = data;
-        const cmd = `DELETE FROM ${store} WHERE ${where}`;
-        const paramsQuery = [...params];
-
-        return {cmd, paramsQuery};
-    },
-
-    mysql: (data: any) => {
-        const {where, params, store} = data;
-        const cmd = `DELETE FROM ?? WHERE ${where}`;
-        const paramsQuery = [store, ...params];
-
-        return {cmd, paramsQuery};
-    }
+    postgresql: async (data: any) => await DeleteQueryForPostgreSQL(data),
+    mysql: async (data: any) => await DeleteQueryForMySQL(data)
 }
 
 export const DeleteSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: ValidAllDataFromService) => {

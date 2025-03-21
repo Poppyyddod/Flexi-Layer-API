@@ -33,11 +33,11 @@ export const FetchQueryForPostgreSQL = (data: any) => {
         const { store, field_list, where, limit, params } = data;
 
         const cmd = where === undefined ? // Get all row
-            `SELECT ${field_list} FROM ${store} ${LimitFeature(limit)}`
+            `SELECT ${field_list} FROM ${store} ${LimitFeature(limit)};`
             : IsGetLastRow(where) ? // Get the last row
-                `SELECT ${field_list} FROM ${store} ${where} ${LimitFeature(limit)}`
+                `SELECT ${field_list} FROM ${store} ${where} ${LimitFeature(limit)};`
                 : IsGetSomeRow(where) ?// Get some row
-                    `SELECT ${field_list} FROM ${store} WHERE ${where} ${LimitFeature(limit)}`
+                    `SELECT ${field_list} FROM ${store} WHERE ${where} ${LimitFeature(limit)};`
                     : 'Not match';
 
         console.log('FetchQueryForPostgreSQL (cmd) : ', cmd);

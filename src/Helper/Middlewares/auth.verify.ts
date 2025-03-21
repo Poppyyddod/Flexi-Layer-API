@@ -1,10 +1,9 @@
 import jwt from 'jsonwebtoken';
+import { useAuthToken } from './middleware.setting';
 
 export const JwtVerifyToken = async (req: any, res: any, next: any) => {
     try {
         console.log('> JwtCompareToken : ');
-
-        const useAuthToken = true;
 
         if (!useAuthToken) {
             return next();

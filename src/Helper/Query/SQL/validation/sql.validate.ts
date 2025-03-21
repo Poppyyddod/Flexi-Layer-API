@@ -1,7 +1,7 @@
 import { sqlNumberType, sqlStringType } from '../sql.datatype';
 import { mappingMethodTableDataStructure } from '../mapping/table-data-structure/sql.method';
 import { dataStructureQueryCmd } from '../mapping/table-data-structure/sql.secretdata';
-import { isString } from '@Helper/Utils';
+import { isArray, isObject, isString } from '@Helper/Utils';
 
 
 
@@ -57,7 +57,7 @@ export const ValidateFieldsBeforeInsert = async (tableFields: any, data: any) =>
     try {
         console.log('* ValidateFieldsBeforeInsert (data) : ', data);
         const requestFields = data;
-        // console.log('CheckRequiredFieldsToInsert (requestField):', requestField);
+        console.log('CheckRequiredFieldsToInsert (requestField):', requestFields);
 
         const primaryKeyFieldInReq = await CheckFieldComment(requestFields, tableFields, 'primary key');
         // console.log('CheckRequiredFieldsToInsert (primaryKeyFieldInReq):', primaryKeyField);
@@ -74,19 +74,9 @@ export const ValidateFieldsBeforeInsert = async (tableFields: any, data: any) =>
             throw { kind: 'missing_comment_field' };
         }
 
-        const checkRequiredFieldInTheTable = tableFields.some((field: any) => field.comment === "required");
-        // console.log('CheckRequiredFieldsToInsert (checkRequiredFieldInTheTable):', checkRequiredFieldInTheTable);
-        const requiredFieldInReq = await CheckFieldComment(requestFields, tableFields, 'required');
-        // console.log('CheckRequiredFieldsToInsert (requiredFieldInReq):', missingRequiredFields);
+        CheckMatterFieldsComment(tableFields, requestFields, "required");
 
-        const checkForeignKeyFieldInTheTable = tableFields.some((field: any) => field.comment === "foreign key");
-        // console.log('CheckRequiredFieldsToInsert (checkForeignKeyFieldInTheTable):', checkForeignKeyFieldInTheTable);
-        const foreignKeyFieldInReq = await CheckFieldComment(requestFields, tableFields, 'foreign key');
-        // console.log('CheckRequiredFieldsToInsert (foreignKeyFieldInReq):', missingRequiredFields);
-
-        if ((checkRequiredFieldInTheTable && requiredFieldInReq.length === 0) || (checkForeignKeyFieldInTheTable && foreignKeyFieldInReq.length === 0)) {
-            throw { kind: 'missing_required_field' };
-        }
+        CheckMatterFieldsComment(tableFields, requestFields, "foreign key");
     } catch (error) {
         console.log('CheckRequiredFieldsToInsert (Error):', error);
         throw error;
@@ -94,7 +84,28 @@ export const ValidateFieldsBeforeInsert = async (tableFields: any, data: any) =>
 };
 
 
+const CheckMatterFieldsComment = (tableFields: any, requestFields: any, comment: string) => {
+    const theCommentFieldInTheTable = tableFields.filter((field: any) => field.comment === comment);
+    // console.log('CheckThisFieldsComment (theCommentFieldInTheTable):', theCommentFieldInTheTable);
 
+    if (isArray(requestFields)) {
+        requestFields.forEach((reqIndex: any) => {
+            const theCommentFieldInReq = CheckFieldComment(reqIndex, tableFields, comment);
+            // console.log('CheckThisFieldsComment (theCommentFieldInReq):', theCommentFieldInReq);
+
+            if (theCommentFieldInTheTable.length !== theCommentFieldInReq.length) {
+                throw { kind: 'missing_required_field' };
+            }
+        })
+    } else {
+        const theCommentFieldInReq = CheckFieldComment(requestFields, tableFields, comment);
+        // console.log('CheckThisFieldsComment (theCommentFieldInReq):', theCommentFieldInReq);
+
+        if (theCommentFieldInTheTable.length !== theCommentFieldInReq.length) {
+            throw { kind: 'missing_required_field' };
+        }
+    }
+}
 
 
 
@@ -115,7 +126,7 @@ export const CheckFieldComment = (requestFields: any, tableFields: any, comment:
     console.log('CheckFieldComment (theCommentFieldsArr):', theCommentFieldsArr);
 
     const filteredFields = theCommentFieldsArr.filter((field: string) => field in requestFields);
-    console.log('CheckFieldComment (filteredFields):', filteredFields);
+    console.log('CheckFieldComment (Object)(filteredFields):', filteredFields);
 
     return filteredFields;
 }
@@ -169,13 +180,15 @@ const CheckForFetchLastRow = async (whereData: any) => {
 
 export const ValidateFieldsAndType = async (tableDataStructure: any[], data: any) => {
     try {
-        console.log('> ValidateFieldsAndType : ', tableDataStructure, data);
+        let isValid = true;
+        console.log('> ValidateFieldsAndType (tableDataStructure): ', tableDataStructure);
+        console.log('> ValidateFieldsAndType (data): ', data);
 
         if (data.where && isString(data.where)) {
             const dataFromCheckForFetchLastRow = await CheckForFetchLastRow(data.where);
             console.log('* ValidateFieldsAndType (dataFromCheckForFetchLastRow):', dataFromCheckForFetchLastRow);
 
-            if (dataFromCheckForFetchLastRow){
+            if (dataFromCheckForFetchLastRow) {
                 data = { ...data, ...dataFromCheckForFetchLastRow };
             }
         } else {
@@ -191,37 +204,59 @@ export const ValidateFieldsAndType = async (tableDataStructure: any[], data: any
 
         delete data['where'];
 
-        for (const [dataKey, dataValue] of Object.entries(data)) {
-            console.log('* ValidateFieldsAndType (loop data):', dataKey, dataValue);
-
-            const matchingField = tableDataStructure.find(tableData => tableData.field === dataKey);
-            console.log('* ValidateFieldsAndType (matchingField):', matchingField);
-
-            if (!matchingField) {
-                console.error(`* Field '${dataKey}' not found in store.`);
-                throw { kind: 'invalid_field_name' };
-            }
-
-            // Fields type
-            const fieldType = matchingField.type.split('(')[0];
-
-            // Check the expected type
-            if (sqlNumberType.includes(fieldType) && typeof dataValue !== 'number') {
-                console.log('Invalid number for field:', dataKey);
-                throw { kind: 'invalid_data_type' };
-            }
-
-            if (sqlStringType.includes(fieldType) && typeof dataValue !== 'string') {
-                console.log('Invalid string for field:', dataKey);
-                throw { kind: 'invalid_data_type' };
-            }
-
-            // if(sqlDateTimeType.includes(fieldType) && )
+        if (isArray(data.set)) {
+            data.set.forEach((obj: any) => {
+                isValid = StartCheckFieldAndType(isValid, tableDataStructure, obj);
+            });
+        } else if (isObject(data.set)) {
+            isValid = StartCheckFieldAndType(isValid, tableDataStructure, data.set);
+        } else {
+            console.log('* ValidateFieldsAndType (data.set is not object or array):', data.set);
         }
 
-        return true;
+        return isValid;
     } catch (error) {
         console.error('CheckDataKeyAndType (Error):', error);
         throw error;
     }
 };
+
+
+// obj is set or where
+const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: any) => {
+    for (const [dataKey, dataValue] of Object.entries(obj)) {
+        console.log('* ValidateFieldsAndType (loop data):', dataKey, dataValue);
+
+        const matchingField = tableDataStructure.find((tableData: any) => tableData.field === dataKey);
+        console.log('* ValidateFieldsAndType (matchingField):', matchingField);
+
+        if (!matchingField) {
+            console.error(`* Field '${dataKey}' not found in store.`);
+            throw { kind: 'invalid_field_name' };
+        }
+
+        // Fields type
+        const fieldType = matchingField.type.split('(')[0];
+
+        if (Array.isArray(dataValue)) {
+            console.log('For array data type: ', dataKey, dataValue);
+            isValid = true;
+            continue;
+        }
+
+        // Check the expected type
+        if (sqlNumberType.includes(fieldType) && typeof dataValue !== 'number') {
+            console.log('Invalid number for field:', dataKey);
+            throw { kind: 'invalid_data_type' };
+        }
+
+        if (sqlStringType.includes(fieldType) && typeof dataValue !== 'string') {
+            console.log('Invalid string for field:', dataKey);
+            throw { kind: 'invalid_data_type' };
+        }
+
+        isValid = true;
+    }
+
+    return isValid;
+}

@@ -38,7 +38,7 @@ export const CreateSqlStoreService = (helpers: any) => async (validRequestData: 
         const { db_type, store, set } = validRequestData;
         console.log('- Request : ', validRequestData);
 
-        const fixedFormat = await FixRequestFormat({ db_type, set });
+        const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'insert'});
         // console.log('CreateStoreService (fixedFormat) : ', fixedFormat);
 
         const dataToServiceCenter = {

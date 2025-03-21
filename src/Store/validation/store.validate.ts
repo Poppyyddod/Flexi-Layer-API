@@ -64,10 +64,10 @@ export const CheckTableDataStructure = async (dataFromServiceCenter: FromControl
             feature
         };
 
-        const dataToCheckFieldAndType = {
-            where: isObject(where) ? { ...where } : where,
-            ...set
-        }
+        // const dataToCheckFieldAndType = {
+        //     where: isObject(where) ? { ...where } : where,
+        //     ...set
+        // }
 
         const tableDataStructure = await ValidateTableMapper(dbPositionData);
         console.log('StartValidateSqlRequestDataStructure (tableDataStructure):', tableDataStructure);
@@ -76,7 +76,7 @@ export const CheckTableDataStructure = async (dataFromServiceCenter: FromControl
             await CheckFieldListFieldName(tableDataStructure, field_list);
         }
 
-        const isValidFieldsAndType = await StartValidateSqlRequestDataStructure(dbPositionData, tableDataStructure, dataToCheckFieldAndType);
+        const isValidFieldsAndType = await StartValidateSqlRequestDataStructure(dbPositionData, tableDataStructure, {set, where});
         console.log('* Checked data key and data type : ', isValidFieldsAndType);
 
         if (!isValidFieldsAndType) {

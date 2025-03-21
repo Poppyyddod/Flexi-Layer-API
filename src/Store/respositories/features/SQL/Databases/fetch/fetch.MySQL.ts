@@ -32,11 +32,11 @@ export const FetchQueryForMySQL = (data: any) => {
         console.log('FetchQueryForMySQL (data) : ', data);
 
         const cmd = where === undefined ? // Get all row
-            `SELECT ${field_list} FROM ?? ${LimitFeature(limit)}`
+            `SELECT ${field_list} FROM ?? ${LimitFeature(limit)};`
             : IsGetLastRow(where) ? // Get the last row
-                `SELECT ${field_list} FROM ${store} ${where} ${LimitFeature(limit)}`
+                `SELECT ${field_list} FROM ${store} ${where} ${LimitFeature(limit)};`
                 : IsGetSomeRow(where) ?
-                `SELECT ${field_list} FROM ?? WHERE ${where} ${LimitFeature(limit)}`
+                `SELECT ${field_list} FROM ?? WHERE ${where} ${LimitFeature(limit)};`
                 : 'Not match';
 
         console.log('FetchQueryForMySQL (cmd) : ', cmd);

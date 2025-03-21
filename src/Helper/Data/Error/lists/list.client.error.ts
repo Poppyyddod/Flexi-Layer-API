@@ -239,6 +239,18 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
+    'auth_setting_turn_off': {
+        more: {
+            message: "Cannot support the `auth`:`myId` feature!",
+            read_me: {
+                case_1: "[Modify] the key has `myId` value to be normal value in the request.",
+                case_2: "Auth setting is turn off. Please turn on the auth setting in middleware setting file on server side."
+            }
+        },
+
+        code: 400
+    },
+
     'incomplete_request': {
         more: {
             message: 'Incomplete request!',
@@ -267,7 +279,7 @@ export const clientError: ClientErrorModel = {
 
     'invalid_field_name': {
         more: {
-            message: 'The field is not found!',
+            message: 'Any field name is invalid!',
             read_me: 'Please check the request fields name in `set` and `where` keys!!',
             'allowed': (errorOn: any) => {
                 try {

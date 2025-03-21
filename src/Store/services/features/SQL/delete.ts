@@ -37,7 +37,7 @@ export const RemoveSqlStoreService = (helpers: any) => async (validRequestData: 
         const { where, store, db_type } = validRequestData;
         console.log('- Request : ', validRequestData);
 
-        const fixedFormat = await FixRequestFormat({ db_type, where });
+        const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'delete'});
         // console.log('RemoveStoreService (fixedFormat) : ', fixedFormat);
 
         const dataToServiceCenter = {

@@ -7,6 +7,7 @@
  */
 
 import { ValidAllDataFromService } from "@Store/models/store.respository.model";
+import { EditQueryForMySQL, EditQueryForPostgreSQL } from "./Databases/edit";
 
 /**
  * 
@@ -33,31 +34,8 @@ import { ValidAllDataFromService } from "@Store/models/store.respository.model";
 
 
 const dbTypeEditRespository: any = {
-    postgresql: (fixedFormat: any) => {
-        const { set, where, params, store } = fixedFormat;
-
-        const cmd = `UPDATE ${store} SET ${set} WHERE ${where}`;
-        const paramsQuery = [...params];
-
-        return {
-            cmd,
-            paramsQuery
-        }
-    },
-
-    mysql: (fixedFormat: any) => {
-        const { set, where, params, store } = fixedFormat;
-
-        const cmd = `UPDATE ?? SET ${set} WHERE ${where}`;
-        console.log('EditStoreRespo (cmd) : ', cmd);
-
-        const paramsQuery = [store, ...params];
-
-        return {
-            cmd,
-            paramsQuery
-        }
-    }
+    postgresql: async (fixedFormat: any) => await EditQueryForPostgreSQL(fixedFormat),
+    mysql: async (fixedFormat: any) => await EditQueryForMySQL(fixedFormat)
 }
 
 

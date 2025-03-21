@@ -4,7 +4,8 @@ import StoreService from '@Store/services';
 import { StoreControllerMethods } from './features/methods';
 import { ControllerMethodRouteKeys } from '@Store/models/store.controller.model';
 import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
-import { isObject } from '@Helper/Utils';
+import { isArray, isObject } from '@Helper/Utils';
+import { useAuthToken } from '@SRC/Helper/Middlewares/middleware.setting';
 
 
 /**
@@ -62,34 +63,47 @@ const CheckDbConnection = async (reqBodyData: any) => {
 
 const CheckMyIdValue = async (req: any) => {
     console.log('* Check and modify id value `myId`!');
+
     const { where, set } = req.body;
 
-    if (where && isObject(where)) {
-        Object.entries(where).map((key: any, value: any) => {
-            console.log("req body where (modify myId) : ", key);
-            if (key[1] === "myId") {
-                console.log("Store Controller (Decoded token data) : ", req.user);
-                where[key[0]] = parseInt(req.user.userId);
-                return;
-            }
-        });
-    }
+    const modifyMyId = (obj: any, fieldName: string) => {
+        if (isObject(obj)) {
+            Object.keys(obj).forEach((key: any) => {
+                if (obj[key] === "myId") {
+                    if (!useAuthToken) {
+                        throw { kind: "auth_setting_turn_off" };
+                    }
 
+                    console.log("Store Controller (Decoded token data) : ", req.user);
+                    obj[key] = parseInt(req.user.userId);
+                }
+            });
+        } else if (isArray(obj)) {
+            obj.forEach((item: any, itemIndex: number) => {
+                // console.log("Check value myId (item) : ", item, itemIndex);
+                Object.keys(item).forEach((key:any, keyIndex: number) => {
+                    // console.log("Check value myId (key, index) : ", key, keyIndex);
+                    if (obj[itemIndex][key] === "myId") {
+                        if (!useAuthToken) {
+                            throw { kind: "auth_setting_turn_off" };
+                        }
 
-    if (set && isObject(set)) {
-        Object.entries(set).map((key: any, value: any) => {
-            console.log("req body set (modify myId) : ", key);
-            if (key[1] === "myId") {
-                console.log("Store Controller (Decoded token data) : ", req.user);
-                set[key[0]] = parseInt(req.user.userId);
-                return;
-            }
-        });
-    }
+                        console.log("Store Controller (Decoded token data) : ", req.user);
+                        obj[itemIndex][key] = parseInt(req.user.userId);
+                        // console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAAAAAAAAAA", obj[itemIndex]);
+                    }
+                });
+            })
+        }else{
+            console.log(`* - ${fieldName} is not object!`);
+            return;
+        }
+    };
 
-    if (!isObject(set) || !isObject(where))
-        console.log('* - set or where is not object!');
-}
+    modifyMyId(where, "where");
+    modifyMyId(set, "set");
+};
+
 
 const StoreController = async (req: any, res: any) => {
     try {
@@ -105,9 +119,7 @@ const StoreController = async (req: any, res: any) => {
             throw { kind: 'cannot_support_the_database_type' };
         }
 
-        if (req.user) {
-            await CheckMyIdValue(req);
-        }
+        await CheckMyIdValue(req);
 
         const controller = StoreControllerMethods[theRoute];
         const dataFromTheController = await controller(helperFunction)(req, res);

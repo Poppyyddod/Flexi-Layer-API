@@ -7,7 +7,7 @@
  */
 
 import { ValidAllDataFromService } from "@Store/models/store.respository.model";
-import { FetchQueryForMySQL, FetchQueryForPostgreSQL } from "./Databases";
+import { FetchQueryForMySQL, FetchQueryForPostgreSQL } from "./Databases/fetch";
 
 /**
  * 
@@ -17,13 +17,13 @@ import { FetchQueryForMySQL, FetchQueryForPostgreSQL } from "./Databases";
 
 /**
  * 
- * @where - fixedFormat
+ * @where <- fixedFormat
  * ເປັນ Object ທີ່ເກັບ ຄຳສັ່ງທີ່ fixed ກັບ Placeholder ແລ້ວຈາກ Request ແລ້ວ
  * ເຊັ່ນ: id = ? | fields = ?
  */
 
 /**
- * @params - fixedFormat
+ * @params <- fixedFormat
  * ເປັນ Array Object ທີ່ເກັບຄ່າທີ່ມາຈາກ Request ເພື່ອໄປໃຊ້ກັບ Placeholder
  */
 
@@ -47,7 +47,7 @@ export const FetchSqlStoreRespo = (helpers: any) => async (dataFromResposCenter:
             ...fixedFormat
         };
 
-        const mappedData = MappingQueryForSQL[db_type](dataToDbTypeMapping);
+        const mappedData = await MappingQueryForSQL[db_type](dataToDbTypeMapping);
         const { cmd, paramsToQuery } = mappedData;
 
         const response = await SQLmanagement(db_type, { cmd, params: paramsToQuery, isReturn: true });
