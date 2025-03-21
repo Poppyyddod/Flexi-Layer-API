@@ -1,2 +1,2 @@
-export * from './mysql';
+export * from './MySQL';
 export * from './PostgreSQL';
