@@ -101,7 +101,8 @@ export const FixRequestFormat = async (request: any) => {
         const { set, where, db_type, field_list, feature } = request;
 
         if (set && (isObject(set) || isArray(set))) {
-            const fixedSet = createFieldsAndParams(db_type, set, 0, feature, "set");
+            const whereDataLength = !where ? 0 : Object.keys(where).length;
+            const fixedSet = createFieldsAndParams(db_type, set, whereDataLength, feature, "set");
             console.log('* Fixed Set : ', fixedSet);
 
             request['set'] = fixedSet.fields;
@@ -109,7 +110,7 @@ export const FixRequestFormat = async (request: any) => {
             dataToReturn['set'] = request['set'];
         }
 
-        if (where && isObject(where)) {
+        if (where && (isObject(where) || isString(where))) {
             const setDataLength = !set ? 0 : Object.keys(set).length;
             const fixedWhere = createFieldsAndParams(db_type, where, setDataLength, feature, "where");
             // console.log('* Fixed Where : ', fixedWhere);
@@ -238,12 +239,12 @@ const dbTypeCreateFieldsAndParams: any = {
 }
 
 // obj is set or where
-const createFieldsAndParams = (db_type: string, obj: any, setDataLength: number, feature: string, reqKey: string) => {
+const createFieldsAndParams = (db_type: string, obj: any, beforeObjLength: number, feature: string, reqKey: string) => {
     try {
         console.log('- createFieldsAndParams : ', obj, feature, reqKey);
 
         const dataToFix = {
-            obj, feature, reqKey
+            obj, beforeObjLength, feature, reqKey
         }
 
         const fixedData = dbTypeCreateFieldsAndParams[db_type](dataToFix);

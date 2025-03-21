@@ -11,7 +11,7 @@
     "preset": "ts-jest",
     "testEnvironment": "node",
     "testMatch": [
-      "**/src/Testing/Store/**/PostgreSQL/*.test.ts"
+      "**/src/Testing/Store/**/MySQL/success/*.test.ts"
     ],
     "moduleFileExtensions": [
       "ts",
@@ -32,7 +32,8 @@
       "^@Helper/(.*)$": "<rootDir>/src/Helper/$1",
       "^@Configs/(.*)$": "<rootDir>/Configs/$1",
       "^@Store/(.*)$": "<rootDir>/src/Store/$1",
-      "^@Testing/(.*)$": "<rootDir>/src/Testing/$1"
+      "^@Testing/(.*)$": "<rootDir>/src/Testing/$1",
+      "^@SRC/(.*)$": "<rootDir>/src/$1"
     }
   },
   "keywords": [],

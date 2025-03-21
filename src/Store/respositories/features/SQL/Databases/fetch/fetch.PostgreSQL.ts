@@ -30,13 +30,23 @@ const IsGetSomeRow = (where: any) => where && where.includes('$');
  */
 export const FetchQueryForPostgreSQL = (data: any) => {
     try {
+        console.log('FetchQueryForPostgreSQL (data) : ', data);
+
         const { store, field_list, where, limit, params } = data;
+
+        // const cmd = where === undefined ? // Get all row
+        //     `SELECT ${field_list} FROM ${store} ${LimitFeature(limit)};`
+        //     : IsGetLastRow(where) ? // Get the last row
+        //         `SELECT ${field_list} FROM ${store} ${where} ${LimitFeature(limit)};`
+        //         : IsGetSomeRow(where) ?// Get some row
+        //             `SELECT ${field_list} FROM ${store} WHERE ${where} ${LimitFeature(limit)};`
+        //             : 'Not match';
 
         const cmd = where === undefined ? // Get all row
             `SELECT ${field_list} FROM ${store} ${LimitFeature(limit)};`
             : IsGetLastRow(where) ? // Get the last row
                 `SELECT ${field_list} FROM ${store} ${where} ${LimitFeature(limit)};`
-                : IsGetSomeRow(where) ?// Get some row
+                : IsGetSomeRow(where) || where.includes('IS NULL') ?// Get some row
                     `SELECT ${field_list} FROM ${store} WHERE ${where} ${LimitFeature(limit)};`
                     : 'Not match';
 

@@ -182,7 +182,7 @@ export const ValidateFieldsAndType = async (tableDataStructure: any[], data: any
     try {
         let isValid = true;
         console.log('> ValidateFieldsAndType (tableDataStructure): ', tableDataStructure);
-        console.log('> ValidateFieldsAndType (data): ', data);
+        console.log('> ValidateFieldsAndType (data)(1): ', data);
 
         if (data.where && isString(data.where)) {
             const dataFromCheckForFetchLastRow = await CheckForFetchLastRow(data.where);
@@ -202,16 +202,25 @@ export const ValidateFieldsAndType = async (tableDataStructure: any[], data: any
             console.log('* ValidateFieldsAndType (current data):', data);
         }
 
-        delete data['where'];
+        // delete data['where'];
+        console.log('> ValidateFieldsAndType (data)(2): ', data);
 
         if (isArray(data.set)) {
             data.set.forEach((obj: any) => {
-                isValid = StartCheckFieldAndType(isValid, tableDataStructure, obj);
+                isValid = StartCheckFieldAndType(isValid, tableDataStructure, obj, "set");
             });
-        } else if (isObject(data.set)) {
-            isValid = StartCheckFieldAndType(isValid, tableDataStructure, data.set);
+        } else if (isObject(data?.set) || isObject(data?.where)) {
+            console.log('> ValidateFieldsAndType (Object): isObject(data.set) || isObject(data.where)');
+            if (data.set) {
+                isValid = StartCheckFieldAndType(isValid, tableDataStructure, data.set, "set");
+            }
+
+            if (data.where) {
+                isValid = StartCheckFieldAndType(isValid, tableDataStructure, data.where, "where");
+            }
         } else {
             console.log('* ValidateFieldsAndType (data.set is not object or array):', data.set);
+            // throw { kind: 'invalid_data_type' };
         }
 
         return isValid;
@@ -223,12 +232,16 @@ export const ValidateFieldsAndType = async (tableDataStructure: any[], data: any
 
 
 // obj is set or where
-const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: any) => {
+const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: any, reqKey: string) => {
+    console.log('* StartCheckFieldAndType (obj):', isValid, obj);
+
+    // if (obj === undefined) return true;
+
     for (const [dataKey, dataValue] of Object.entries(obj)) {
-        console.log('* ValidateFieldsAndType (loop data):', dataKey, dataValue);
+        console.log('* StartCheckFieldAndType (loop data):', dataKey, dataValue);
 
         const matchingField = tableDataStructure.find((tableData: any) => tableData.field === dataKey);
-        console.log('* ValidateFieldsAndType (matchingField):', matchingField);
+        console.log('* StartCheckFieldAndType (matchingField):', matchingField);
 
         if (!matchingField) {
             console.error(`* Field '${dataKey}' not found in store.`);
@@ -237,10 +250,16 @@ const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: 
 
         // Fields type
         const fieldType = matchingField.type.split('(')[0];
+        console.log('* StartCheckFieldAndType (fieldType):', fieldType);
 
         if (Array.isArray(dataValue)) {
+            if (reqKey === "set") return false;
+
             console.log('For array data type: ', dataKey, dataValue);
-            isValid = true;
+            const hasObject = dataValue.some(item => typeof item === "object" && isObject(item));
+            console.log('StartCheckFieldAndType (hasObject):', hasObject);
+
+            isValid = hasObject ? false : true;
             continue;
         }
 
@@ -255,6 +274,7 @@ const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: 
             throw { kind: 'invalid_data_type' };
         }
 
+        console.log("End StartCheckFieldAndType : ", isValid, dataKey, dataValue);
         isValid = true;
     }
 

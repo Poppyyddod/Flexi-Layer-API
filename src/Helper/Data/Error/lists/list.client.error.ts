@@ -228,7 +228,7 @@ export const clientError: ClientErrorModel = {
 
     'route_is_not_valid': {
         more: {
-            message: "Route is not valid !",
+            message: "Route is invalid !",
             read_me: "Please make sure the route on client side."
         },
 
@@ -313,7 +313,7 @@ export const clientError: ClientErrorModel = {
 
     'invalid_data_type': {
         more: {
-            message: 'Invalid request data type !!',
+            message: 'Invalid request data type!',
             read_me: 'Please check the request field data type in `set` and `where` keys.'
         },
 

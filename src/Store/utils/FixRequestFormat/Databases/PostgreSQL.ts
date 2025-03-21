@@ -1,9 +1,14 @@
+import { isObject } from "@SRC/Helper/Utils";
+
 export const FixPostgreSQLRequestFormat = (dataToFix: any) => {
     try {
-        const { obj, feature, reqKey } = dataToFix;
+        console.log("FixPostgreSQLRequestFormat (dataToFix) : ", dataToFix);
+        const { obj, feature, beforeObjLength, reqKey } = dataToFix;
 
         const fields: string[] = [];
         const fieldValues: any[] = [];
+        let placeholderIndex = beforeObjLength !== 0 && reqKey === "where" ? beforeObjLength + 1 : 1;
+        console.log("FixPostgreSQLRequestFormat (start from)(placeholderIndex) : ", placeholderIndex);
 
         // หาก obj เป็น Array
         if (Array.isArray(obj)) {
@@ -11,7 +16,7 @@ export const FixPostgreSQLRequestFormat = (dataToFix: any) => {
 
             // สร้าง placeholders สำหรับหลายๆ แถว
             const placeholders = obj
-                .map(() => `(${keys.map((_, idx) => `$${idx + 1}`).join(', ')})`)
+                .map(() => `(${keys.map((_, idx) => `$${placeholderIndex++}`).join(', ')})`)
                 .join(', ');
             const fieldValues = obj.flatMap((theObj: any) =>
                 keys.map((key) => theObj[key])
@@ -19,13 +24,13 @@ export const FixPostgreSQLRequestFormat = (dataToFix: any) => {
 
             // สำหรับ insert
             if (feature === "insert") {
-                const queryString = `INSERT INTO table_name (${keys.join(', ')}) VALUES ${placeholders}`;
+                const queryString = `(${keys.join(', ')}) VALUES ${placeholders}`;
                 return { fields: queryString, params: fieldValues };
             }
 
             // สำหรับ select
             if (feature === "select") {
-                const queryString = `SELECT * FROM table_name WHERE ${keys
+                const queryString = `${keys
                     .map((key, idx) => `${key} = $${idx + 1}`)
                     .join(' AND ')}`;
                 return { fields: queryString, params: fieldValues };
@@ -33,9 +38,9 @@ export const FixPostgreSQLRequestFormat = (dataToFix: any) => {
 
             // สำหรับ update
             if (feature === "update") {
-                const queryString = `UPDATE table_name SET ${keys
-                    .map((key, idx) => `${key} = $${idx + 1}`)
-                    .join(', ')} WHERE some_condition`; // คุณสามารถแทนที่ `some_condition` ด้วยเงื่อนไขที่ต้องการ
+                const queryString = `${keys
+                    .map((key, idx) => `${key} = $${placeholderIndex++}`)
+                    .join(', ')}`; // คุณสามารถแทนที่ `some_condition` ด้วยเงื่อนไขที่ต้องการ
                 return { fields: queryString, params: fieldValues };
             }
 
@@ -46,50 +51,89 @@ export const FixPostgreSQLRequestFormat = (dataToFix: any) => {
                     .join(' AND ')}`;
                 return { fields: queryString, params: fieldValues };
             }
-        } else { // หาก obj เป็น Object เดียว
-            // แยกกรณีของ `feature`
-            Object.entries(obj).forEach(([key, value], idx) => {
-                if (Array.isArray(value)) {
-                    console.log("* Array Field Value : ", key, value);
-                    const placeholders = value
-                        .map((_, i) => `$${i + 1 + idx}`).join(', ');
-                    fields.push(`${key} IN (${placeholders})`);
-                    fieldValues.push(...value);
+        } else if (isObject(obj)) { // หาก obj เป็น Object เดียว
+            console.log("FixPostgreSQLRequestFormat (Object)(obj) : ", obj);
+
+            Object.entries(obj).forEach(([key, value]) => {
+                if (value === null) {
+                    fields.push(`${key} IS NULL`);
+                } else if (Array.isArray(value)) {
+                    if (value.includes(null)) {
+                        fields.push(`${key} IS NULL`);
+                    } else {
+                        const placeholders = value.map((item) => {
+                            // if (isObject(item)) {
+                            //     throw { kind: 'invalid_data_type' };
+                            // }
+
+                            return `$${placeholderIndex++}`;
+                        }).join(', ');
+                        fields.push(`${key} IN (${placeholders})`);
+                        fieldValues.push(...value);
+                    }
                 } else {
-                    fields.push(feature === "insert" && key ? key : `${key} = $${idx + 1}`);
+                    fields.push(feature === "insert" ? key : `${key} = $${placeholderIndex++}`);
                     fieldValues.push(value);
                 }
             });
 
             // สำหรับ insert
             if (feature === "insert") {
-                const queryString = `${fields.join(', ')}) VALUES (${fields
-                    .map((_, idx) => `$${idx + 1}`).join(', ')}`;
+                console.log("* fields (Object)(insert): ", fields);
+                const queryString = `(${fields.join(', ')}) VALUES (${fields
+                    .map((_, idx) => `$${idx + 1}`).join(', ')})`;
                 return { fields: queryString, params: fieldValues };
             }
 
             // สำหรับ select
             if (feature === "select") {
+                console.log("* fields (select): ", fields);
+
                 const queryString = `${fields
-                    .map((field, idx) => `${field} = $${idx + 1}`)
+                    .map((field, idx) => field)
                     .join(' AND ')}`;
+
+                console.log("* queryString (select): ", queryString);
                 return { fields: queryString, params: fieldValues };
             }
 
             // สำหรับ update
             if (feature === "update") {
+                console.log("* fields (update): ", fields);
+
                 const queryString = `${fields
-                    .map((field, idx) => `${field} = $${idx + 1}`)
-                    .join(', ')}`; // เช่นกัน, `some_condition` ควรแทนที่ด้วยเงื่อนไขที่คุณต้องการ
+                    .map((field, idx) => field)
+                    .join(', ')}`;
+
+                console.log("* queryString (update): ", queryString);
                 return { fields: queryString, params: fieldValues };
             }
 
             // สำหรับ delete
             if (feature === "delete") {
+                console.log("* fields (delete): ", fields);
+
                 const queryString = `${fields
-                    .map((_, idx) => `${fields[idx]} = $${idx + 1}`)
+                    .map((field, idx) => field)
                     .join(' AND ')}`;
+
+                console.log("* queryString (delete): ", queryString);
                 return { fields: queryString, params: fieldValues };
+            }
+        } else {
+            console.log("FixPostgreSQLRequestFormat (else)(obj) : ", obj);
+            if (obj.includes(":LAST")) {
+                const splitedObj = obj.split(":");
+
+                if (splitedObj.length != 2) throw { kind: "incomplete_request" };
+
+                // const queryString = `${splitedObj[0]} ORDER BY ${splitedObj[0]} DESC`;
+                const queryString = `${splitedObj[0]} ORDER BY ${splitedObj[0]} DESC`;
+                // const params = []
+                return {
+                    fields: queryString,
+                    params: []
+                }
             }
         }
 

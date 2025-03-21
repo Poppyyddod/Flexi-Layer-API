@@ -13,13 +13,13 @@ import { listCmdType } from "./list.cmd.type";
  * @throws {Error}
  */
 
-export const CheckResponsePosgreSqlData = async (params: any, sqlData: any, isReturn: boolean): Promise<any> => {
+export const CheckResponsePosgreSqlData = async (cmd: string, params: any, sqlData: any, isReturn: boolean): Promise<any> => {
     try {
-        // console.log('CheckResponsePosgreSqlData : ', params.length);
+        console.log('CheckResponsePosgreSqlData : ', params.length);
 
         const notFoundData = {
             first: listCmdType.affect.includes(sqlData.command) && 'rowCount' in sqlData && sqlData.rowCount === 0,
-            second: listCmdType.affect_data.includes(sqlData.command) && params.length > 0 && 'rowCount' in sqlData && sqlData.rowCount === 0
+            second: listCmdType.affect_data.includes(sqlData.command) && (params.length > 0 || cmd.includes('IS NULL')) && 'rowCount' in sqlData && sqlData.rowCount === 0
         };
         // console.log('CheckResponsePosgreSqlData (notFoundData) : ', notFoundData);
 
