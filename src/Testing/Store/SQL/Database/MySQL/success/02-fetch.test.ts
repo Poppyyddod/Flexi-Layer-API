@@ -13,11 +13,18 @@ const dbBrand = 'mysql';
  * End Header
  */
 
+let originalLog: any;
+
 beforeAll(async () => {
+    originalLog = console.log;
+    console.log = jest.fn(); // ปิด console.log
+
     if (server) {
         await server.close();
+    } else {
+        await server.connect();
     }
-})
+});
 
 /**
  * @Fetch `all row` & `all column` + limit(1)

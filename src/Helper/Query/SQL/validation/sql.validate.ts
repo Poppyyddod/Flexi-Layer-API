@@ -249,27 +249,31 @@ const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: 
         }
 
         // Fields type
-        const fieldType = matchingField.type.split('(')[0];
-        console.log('* StartCheckFieldAndType (fieldType):', fieldType);
+        const dataType = matchingField.type.split('(')[0];
+        console.log('* StartCheckFieldAndType (dataType):', dataType);
+
+        CheckerManFieldAndKey(dataValue, reqKey);
 
         if (Array.isArray(dataValue)) {
             if (reqKey === "set") return false;
 
             console.log('For array data type: ', dataKey, dataValue);
+
             const hasObject = dataValue.some(item => typeof item === "object" && isObject(item));
             console.log('StartCheckFieldAndType (hasObject):', hasObject);
 
             isValid = hasObject ? false : true;
+            // isValid = true;
             continue;
         }
 
         // Check the expected type
-        if (sqlNumberType.includes(fieldType) && typeof dataValue !== 'number') {
+        if (sqlNumberType.includes(dataType) && typeof dataValue !== 'number') {
             console.log('Invalid number for field:', dataKey);
             throw { kind: 'invalid_data_type' };
         }
 
-        if (sqlStringType.includes(fieldType) && typeof dataValue !== 'string') {
+        if (sqlStringType.includes(dataType) && typeof dataValue !== 'string') {
             console.log('Invalid string for field:', dataKey);
             throw { kind: 'invalid_data_type' };
         }
@@ -279,4 +283,23 @@ const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: 
     }
 
     return isValid;
+}
+
+
+const CheckerManFieldAndKey = (dataValue: any, reqKey: string) => {
+    console.log('> CheckerFieldAndKey (dataValue):', dataValue, reqKey);
+
+    // Set field value is array
+    if (Array.isArray(dataValue) && reqKey === "set") {
+        console.log("[Error][CheckerFieldAndKey] Set field value is array");
+        throw { kind: 'invalid_data_type' };
+    }
+
+    // Where has object type in the field array value
+    if (Array.isArray(dataValue) && reqKey === "where") {
+        console.log("[Error][CheckerFieldAndKey] Where has object type in the field array value");
+        dataValue.forEach((item: any) => {
+            if (isObject(item)) throw { kind: 'invalid_data_type' };
+        })
+    }
 }

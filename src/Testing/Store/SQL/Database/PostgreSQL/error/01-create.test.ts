@@ -273,5 +273,43 @@ tester(`Test ${dbBrand}/Store/${feature}`, () => {
         expect(obj.message).toBe("Invalid request data type!");
     });
 });
+
+/**
+ * @Create error #Invalid request data type (For create one row)
+ */
+
+tester(`Test ${dbBrand}/Store/${feature}`, () => {
+    it("(One) should return error message 'Invalid request data type!' & status code is '400'", async () => {
+        const bodyData = {
+            db_type: dbBrand,
+            store_code: "testing_table",
+            set: [
+                {
+                    string_field: [{ id: 1 }],
+                    timestamp_field: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+                    boolean_field: true
+                },
+                {
+                    string_field: `Success testing`,
+                    number_field: 1,
+                    timestamp_field: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+                    boolean_field: true
+                }
+            ]
+        }
+
+        const response: any = await request(server).post(TestStoreRoute[feature])
+            .set('x_z_token', `${process.env.TESTING_TOKEN}`)
+            .send(bodyData);
+
+        // console.log(`# [RESULT] : Store/${dbBrand}/${${feature} : `, response);
+        expect(response.status).toBe(400);
+
+        const obj: CreateSuccessDataResponseHttp = await response.body;
+        console.log(`# [OBJECT] : Store/${dbBrand}/${feature} : `, obj);
+
+        expect(obj.message).toBe("Invalid request data type!");
+    });
+});
 //#endregion
 

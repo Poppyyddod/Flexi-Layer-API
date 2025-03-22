@@ -30,6 +30,7 @@ const GetPrimaryKeyFieldName = async (data: any) => {
  */
 export const CreateQueryForMySQL = async (data: any) => {
     try {
+        console.log('CreateQueryForMySQL (data) : ', data);
         const { SQLmanagement, set, params, store, db_type } = data;
 
         const insertCMD = `INSERT INTO ?? ${set}`;
@@ -38,7 +39,11 @@ export const CreateQueryForMySQL = async (data: any) => {
 
         const primaryKeyData = await GetPrimaryKeyFieldName(data);
 
-        const selectCMD = `SELECT * FROM ?? WHERE ${primaryKeyData[0]?.COLUMN_NAME} = ?`;
+        // const selectCMD = `SELECT * FROM ?? WHERE ${primaryKeyData[0]?.COLUMN_NAME} = ?`;
+        const splitedValuesFromString = insertCMD.split('VALUES ');
+        const lengthParamsForLimit = splitedValuesFromString[1].split('(').length - 1;
+
+        const selectCMD = `SELECT * FROM ?? ${primaryKeyData[0]?.COLUMN_NAME} ORDER BY ${primaryKeyData[0]?.COLUMN_NAME} DESC LIMIT ${lengthParamsForLimit}`;
         const newData = await SQLmanagement(db_type, { cmd: selectCMD, params: [store, newRecord.insertId], isReturn: true });
         console.log('CreateStoreRespo (new record data): ', newData);
 
