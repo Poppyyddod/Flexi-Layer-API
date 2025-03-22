@@ -2,11 +2,18 @@ import { EditSuccessDataResponseHttp } from '@Testing/tester.model';
 import { TestStoreRoute, server, request } from '@Testing/tester.config';
 import { format } from 'date-fns';
 
+let originalLog: any;
+
 beforeAll(async () => {
+    originalLog = console.log;
+    console.log = jest.fn(); // ปิด console.log
+
     if (server) {
         await server.close();
+    } else {
+        await server.connect();
     }
-})
+});
 
 const dbBrand = 'mysql';
 const feature = 'edit';
