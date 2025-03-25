@@ -13,8 +13,8 @@ const storeRoutes = (app: Router) => {
 
     app.post('/store/fetch', JwtVerifyToken, storeController);
     app.post('/store/create', JwtVerifyToken, storeController);
-    app.patch('/store/edit', JwtVerifyToken, storeController);
-    app.delete('/store/delete', JwtVerifyToken, storeController);
+    app.post('/store/edit', JwtVerifyToken, storeController);
+    app.post('/store/delete', JwtVerifyToken, storeController);
 
     return app;
 }
