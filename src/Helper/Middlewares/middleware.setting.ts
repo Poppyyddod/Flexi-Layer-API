@@ -1,3 +1,3 @@
 
 // Use Authentication (JWT)
-export const useAuthToken = false;
+export const useAuthToken = true;
