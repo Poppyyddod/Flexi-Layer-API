@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
     await mongodb.testConnection();
 })();
 
-app.use(`/${apiVersion}}`, GuiderRoutes(router));
+app.use(`/${apiVersion}`, GuiderRoutes(router));
 app.set('json spaces', 2);
 
 app.get('/flexi-layer-api', (req: any, res: any) => {
