@@ -20,23 +20,20 @@ export const CreateNosqlStoreRespo = (helper: any) => async (validRequestData: a
             }
         }
 
-        await mongodb.client.connect();
+        await mongodb.testConnection();
+
+        const db = mongodb.client.db(process.env.MONGODB_DATABASE);
 
         const insertThisData = isArray(set) ? set : [set];
 
         console.log('CreateNosqlStoreRespo (insertThisData) : ', insertThisData);
-        const result = await mongodb.db.collection(store).insertMany(insertThisData);
+        const result = await db.collection(store).insertMany(insertThisData);
 
-        if (!result.acknowledged) {
-            await mongodb.client.close();
-            throw { kind: 'mongodb_query_failed' };
-        }
+        if (!result.acknowledged) throw { kind: 'mongodb_query_failed' };
 
-        const insertedData = await mongodb.db.collection(store)
+        const insertedData = await db.collection(store)
             .find({ _id: { $in: Object.values(result.insertedIds) } })
             .toArray();
-
-        await mongodb.client.close();
 
         console.log('CreateNosqlStoreRespo (insertedData) : ', insertedData);
 

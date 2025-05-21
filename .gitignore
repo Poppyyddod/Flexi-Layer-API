@@ -1,6 +1,9 @@
 # Ignore ไฟล์ทั้งหมดที่เป็น log
 *.log
 
+# Ignore ไฟล์ทั้งหมดที่เป็น pem
+*.pem
+
 # Ignore ไฟล์ .log ใน src/Store/logs/
 # src/Store/logs/*.log
 

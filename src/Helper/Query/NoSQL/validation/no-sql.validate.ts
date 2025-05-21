@@ -4,25 +4,50 @@ import { noSqlSupporterList } from "@Helper/Data/Center/list/list.nosql-supporte
 
 
 
+// export const ValidateCollectionMapper = async (db_type: string, store_code: string) => {
+//     try {
+//         console.log('ValidateCollectionMapper :', db_type, store_code);
+
+//         await mongodb.client.connect();
+
+//         const collectionsFromMongoDB = await mongodb.db.listCollections().toArray();
+
+//         const collections = collectionsFromMongoDB.map((collection: any) => collection.name);
+//         console.log('ValidateCollectionMapper (collections) :', collections);
+
+//         const theCollectionIndex = collections.indexOf(store_code);
+//         console.log('ValidateCollecetionMapper (theCollectionIndex) :', theCollectionIndex);
+
+//         if (theCollectionIndex !== -1) {
+//             const theCollection = collections[theCollectionIndex];
+
+//             return theCollection;
+//         }
+
+//         throw { kind: 'invalid_store_code' };
+//     } catch (error) {
+//         console.log('ValidateCollectionMapper (Error):', error);
+//         throw error;
+//     }
+// }
+
 export const ValidateCollectionMapper = async (db_type: string, store_code: string) => {
     try {
         console.log('ValidateCollectionMapper :', db_type, store_code);
 
-        await mongodb.client?.connect();
+        await mongodb.testConnection();
 
-        const collectionsFromMongoDB = await mongodb.db?.listCollections().toArray();
-        await mongodb.client?.close();
+        const db = mongodb.client.db(process.env.MONGODB_DATABASE);
+        const collectionsFromMongoDB = await db.listCollections().toArray();
 
-        const collections = collectionsFromMongoDB?.map((collection: any) => collection.name);
+        const collections = collectionsFromMongoDB.map((collection: any) => collection.name);
         console.log('ValidateCollectionMapper (collections) :', collections);
 
-        const theCollectionIndex = collections?.indexOf(store_code);
+        const theCollectionIndex = collections.indexOf(store_code);
         console.log('ValidateCollecetionMapper (theCollectionIndex) :', theCollectionIndex);
 
         if (theCollectionIndex !== -1) {
-            const theCollection = collections?.[theCollectionIndex];
-
-            return theCollection;
+            return collections[theCollectionIndex];
         }
 
         throw { kind: 'invalid_store_code' };
@@ -31,6 +56,7 @@ export const ValidateCollectionMapper = async (db_type: string, store_code: stri
         throw error;
     }
 }
+
 
 
 export const ValidateNosqlSupporter = async (noSqlSupporterRequestData: any, feature: string) => {

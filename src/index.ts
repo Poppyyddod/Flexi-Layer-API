@@ -5,9 +5,13 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import GuiderRoutes from '@Helper/Routes';
 import { mongodb } from '@Configs/Database';
+import { RunHttpsMiddleware } from './Helper/Middlewares/runner.https';
+import { RunHttpMiddleware } from './Helper/Middlewares/runner.http';
 
 const app = express();
-const PORT = process.env.SERVER_PORT;
+const HTTP_PORT = process.env.HTTP_SERVER_PORT;
+const HTTPS_PORT = process.env.HTTPS_SERVER_PORT;
+const HOSTNAME = process.env.HOST;
 const apiVersion = "v2.0.0";
 const router = express.Router();
 
@@ -27,11 +31,11 @@ app.get('/flexi-layer-api', (req: any, res: any) => {
     res.json({ message: "Welcome to Flexi Layer API!!" });
 });
 
-const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+const httpsServer = RunHttpsMiddleware(app, HOSTNAME, HTTPS_PORT);
+
+const httpServer = RunHttpMiddleware(app, HOSTNAME, HTTP_PORT);
 
 // Test fetch origin and pull it
 
-export default server as any;
+export default httpServer as any;
 

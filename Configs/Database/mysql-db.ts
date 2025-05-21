@@ -20,6 +20,7 @@ if (supportForDbTypes.mysql.connect_state) {
 
     connection = mysql.createPool({
         host: HOST,
+        // host: "localhost", // <- delete it later
         user: MYSQL_USER,
         password: MYSQL_PASSWORD,
         database: MYSQL_DATABASE,

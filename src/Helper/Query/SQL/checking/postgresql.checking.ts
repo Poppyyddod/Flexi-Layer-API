@@ -24,7 +24,11 @@ export const CheckResponsePosgreSqlData = async (cmd: string, params: any, sqlDa
         // console.log('CheckResponsePosgreSqlData (notFoundData) : ', notFoundData);
 
         if (notFoundData.first || notFoundData.second) {
-            throw { kind: 'not_found_data' };
+            if (params.includes("user_privacy")) {
+                throw { kind: 'incorrect_password' };
+            } else {
+                throw { kind: 'not_found_data' };
+            }
         }
 
         if (listCmdType.data.includes(sqlData.command)) {

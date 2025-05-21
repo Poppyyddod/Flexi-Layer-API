@@ -12,6 +12,7 @@ let client;
 if (supportForDbTypes.postgresql.connect_state) {
     client = new Client({
         host: HOST,
+        // host: "localhost", // <- delete it later
         port: Number(PGSQL_PORT),
         user: PGSQL_USER,
         password: PGSQL_PASSWORD,

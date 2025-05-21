@@ -9,10 +9,10 @@ export const DeleteNosqlStoreRespo = (helper: any) => async (validRequestData: a
         console.log('DeleteNosqlStoreRespo : ', validRequestData);
         const { store, where } = validRequestData;
 
-        await mongodb.client.connect();
+        await mongodb.testConnection();
+        const db = mongodb.client.db(process.env.MONGODB_DATABASE);
 
-        const result = await mongodb.db.collection(store).deleteMany(where);
-        await mongodb.client.close();
+        const result = await db.collection(store).deleteMany(where);
 
         if (!result.acknowledged) {
             throw { kind: 'mongodb_query_failed' };

@@ -26,7 +26,11 @@ export const CheckResponseMySqlData = async (cmd: string, params: any, sqlData: 
         // console.log('notFoundData : ', notFoundData);
 
         if (notFoundData.first || notFoundData.second) {
-            throw { kind: 'not_found_data' };
+            if (params.includes("user_privacy")) {
+                throw { kind: 'incorrect_password' };
+            } else {
+                throw { kind: 'not_found_data' };
+            }
         }
 
         if (Array.isArray(sqlData) && sqlData.length === 0) {
