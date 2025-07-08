@@ -1,0 +1,28 @@
+# Ignore all log file
+*.log
+
+# Ignore All .pem file
+*.pem
+
+# Ignore node_modules folder
+node_modules/
+
+# Ignore .env file
+.env
+.env.development
+.env.production
+
+# Ignore dist folder
+dist/
+
+# Ignore build folder
+build/
+
+# Ignore start with temp
+temp*
+
+# Ignore File has created from IDE or editor such as VS Code
+.vscode/
+
+# Ignore OS such as .DS_Store (macOS)
+.DS_Store

@@ -1,0 +1,28 @@
+# Project environment
+NODE_ENV=#environment
+
+# Server port
+HTTP_PORT=#port_number
+HTTPS_PORT=#port_number
+
+# Hostname
+HOST=#hostname
+
+# MySQL username
+MYSQL_USER=#username
+# MySQL password
+MYSQL_PASSWORD=#password
+# MySQL database name
+MYSQL_DATABASE=#database_name
+# MySQL/Tables
+MYSQL_STORE_MAPPING="
+#table_name:table_name,
+..."
+
+# JWT
+SECRET_KEY=#access
+REFRESH_KEY=#refresh
+
+# Discord
+DISCORD_BOT_TOKEN=#BOT_TOKEN
+DISCORD_CHANNEL_ID=#CHANNEL_ID

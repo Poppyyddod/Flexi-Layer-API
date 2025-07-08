@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "dist",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@SRC/*": [
+        "src/*"
+      ],
+      "@Helper/*": [
+        "src/Helper/*"
+      ],
+      "@Configs/*": [
+        "Configs/*"
+      ],
+      "@Store/*": [
+        "src/Store/*"
+      ],
+      "@Testing/*": [
+        "src/Testing/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "Configs/**/*",
+    "env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

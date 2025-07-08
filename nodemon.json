@@ -1,0 +1,14 @@
+{
+    "watch": [
+        "src",
+        "Configs",
+        ".env",
+        ".env.development",
+        ".env.production"
+    ],
+    "ext": "ts,json",
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "exec": "ts-node -r tsconfig-paths/register -r module-alias/register src/index.ts"
+}
