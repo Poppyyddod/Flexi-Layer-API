@@ -2,7 +2,6 @@
 import { StoreMapping } from '@Store/utils';
 import { StartValidateSqlRequestDataStructure } from '@Helper/Query/SQL';
 import { FromControllerRequestDataModel } from '@Store/models/store.service.model';
-import { StartValidateNoSqlRequestDataStructure } from '@Helper/Query/NoSQL/no-sql.management';
 import { isArray, isObject, isString } from '@Helper/Utils';
 import { ValidateTableMapper } from '@Helper/Query/SQL/validation';
 

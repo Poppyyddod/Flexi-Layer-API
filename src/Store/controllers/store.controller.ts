@@ -6,7 +6,10 @@ import { ControllerMethodRouteKeys } from '@Store/models/store.controller.model'
 import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
 import { isArray, isObject } from '@Helper/Utils';
 import { useAuthToken } from '@SRC/Helper/Middlewares/middleware.setting';
+import { loadEnvConfig } from '@Configs/env';
+import { sendDiscordWebhook } from '@SRC/Helper/Supplier';
 
+const RAW_ENV = loadEnvConfig();
 
 /**
  * @functions

@@ -1,5 +1,8 @@
+import { sendDiscordWebhook } from "@SRC/Helper/Supplier";
 import { serverError } from "../lists/list.server.error";
+import { loadEnvConfig } from "@Configs/env";
 
+const RAW_ENV = loadEnvConfig();
 
 
 /**
@@ -38,12 +41,17 @@ const ServerSideError = (Logger: any) => async (err: any, res: any, system: any)
         }
 
         if (!hasServerError) {
-            Logger('Store', 'error', {
+            const errorData = {
                 message: err.message,
                 system: systemName,
                 feature: feature,
                 status: 500
-            });
+            };
+
+            Logger('Store', 'error', errorData);
+
+            if (RAW_ENV.NODE_ENV === 'production')
+                await sendDiscordWebhook('error', JSON.stringify({err, system}));
 
             return res.status(500).json({
                 message: `Some error (${err.functionName})`,
@@ -58,6 +66,9 @@ const ServerSideError = (Logger: any) => async (err: any, res: any, system: any)
             feature: feature,
             status: code
         });
+
+        if (RAW_ENV.NODE_ENV === 'production')
+            await sendDiscordWebhook('error', JSON.stringify(hasServerError));
 
         console.log('Server error: ', hasServerError);
         return res.status(code).json(more);

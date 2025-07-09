@@ -13,6 +13,7 @@ const RAW_ENV = loadEnvConfig();
 import GuiderRoutes from '@Helper/Routes';
 import { RunHttpsMiddleware } from './Helper/Middlewares/runner.https';
 import { RunHttpMiddleware } from './Helper/Middlewares/runner.http';
+import { sendDiscordWebhook } from './Helper/Supplier';
 
 const app = express();
 const router = express.Router();
@@ -37,5 +38,13 @@ console.log(`\x1b[33m[!][SERVER] Server State :
 
 const httpsServer = RunHttpsMiddleware(app, RAW_ENV.HOST, RAW_ENV.HTTPS_PORT);
 const httpServer = RunHttpMiddleware(app, RAW_ENV.HOST, RAW_ENV.HTTP_PORT);
+
+// // Test Discord Messager
+// (async () => {
+//     await sendDiscordWebhook(
+//         "signup",
+//         '[Professional101] Test Webhook Message 🚀'
+//     );
+// })();
 
 export default httpServer;

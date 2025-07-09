@@ -1,4 +1,3 @@
-import Supplier from '@Helper/Supplier';
 import StoreRespository from '@Store/respositories';
 import { FixRequestFormat, FixWhereRequestFormat } from '@Store/utils';
 import { CheckTableDataStructure } from '@Store/validation';
@@ -13,7 +12,6 @@ import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.
 
 const SqlHelperFunctions = {
     FixRequestFormat,
-    Supplier,
     // CheckTableDataStructure,
     // StoreRespository
 };
