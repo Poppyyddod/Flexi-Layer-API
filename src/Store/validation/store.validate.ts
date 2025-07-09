@@ -53,11 +53,11 @@ export const CheckTableDataStructure = async (dataFromServiceCenter: FromControl
 
         const { db_type, store_code, feature, set, where, field_list } = dataFromServiceCenter;
 
-        const theStore = await StoreMapping(db_type, store_code);
-        console.log('* Store (Mapped) : ', theStore);
+        const storeCode = await StoreMapping(db_type, store_code);
+        console.log('* Store (Mapped) : ', storeCode);
 
         const dbPositionData = {
-            store: theStore,
+            store: storeCode,
             db_type,
             feature
         };
@@ -82,7 +82,7 @@ export const CheckTableDataStructure = async (dataFromServiceCenter: FromControl
         }
 
         const dataToService = {
-            store: theStore,
+            store: storeCode,
             ...dataFromServiceCenter
         };
 

@@ -1,6 +1,6 @@
 import { SQLmanagementModel } from './sql.model';
 import { ValidateFieldsAndType, ValidateFieldsBeforeInsert } from './validation';
-import { dbTypeSqlManagement } from './mapping/management';
+import { MapSqlQuery } from './sql.mapper.query';
 
 
 
@@ -73,7 +73,7 @@ export const StartValidateSqlRequestDataStructure = async (dbPositionData: any, 
 export const SQLmanagement = async (db_type: string, { cmd, params, isReturn }: SQLmanagementModel): Promise<any> => {
     try {
         console.log("[SQLmanagement] : ", cmd, params, isReturn);
-        const checkReturnSqlData = await dbTypeSqlManagement[db_type]({ cmd, params, isReturn });
+        const checkReturnSqlData = await MapSqlQuery[db_type]({ cmd, params, isReturn });
         console.log('checkingReturn (SQLmanagement) : ', checkReturnSqlData);
 
         return checkReturnSqlData;

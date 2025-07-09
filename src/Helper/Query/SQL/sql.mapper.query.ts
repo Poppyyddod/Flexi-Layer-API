@@ -1,10 +1,10 @@
 import { sql } from "@Configs/Database";
-import { CheckResponseMySqlData, CheckResponsePosgreSqlData } from "../../checking";
+import { CheckResponseMySqlData } from "./checker";
 
 
 
 
-export const dbTypeSqlManagement: any = {
+export const MapSqlQuery: any = {
     mysql: async (data: any) => {
         const [response] = await sql.query(data.cmd, data.params);
         // console.log('SQLmanagement (response) : ', response);

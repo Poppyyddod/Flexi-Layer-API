@@ -36,7 +36,7 @@ if (supportForDbTypes.mysql.connect_state) {
      */
 
     connection.getConnection()
-        .then(() => console.log('* MySQL connected successfully!'))
+        .then(() => console.log('📦 MySQL connected successfully!'))
         .catch((error) => {
             console.error('* (Error): MySQL connection failed:', error);
             process.exit(1);

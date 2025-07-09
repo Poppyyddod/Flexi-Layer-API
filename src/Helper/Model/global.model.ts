@@ -5,6 +5,12 @@ export interface IMyRequestData {
     set?: any
 }
 
+export interface IMySQLTableStructure {
+    field: string;
+    type: string;
+    comment: string;
+}
+
 // export interface IMyDotEnvKey {
 //     NODE_ENV: string
 //     SERVER_PORT: number

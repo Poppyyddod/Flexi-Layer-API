@@ -1,21 +1,23 @@
 {
-  "name": "dynamic_stores",
-  "version": "1.0.0",
-  "description": "",
+  "name": "professor",
+  "version": "1.2.0",
+  "description": "Dynamic API~~",
   "main": "index.js",
   "scripts": {
     "postinstall": "module-alias",
-    "build": "tsc --project tsconfig.json",
-    "dev": "nodemon",
-    "prod": "cross-env NODE_ENV=production node -r module-alias/register dist/src/index.js"
+    "clean": "if exist dist (rmdir /s /q dist) else (echo Folder dist does not exist.)",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "fix-alias-dev": "cross-env NODE_ENV=development node ./scripts/fix-alias.js",
+    "fix-alias-prod": "cross-env NODE_ENV=production node ./scripts/fix-alias.js",
+    "dev": "npm run fix-alias-dev && nodemon",
+    "prod": "npm run fix-alias-prod && cross-env NODE_ENV=production node -r module-alias/register dist/src/index.js"
   },
   "_moduleAliases": {
-    "src": "dist/src",
-    "@SRC": "dist/src",
-    "@Helper": "dist/src/Helper",
-    "@Configs": "dist/Configs",
-    "@Store": "dist/src/Store",
-    "@Testing": "dist/src/Testing"
+    "@SRC": "src",
+    "@Helper": "src/Helper",
+    "@Configs": "Configs",
+    "@Store": "src/Store",
+    "@Testing": "src/Testing"
   },
   "jest": {
     "preset": "ts-jest",

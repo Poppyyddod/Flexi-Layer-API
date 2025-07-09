@@ -9,6 +9,7 @@ import {
 } from '@Helper/Utils';
 import { ObjectId } from 'mongodb';
 import { FixMySQLRequestFormat, FixPostgreSQLRequestFormat } from './FixRequestFormat/Databases';
+import { cachedTables, GetCachedTables, cachedTableStructure, isCacheReady, CacheInitMySqlTableStructure } from '../../Helper/Cache';
 
 
 /**
@@ -18,59 +19,52 @@ import { FixMySQLRequestFormat, FixPostgreSQLRequestFormat } from './FixRequestF
  */
 
 
-const dbTypeMapping: any = {
-    postgresql: async () => {
-        try {
-            const codeToMapping = process.env.POSTGRESQL_STORE_MAPPING || '';
-            return codeToMapping;
-        } catch (error) {
-            console.log('StoreMapping (dbTypeMapping)(PostgreSQL)(Error):', error);
-            throw error;
-        }
-    },
+// const dbTypeMapping: any = {
+//     postgresql: async () => {
+//         try {
+//             const codeToMapping = process.env.POSTGRESQL_STORE_MAPPING || '';
+//             return codeToMapping;
+//         } catch (error) {
+//             console.log('StoreMapping (dbTypeMapping)(PostgreSQL)(Error):', error);
+//             throw error;
+//         }
+//     },
 
-    mysql: async () => {
-        try {
-            const codeToMapping = process.env.MYSQL_STORE_MAPPING || '';
-            return codeToMapping;
-        } catch (error) {
-            console.log('StoreMapping (dbTypeMapping)(MySQL)(Error):', error);
-            throw error;
-        }
-    },
+//     mysql: async () => {
+//         try {
+//             const codeToMapping = process.env.MYSQL_STORE_MAPPING || '';
+//             return codeToMapping;
+//         } catch (error) {
+//             console.log('StoreMapping (dbTypeMapping)(MySQL)(Error):', error);
+//             throw error;
+//         }
+//     },
 
-    mongodb: async () => {
-        try {
-            const codeToMapping = process.env.MONGODB_STORE_MAPPING || '';
-            return codeToMapping;
-        } catch (error) {
-            console.log('StoreMapping (dbTypeMapping)(MongoDB)(Error):', error);
-            throw error;
-        }
-    }
-}
+//     mongodb: async () => {
+//         try {
+//             const codeToMapping = process.env.MONGODB_STORE_MAPPING || '';
+//             return codeToMapping;
+//         } catch (error) {
+//             console.log('StoreMapping (dbTypeMapping)(MongoDB)(Error):', error);
+//             throw error;
+//         }
+//     }
+// }
 
-export const StoreMapping = async (db_type: string, code: string) => {
+
+export const StoreMapping = async (db_type: string, storeCode: string) => {
     try {
-        const codeToMapping = await dbTypeMapping[db_type]();
-        const mapping = await convertStringToJson(codeToMapping);
+        console.log('StoreMapping (db_type):', db_type);
+        console.log('StoreMapping (store):', storeCode);
 
-        console.log('Stores in the ENV:', mapping);
-        // console.log('Code:', code);
-        // console.log('StoreMapping : ', mapping[code]);
+        // console.log('StoreMapping (cachedTables):', gotCachedTables);
+        // console.log('StoreMapping (cachedTableStructure):', cachedTableStructure);
 
-        const trimmedCode = code.trim();
-        // console.log('Trimmed Code:', trimmedCode);
+        const findedStoreCode = cachedTables.find((store: string) => store === storeCode);
+        if (!findedStoreCode) throw { kind: 'invalid_store_code' };
+        console.log('StoreMapping (findedStoreCode) : ', findedStoreCode);
 
-        if (!(trimmedCode in mapping)) {
-            throw { kind: 'invalid_store_code' };
-        }
-
-        const theStore = mapping[trimmedCode];
-        // console.log('StoreMapping : ', theStore);
-        // console.log('CheckStoreLength : ', theStore.length);
-
-        return theStore;
+        return findedStoreCode;
     } catch (error) {
         console.log('StoreMapping (Error):', error);
         throw error;

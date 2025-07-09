@@ -54,7 +54,7 @@ export const ArgonComparePassword = async (password: string, hashedPassword: str
  */
 export const JwtGenerateToken = async (
     userId: string | number,
-    expireTime: "1h" | "1d" | "7d" // เช่น "1h" หรือ 3600
+    expireTime: "1h" | "1d" | "7d"
 ): Promise<string> => {
     try {
         console.log('JwtGenerateToken (parameter) : ', userId);
@@ -69,83 +69,3 @@ export const JwtGenerateToken = async (
         throw error;
     }
 };
-
-
-/**
- * @function JwtGenerateRefreshToken ສຳຫຼັບການສ້າງ Refresh Token ດ້ວຍ JsonWebToken
- * @param userId 
- * @returns 
- */
-export const JwtGenerateRefreshToken = async (userId: string | number) => {
-    try {
-        console.log('JwtGenerateToken (parameter) : ', userId);
-
-        const token = jwt.sign({ userId }, `${process.env.SECRET_KEY}`);
-        console.log('JwtGenerateToken (token) : ', token);
-
-        return token;
-    } catch (error) {
-        console.log('JwtGenerateToken (Error):', error);
-        throw error;
-    }
-}
-
-// export const generateAccessToken = async (userId: any) => {
-//     try {
-//         const expireTime = 60 * 60; // 1 hour in seconds
-
-//         const accessToken = jwt.sign({ userId }, ENV.SECRET_KEY, { expiresIn: '1h' });
-//         return { token: accessToken, expire_time: expireTime };
-//     } catch (error: any) {
-//         console.log('generateToken (utils) : ', error.message);
-//         throw error;
-//     }
-// };
-
-// export const generateRefreshToken = async (userId: any) => {
-//     try {
-//         const expireTime = 24 * 60 * 60; // 1 hour in milliseconds
-//         const refreshToken = jwt.sign({ userId }, ENV.REFRESH_KEY, { expiresIn: '1d' });
-//         // console.log(refreshToken);
-
-//         return { token: refreshToken, expire_time: expireTime };
-//     } catch (error: any) {
-//         console.log('generateToken (utils) : ', error.message);
-//         // return null;
-//         throw error;
-//     }
-// }
-
-// export const ExpireCaculator = (expireTime: number) => {
-//     const now = new Date();
-//     const expirationDate = new Date(now.getTime() + expireTime * 1000);
-//     console.log("Expiration Date:", expirationDate);
-
-//     return expirationDate;
-// }
-
-// /**
-//  * @function SetCookieForJwtToken ສຳຫຼັບການສ້າງ Cookie ເພື່ອເກັບ Token
-//  * @param res 
-//  * @param token 
-//  */
-// export const SetCookieForJwtToken = async (res: any, token: string) => {
-//     try {
-//         console.log('SetCookieForJwtToken (token) : ', token);
-
-//         const expiryDate = new Date(9999, 0, 1);
-
-//         await res.cookie('jwt_token', token, {
-//             httpOnly: true,
-//             secure: true,
-//             expires: expiryDate,
-//         });
-
-//         const cookie = res.getHeaders()['set-cookie'];
-
-//         console.log('SetCookieForJwtToken (cookies): ', cookie);
-//     } catch (error) {
-//         console.log('SetCookieForJwtToken (Error):', error);
-//         throw error;
-//     }
-// }
