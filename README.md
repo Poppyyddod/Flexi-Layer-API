@@ -34,10 +34,6 @@ MYSQL_STORE_MAPPING="
 # JWT
 SECRET_KEY=#access
 REFRESH_KEY=#refresh
-
-# Discord
-DISCORD_BOT_TOKEN=#BOT_TOKEN
-DISCORD_CHANNEL_ID=#CHANNEL_ID
 ```
 - **Step 4 :** Run the server
 ```sh
