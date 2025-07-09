@@ -10,8 +10,34 @@ npm run build
 ```
 - **Step 3 :** Fix your `.env` file
 ```sh
-# You need to fix the `.env` file for your server first.
-# You could edit it as specified in the file `.env-example-file`.
+# Project environment
+NODE_ENV=#environment
+
+# Server port
+HTTP_PORT=#port_number
+HTTPS_PORT=#port_number
+
+# Hostname
+HOST=#hostname
+
+# MySQL username
+MYSQL_USER=#username
+# MySQL password
+MYSQL_PASSWORD=#password
+# MySQL database name
+MYSQL_DATABASE=#database_name
+# MySQL/Tables
+MYSQL_STORE_MAPPING="
+#table_name:table_name,
+..."
+
+# JWT
+SECRET_KEY=#access
+REFRESH_KEY=#refresh
+
+# Discord
+DISCORD_BOT_TOKEN=#BOT_TOKEN
+DISCORD_CHANNEL_ID=#CHANNEL_ID
 ```
 - **Step 4 :** Run the server
 ```sh
