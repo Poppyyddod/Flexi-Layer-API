@@ -4,13 +4,21 @@
 ```sh
 npm install
 ```
-- **Step 2 :** Fix your `.env` file
+- **Step 2 :** Install dependencies:
+```sh
+npm run build
+```
+- **Step 3 :** Fix your `.env` file
 ```sh
 # You need to fix the `.env` file for your server first.
 # You could edit it as specified in the file `.env-example-file`.
 ```
-- **Step 3 :** Run the server
+- **Step 4 :** Run the server
 ```sh
-npm start
+#For development
+npm run dev
+
+#For Production
+npm run prod
 ```
 ## Enjoy the project!
