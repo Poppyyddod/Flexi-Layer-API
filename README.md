@@ -4,7 +4,7 @@
 ```sh
 npm install
 ```
-- **Step 2 :** Install dependencies:
+- **Step 2 :** Build Dist:
 ```sh
 npm run build
 ```
