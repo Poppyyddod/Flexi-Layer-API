@@ -1,9 +1,11 @@
-import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isLengthZero } from "@Helper/Utils";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IStoreReturnToControllerCenter } from "@SRC/Store/models/store.controller.model";
+import { Request, Response } from "express";
 
 
 /**
- * @function RemoveStoreController - Dynamic Store Remove ສຳຫຼັບການລົບຂໍ້ມູນໃນ Database Table/Store
+ * @function DeleteStoreController - Dynamic Store Delete ສຳຫຼັບການລົບຂໍ້ມູນໃນ Database Table/Store
  * @param helpers - functions
  * @param req - Request Data
  * @param res - Response HTTP
@@ -32,22 +34,14 @@ import { isLengthZero } from "@Helper/Utils";
  * @returns {Json Object} - HTTP Response
  */
 
-export const RemoveStoreController = (helpers: any) => async (req: any, res: any) => {
+export const DeleteStoreController = (helpers: any) => async (req: Request, res: Response): Promise<IStoreReturnToControllerCenter> => {
     try {
         const { StoreService, Logger } = helpers; // Helper functions
-        const { set, where, store_code, db_type, nosql_supporter } = req.body; // Request
+        const { set, where, store_code, db_type } = req.body as IMyRequestData; // Request
 
         if (set) {
             console.warn('[WARNING] : `set` key object is not required for remove !!');
             delete req.body['set'];
-        }
-
-        if (supportForDbTypes[db_type as DbTypeListKey].type === 'nosql') {
-            if (!nosql_supporter)
-                throw { kind: 'incomplete_request' };
-
-            if (!nosql_supporter.request_confirmed && !nosql_supporter.ignore_supporter)
-                throw { kind: 'missing_supporter_confirmed_feature' };
         }
 
         if (!db_type || !where || !store_code || isLengthZero(where)) {
@@ -55,21 +49,21 @@ export const RemoveStoreController = (helpers: any) => async (req: any, res: any
                 message: 'Incomplete request!',
                 system: 'Store',
                 store: store_code,
-                feature: 'remove',
+                feature: 'delete',
                 request_data: req.body
             });
 
             throw { kind: 'incomplete_request' };
         }
 
-        const dataFromServiceCenter = await StoreService(req.body, 'remove');
-        console.log('RemoveStoreController : ', dataFromServiceCenter);
+        const dataFromServiceCenter = await StoreService(req.body, 'delete');
+        console.log('DeleteStoreController : ', dataFromServiceCenter);
 
         const data = {
             message: `The data matching the request has been deleted!`,
             system: 'Store',
             store: store_code,
-            feature: 'remove',
+            feature: 'delete',
             request_data: req.body,
             affectedRows: dataFromServiceCenter.affectedRows
         }
@@ -78,7 +72,7 @@ export const RemoveStoreController = (helpers: any) => async (req: any, res: any
             ...data
         });
 
-        const dataToControllerCenter = {
+        const dataToControllerCenter: IStoreReturnToControllerCenter = {
             response: {
                 ...data
             },
@@ -87,7 +81,7 @@ export const RemoveStoreController = (helpers: any) => async (req: any, res: any
 
         return dataToControllerCenter;
     } catch (error: any) {
-        console.log('RemoveStoreController (Error):', error);
-        throw { ...error, feature: 'remove' };
+        console.log('DeleteStoreController (Error):', error);
+        throw { ...error, feature: 'delete' };
     }
 }

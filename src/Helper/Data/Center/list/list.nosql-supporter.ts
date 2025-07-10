@@ -30,13 +30,13 @@ export const noSqlSupporterList: noSqlSupportListModel = {
         }
     },
 
-    remove: {
+    delete: {
 
     },
 
     mix: {
         "ignore_supporter": {
-            for: ['fetch', 'create', 'edit', 'remove'],
+            for: ['fetch', 'create', 'edit', 'delete'],
             data_type: 'boolean',
             description: 'For ignore all of nosql supporter.'
         },

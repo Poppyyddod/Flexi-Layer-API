@@ -1,5 +1,8 @@
 import { ValidAllDataFromService } from "@Store/models/store.respository.model";
-import { CreateQueryForMySQL, CreateQueryForPostgreSQL } from "./Databases/create";
+import { CreateQueryForMySQL } from "./Databases/create";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IFixedToQueryFormat } from "@SRC/Store/models/store.controller.model";
+import { IStoreFeatureList } from "@SRC/Store/models/store.global.model";
 
 /**
  * @function CreateStoreRespo - ສຳຫຼັບເປັນເສັ້ນທາງການສົ່ງ Query ໄປທີ່ Database
@@ -28,27 +31,30 @@ import { CreateQueryForMySQL, CreateQueryForPostgreSQL } from "./Databases/creat
  */
 
 const dbTypeCreateStoreRespository: any = {
-    postgresql: async (data: any) => await CreateQueryForPostgreSQL(data),
-    mysql: async (data: any) => await CreateQueryForMySQL(data)
+    mysql: async (
+        SQLmanagement: any,
+        validRequestData: IMyRequestData,
+        fixedFormat: IFixedToQueryFormat
+    ) => await CreateQueryForMySQL(SQLmanagement, validRequestData, fixedFormat)
 };
 
-export const CreateSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: ValidAllDataFromService): Promise<any> => {
+export const CreateSqlStoreRespo = (helpers: any) => async (validRequestData: IMyRequestData, fixedFormat: IFixedToQueryFormat, feature: IStoreFeatureList): Promise<any> => {
     try {
         console.log('> CreateStoreRespo : ');
-        console.log('- Query data : ', dataFromResposCenter);
+        console.log('- Query data : ', validRequestData);
         const { SQLmanagement } = helpers;
-        const { db_type, store, fixedFormat } = dataFromResposCenter;
+        const { db_type, store_code } = validRequestData;
         const { set, params } = fixedFormat;
 
         const dataToQuery = {
             db_type,
-            store,
+            store_code,
             set,
             params,
             SQLmanagement
         };
 
-        const dataToReturn = await dbTypeCreateStoreRespository[db_type](dataToQuery);
+        const dataToReturn = await dbTypeCreateStoreRespository[db_type](SQLmanagement, validRequestData, fixedFormat);
 
         return dataToReturn;
     } catch (error: any) {

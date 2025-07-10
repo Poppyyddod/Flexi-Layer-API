@@ -17,24 +17,18 @@ import { cachedTableStructure } from '@SRC/Helper/Cache';
  * @returns Key # table data structure
  */
 
-export const ValidateTableMapper = async (dbPositionData: any) => {
+export const MapperTableStructure = async (storeCode: any): Promise<IMySQLTableStructure[]> => {
     try {
-        console.log('* ValidateTableMapper (dbPositionData) :', dbPositionData);
-        // Table Structure !!!!!!!!!!!!!!!!!
-        // const cmd = await dataStructureQueryCmd[dbPositionData.db_type]; // <- Old
-        // console.log('ValidateTableMapper (cmd) :', cmd);
-
-        // Mapping Table Structure !!!!!!!!!!!!!!!!!
-        // const tableDataStructure = await mappingMethodTableDataStructure[dbPositionData.db_type](dbPositionData, cmd);
+        console.log('* ValidateTableMapper (storeCode) :', storeCode);
         
-        const tableDataStructure: IMySQLTableStructure[] = cachedTableStructure[dbPositionData.store];
+        const tableDataStructure: IMySQLTableStructure[] = cachedTableStructure[storeCode];
         console.log("* ValidateTableMapper (tableDataStructure) : ", tableDataStructure);
 
-        // console.log('ValidateTableMapper (tableDataStructure) : ', dbPositionData.db_type, tableDataStructure);
+        // console.log('ValidateTableMapper (tableDataStructure) : ', storeCode.db_type, tableDataStructure);
 
         // Ensure that 'fields' is an array of objects
         if (!Array.isArray(tableDataStructure) || tableDataStructure.length === 0) {
-            console.log('* Table is not found in the database : ', dbPositionData.store);
+            console.log('* Table is not found in the database : ', storeCode);
             throw { kind: 'not_found_the_store' };
         }
 

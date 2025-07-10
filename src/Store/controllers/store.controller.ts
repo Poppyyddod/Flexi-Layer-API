@@ -1,12 +1,16 @@
 import ErrorHandles from '@Helper/Data/Error';
 import Logger from '@Helper/Logger';
 import StoreService from '@Store/services';
-import { StoreControllerMethods } from './features/methods';
-import { ControllerMethodRouteKeys } from '@Store/models/store.controller.model';
+import { StoreControllerEndpoint, StoreControllerMethods } from './methods';
 import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
-import { isArray, isObject } from '@Helper/Utils';
-import { useAuthToken } from '@SRC/Helper/Middlewares/middleware.setting';
 import { loadEnvConfig } from '@Configs/env';
+import { IMyRequestData } from '@SRC/Helper/Model/global.model';
+import { Request, Response } from 'express';
+import { $Settings } from '@SRC/Helper/Middlewares/middleware.setting';
+import { $SettingFunctions } from '@SRC/Helper/Utils/Setting';
+import { IReturnToCenterServiceData } from '@SRC/Auth/models/auth.global.model';
+import { IStoreReturnToControllerCenter } from '../models/store.controller.model';
+// import { ResolveRequestPlaceholdersUsingToken } from '@SRC/Helper/Utils/Setting/check-token-user.id';
 
 const RAW_ENV = loadEnvConfig();
 
@@ -22,116 +26,54 @@ const helperFunction = {
 
 
 
-/**
- * @function StoreController - ສຳຫຼັບການ Map ເພື່ອເອີ້ນໃຊ້ Controller ຂອງ Feature ນັ້ນໆ
- * @param req - Request Data
- * @param res - Response HTTP
- * @returns 
- */
-
-/**
- * 
- * @StoreControllerMethods
- * ເປັນຕົວປ່ຽນທີ່ເກັບ Methods ແຕ່ລະ Features
- */
-
-/**
- * 
- * @StoreRouteKeys
- * Model ສຳຫຼັບ Route Keys
- */
-
-const CheckDbConnection = async (reqBodyData: any) => {
+const CheckDbConnection = (reqBodyData: IMyRequestData, endpointPath: string): void => {
     try {
-        console.log('- StoreController (CheckDbConnection) : ', reqBodyData);
+        console.log('- StoreController (CheckDbConnection) : ', reqBodyData, endpointPath);
+        const splittedFeature = endpointPath.split('/')[2];
 
+        // Check Database Type
         if (reqBodyData.db_type === undefined)
-            throw { kind: 'incomplete_request' };
+            throw { kind: 'incomplete_main_request', feature: splittedFeature };
 
         const { db_type } = reqBodyData;
 
+        // Find Database Type
         const theDatabaseDetails = supportForDbTypes[db_type as DbTypeListKey];
-
         if (theDatabaseDetails === undefined)
-            throw { kind: 'cannot_support_the_database_type' };
+            throw { kind: 'cannot_support_the_database_type', feature: splittedFeature };
 
+        // Check Database Connection Setting
         if (!theDatabaseDetails.connect_state)
-            throw { kind: 'we_disconnect_the_database' };
+            throw { kind: 'we_disconnect_the_database', feature: splittedFeature };
     } catch (error) {
         console.log('StoreController (CheckDbConnection)(error) : ', error);
         throw error;
     }
 }
 
-const CheckMyIdValue = async (req: any) => {
-    console.log('* Check and modify id value `myId`!');
 
-    const { where, set } = req.body;
 
-    const modifyMyId = (obj: any, fieldName: string) => {
-        if (isObject(obj)) {
-            Object.keys(obj).forEach((key: any) => {
-                if (obj[key] === "myId") {
-                    if (!useAuthToken) {
-                        throw { kind: "auth_setting_turn_off" };
-                    }
 
-                    console.log("Store Controller (Decoded token data) : ", req.user);
-                    obj[key] = parseInt(req.user.userId);
-                }
-            });
-        } else if (isArray(obj)) {
-            obj.forEach((item: any, itemIndex: number) => {
-                // console.log("Check value myId (item) : ", item, itemIndex);
-                Object.keys(item).forEach((key: any, keyIndex: number) => {
-                    // console.log("Check value myId (key, index) : ", key, keyIndex);
-                    if (obj[itemIndex][key] === "myId") {
-                        if (!useAuthToken) {
-                            throw { kind: "auth_setting_turn_off" };
-                        }
 
-                        console.log("Store Controller (Decoded token data) : ", req.user);
-                        obj[itemIndex][key] = parseInt(req.user.userId);
-                        // console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPAAAAAAAAAA", obj[itemIndex]);
-                    }
-                });
-            })
-        } else {
-            console.log(`* - ${fieldName} is not object!`);
-            return;
-        }
-    };
 
-    modifyMyId(where, "where");
-    modifyMyId(set, "set");
-};
-
-const StoreController = async (req: any, res: any) => {
+const StoreControllerCenter = async (req: Request, res: Response): Promise<Response> => {
     try {
-        
-
         console.log('> Store Controller : ', req.body);
-        console.log('Request user (Verify token) : ', req?.user);
 
-        await CheckDbConnection(req.body);
+        const endpoint = req.path as StoreControllerEndpoint;
+        console.log(`- Request route : ${endpoint}`);
 
-        const theRoute = req.path as ControllerMethodRouteKeys;
-        console.log(`- Request route : ${theRoute}`);
+        // `db_type` Validation
+        CheckDbConnection(req.body, endpoint);
 
-        if (!Object.keys(supportForDbTypes).includes(req.body.db_type)) {
-            throw { kind: 'cannot_support_the_database_type' };
-        }
+        // Setting Function Part
+        if ($Settings.useCheckTokenPlaceholder)
+            await $SettingFunctions.ResolveRequestPlaceholdersUsingToken(req);
 
-        await CheckMyIdValue(req);
-
-        if (!StoreControllerMethods[theRoute]) {
-            throw { kind: "route_is_not_valid" };
-        }
-
-        const controller = StoreControllerMethods[theRoute];
-
-        const dataFromTheController = await controller(helperFunction)(req, res);
+        const controller = StoreControllerMethods[endpoint];
+        const dataFromTheController: IStoreReturnToControllerCenter = await controller(helperFunction)(req, res);
         // console.log('StoreController (response) : ', response);
+
         const { response, status_code } = dataFromTheController;
 
         return res.status(status_code).json({
@@ -148,4 +90,4 @@ const StoreController = async (req: any, res: any) => {
     }
 }
 
-export default StoreController;
+export default StoreControllerCenter;

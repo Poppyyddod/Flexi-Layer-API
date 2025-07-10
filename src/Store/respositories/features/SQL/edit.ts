@@ -7,7 +7,10 @@
  */
 
 import { ValidAllDataFromService } from "@Store/models/store.respository.model";
-import { EditQueryForMySQL, EditQueryForPostgreSQL } from "./Databases/edit";
+import { EditQueryForMySQL } from "./Databases/edit";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IFixedToQueryFormat } from "@SRC/Store/models/store.controller.model";
+import { IStoreFeatureList } from "@SRC/Store/models/store.global.model";
 
 /**
  * 
@@ -34,27 +37,21 @@ import { EditQueryForMySQL, EditQueryForPostgreSQL } from "./Databases/edit";
 
 
 const dbTypeEditRespository: any = {
-    postgresql: async (fixedFormat: any) => await EditQueryForPostgreSQL(fixedFormat),
-    mysql: async (fixedFormat: any) => await EditQueryForMySQL(fixedFormat)
+    mysql: async (fixedFormat: IFixedToQueryFormat, store_code: string) => await EditQueryForMySQL(fixedFormat, store_code)
 }
 
 
-export const EditSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: ValidAllDataFromService) => {
+export const EditSqlStoreRespo = (helpers: any) => async (validRequestData: IMyRequestData, fixedFormat: IFixedToQueryFormat, feature: IStoreFeatureList) => {
     try {
         const { SQLmanagement } = helpers;
-        const { db_type, store, fixedFormat } = dataFromResposCenter;
-        
-        console.log('EditStoreRespo', store, db_type);
+        const { db_type, store_code } = validRequestData;
+
+        console.log('EditStoreRespo', store_code, db_type);
         console.log('Set : ', fixedFormat.set);
         console.log('Fixed Params : ', fixedFormat.params);
-        
-        const dataToMapping = {
-            ...fixedFormat,
-            store
-        }
 
-        const mappedData = await dbTypeEditRespository[db_type](dataToMapping);
-        const {cmd, paramsQuery} = mappedData;
+        const mappedData = await dbTypeEditRespository[db_type](fixedFormat, store_code);
+        const { cmd, paramsQuery } = mappedData;
 
         // console.log('mappedData (EditStoreRespo) : ', mappedData);
 

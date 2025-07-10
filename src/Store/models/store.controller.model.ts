@@ -1,13 +1,24 @@
-/**
- * Store Controller Model
- */
-
-export type ControllerMethodMapping = {
-    [route: string]: ControllerMethodsModel
+export interface IStoreReturnToServiceCenter {
+    db_type: string,
+    store_code: any,
+    fixedFormat: IFixedToQueryFormat
+    kind?: string | undefined
 }
 
-export type ControllerMethodRouteKeys = '/store/fetch' | '/store/create' | '/store/edit' | '/store/delete';
+export interface IFixedToQueryFormat {
+    where?: string
+    set?: string
+    field_list?: string
+    params: any[]
+}
 
-export type ControllerMethodsModel = {
-    [key in ControllerMethodRouteKeys]: (helpers: any) => (req: any, res: any) => Promise<any>
+export interface IStoreReturnToControllerCenter {
+    response: IStoreResponseInReturnToControllerCenter
+    status_code: number
+}
+
+export interface IStoreResponseInReturnToControllerCenter {
+    message?: string
+    feature?: string
+    data?: any
 }

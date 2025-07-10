@@ -2,16 +2,19 @@
  * Store Respository Model
  */
 
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IFixedToQueryFormat } from "./store.controller.model";
+import { IStoreFeatureList } from "./store.global.model";
+
 export interface ServiceMappedFeature {
     [feature: string]: RespositoryMethodsModel; // แต่ละ feature จะมี methods ครบ
 }
 
 // ສຳຫຼັບ Respository Key
-export type RespositoryKeys = 'fetch' | 'create' | 'edit' | 'remove';
 
 // ສຳຫຼັບ Respository Methods
 export type RespositoryMethodsModel = {
-    [key in RespositoryKeys]: (helpers: any) => (dataFromResposCenter: ValidAllDataFromService) => Promise<void>
+    [key in IStoreFeatureList]: (helpers: any) => (validRequestData: IMyRequestData, fixedFormat: IFixedToQueryFormat, feature: IStoreFeatureList) => Promise<void>
 }
 
 export type ValidAllDataFromService = {

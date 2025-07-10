@@ -1,5 +1,5 @@
 import { JwtVerifyToken } from '@Helper/Middlewares';
-import storeController from '@Store/controllers';
+import StoreControllerCenter from '@Store/controllers';
 import { Router } from 'express';
 
 /**
@@ -11,10 +11,10 @@ import { Router } from 'express';
 const storeRoutes = (app: Router) => {
     // console.log('Store routes');
 
-    app.post('/store/fetch', JwtVerifyToken, storeController);
-    app.post('/store/create', JwtVerifyToken, storeController);
-    app.post('/store/edit', JwtVerifyToken, storeController);
-    app.post('/store/delete', JwtVerifyToken, storeController);
+    app.post('/store/fetch', JwtVerifyToken, StoreControllerCenter);
+    app.post('/store/create', JwtVerifyToken, StoreControllerCenter);
+    app.post('/store/edit', JwtVerifyToken, StoreControllerCenter);
+    app.post('/store/delete', JwtVerifyToken, StoreControllerCenter);
 
     return app;
 }

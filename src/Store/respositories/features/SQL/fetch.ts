@@ -6,8 +6,10 @@
  * @returns SQL Data || Object
  */
 
-import { ValidAllDataFromService } from "@Store/models/store.respository.model";
-import { FetchQueryForMySQL, FetchQueryForPostgreSQL } from "./Databases/fetch";
+import { IStoreFeatureList } from "@SRC/Store/models/store.global.model";
+import { FetchQueryForMySQL } from "./Databases/fetch";
+import { IFixedToQueryFormat } from "@SRC/Store/models/store.controller.model";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
 
 /**
  * 
@@ -28,21 +30,20 @@ import { FetchQueryForMySQL, FetchQueryForPostgreSQL } from "./Databases/fetch";
  */
 
 const MappingQueryForSQL: any = {
-    postgresql: FetchQueryForPostgreSQL,
     mysql: FetchQueryForMySQL
 }
 
-export const FetchSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: any): Promise<any> => {
+export const FetchSqlStoreRespo = (helpers: any) => async (validRequestData: IMyRequestData, fixedFormat: IFixedToQueryFormat, feature: IStoreFeatureList): Promise<any> => {
     try {
         const { SQLmanagement } = helpers;
-        const { db_type, store, fixedFormat, limit } = dataFromResposCenter;
+        const { db_type, store_code, limit } = validRequestData;
 
-        console.log('- FetchStoreRespo : ', store, fixedFormat);
+        console.log('- FetchStoreRespo : ', store_code, fixedFormat);
 
-        delete dataFromResposCenter['where'];
+        delete validRequestData['where'];
 
         const dataToDbTypeMapping = {
-            store,
+            store_code,
             limit,
             ...fixedFormat
         };

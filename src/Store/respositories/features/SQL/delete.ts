@@ -7,7 +7,10 @@
  */
 
 import { ValidAllDataFromService } from "@Store/models/store.respository.model";
-import { DeleteQueryForMySQL, DeleteQueryForPostgreSQL } from "./Databases/delete";
+import { DeleteQueryForMySQL } from "./Databases/delete";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IFixedToQueryFormat } from "@SRC/Store/models/store.controller.model";
+import { IStoreFeatureList } from "@SRC/Store/models/store.global.model";
 
 /**
  * 
@@ -29,18 +32,17 @@ import { DeleteQueryForMySQL, DeleteQueryForPostgreSQL } from "./Databases/delet
 
 
 const dbTypeDeleteRespository: any = {
-    postgresql: async (data: any) => await DeleteQueryForPostgreSQL(data),
-    mysql: async (data: any) => await DeleteQueryForMySQL(data)
+    mysql: async (fixedFormat: IFixedToQueryFormat, store_code: string) => await DeleteQueryForMySQL(fixedFormat, store_code)
 }
 
-export const DeleteSqlStoreRespo = (helpers: any) => async (dataFromResposCenter: ValidAllDataFromService) => {
+export const DeleteSqlStoreRespo = (helpers: any) => async (validRequestData: IMyRequestData, fixedFormat: IFixedToQueryFormat, feature: IStoreFeatureList) => {
     try {
-        const { db_type, store, fixedFormat } = dataFromResposCenter;
-        console.log('DeleteStoreRespo', db_type, store, fixedFormat);
+        const { db_type, store_code } = validRequestData;
+        console.log('DeleteStoreRespo', db_type, store_code, fixedFormat);
         const { SQLmanagement } = helpers;
 
-        const mappedData = await dbTypeDeleteRespository[db_type]({...fixedFormat, store});
-        const {cmd, paramsQuery} = mappedData;
+        const mappedData = await dbTypeDeleteRespository[db_type](fixedFormat, store_code);
+        const { cmd, paramsQuery } = mappedData;
 
         const response = await SQLmanagement(db_type, { cmd, params: paramsQuery, isReturn: true });
         // console.log('DeleteStoreRespo (response): ', response);

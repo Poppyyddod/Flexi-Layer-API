@@ -1,5 +1,8 @@
 import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isLengthZero, isObject, isString } from "@Helper/Utils";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IStoreReturnToControllerCenter } from "@SRC/Store/models/store.controller.model";
+import { Request, Response } from "express";
 
 
 /**
@@ -32,19 +35,10 @@ import { isLengthZero, isObject, isString } from "@Helper/Utils";
  * @returns {Json Object} - HTTP Response
  */
 
-export const EditStoreController = (helpers: any) => async (req: any, res: any) => {
+export const EditStoreController = (helpers: any) => async (req: Request, res: Response): Promise<IStoreReturnToControllerCenter> => {
     try {
         const { StoreService, Logger } = helpers; // Helper functions
-        const { set, where, store_code, db_type, nosql_supporter } = req.body; // Request
-
-        if (supportForDbTypes[db_type as DbTypeListKey].type === 'nosql') {
-            if (!nosql_supporter)
-                throw { kind: 'incomplete_request' };
-
-            if (!nosql_supporter.request_confirmed) {
-                throw { kind: 'missing_supporter_confirmed_feature' };
-            }
-        }
+        const { set, where, store_code, db_type } = req.body as IMyRequestData; // Request
 
         if (db_type === undefined || !set || !isObject(req.body.where) || !store_code || isLengthZero(set) || isLengthZero(req.body.where)) {
             Logger('Store', 'error', {
@@ -74,7 +68,7 @@ export const EditStoreController = (helpers: any) => async (req: any, res: any) 
             ...data,
         });
 
-        const dataToControllerCenter = {
+        const dataToControllerCenter: IStoreReturnToControllerCenter = {
             response: {
                 ...data
             },

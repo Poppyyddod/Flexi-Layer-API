@@ -1,5 +1,5 @@
 /**
- * @function RemoveStoreService - ສຳຫຼັບການເອີ້ນໃຊ້ Function ຕ່າງໆເພື່ອລົບຂໍ້ມູນ
+ * @function DeleteStoreService - ສຳຫຼັບການເອີ້ນໃຊ້ Function ຕ່າງໆເພື່ອລົບຂໍ້ມູນ
  * @param helpers - Helper functions
  * @param request - ເປັນ Object ຂອງ Request body
  * @returns Object
@@ -29,16 +29,16 @@
  * ສຳຫຼັບການສື່ສານກັບ Database
  */
 
-export const RemoveSqlStoreService = (helpers: any) => async (validRequestData: any): Promise<any> => {
+export const DeleteSqlStoreService = (helpers: any) => async (validRequestData: any): Promise<any> => {
     try {
-        console.log('> RemoveStoreService :');
-        const { FixRequestFormat, Supplier } = helpers;
+        console.log('> DeleteStoreService :');
+        const { FixRequestFormat } = helpers;
 
         const { where, store, db_type } = validRequestData;
         console.log('- Request : ', validRequestData);
 
         const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'delete'});
-        // console.log('RemoveStoreService (fixedFormat) : ', fixedFormat);
+        // console.log('DeleteStoreService (fixedFormat) : ', fixedFormat);
 
         const dataToServiceCenter = {
             db_type,
@@ -48,7 +48,7 @@ export const RemoveSqlStoreService = (helpers: any) => async (validRequestData: 
 
         return dataToServiceCenter;
     } catch (error) {
-        // console.log('RemoveStoreService (Error):', error);
+        // console.log('DeleteStoreService (Error):', error);
         throw error;
     }
 }

@@ -1,14 +1,21 @@
 export interface IMyRequestData {
-    db_type: "mysql" | "postgresql",
-    store_code: string,
-    where?: any,
+    db_type: "mysql"
+    store_code: string
+    where?: any
     set?: any
+    field_list?: string | string[]
+    limit?: number
 }
 
 export interface IMySQLTableStructure {
     field: string;
     type: string;
     comment: string;
+}
+
+export interface IMyTokenData {
+    userId: number | string
+    expireAt: number
 }
 
 // export interface IMyDotEnvKey {

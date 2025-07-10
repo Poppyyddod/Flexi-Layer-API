@@ -58,7 +58,7 @@ export const AuthSignOutService = (helpers: any) => async ({
         const whereObj = validRequestData.where as IUserAuthTableField;
 
         // Remove the refresh token entry from the data store
-        const dataFromServiceCenter = await StoreService(validRequestData, 'remove');
+        const dataFromServiceCenter = await StoreService(validRequestData, 'delete');
         console.log('AuthSignOutService (dataFromCenterService) : ', dataFromServiceCenter);
 
         // Update the auth status to signed out

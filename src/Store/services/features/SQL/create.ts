@@ -32,7 +32,7 @@
 export const CreateSqlStoreService = (helpers: any) => async (validRequestData: any): Promise<any> => {
     try {
         console.log('> CreateStoreService :');
-        const { FixRequestFormat, Supplier } = helpers;
+        const { FixRequestFormat } = helpers;
 
         // Checked Data Structure
         const { db_type, store, set } = validRequestData;

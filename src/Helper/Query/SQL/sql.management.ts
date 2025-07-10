@@ -1,6 +1,8 @@
 import { SQLmanagementModel } from './sql.model';
 import { ValidateFieldsAndType, ValidateFieldsBeforeInsert } from './validation';
 import { MapSqlQuery } from './sql.mapper.query';
+import { IStoreFeatureList } from '@SRC/Store/models/store.global.model';
+import { IMyRequestData, IMySQLTableStructure } from '@SRC/Helper/Model/global.model';
 
 
 
@@ -28,15 +30,14 @@ import { MapSqlQuery } from './sql.mapper.query';
  * @returns {Boolean}
  */
 
-export const StartValidateSqlRequestDataStructure = async (dbPositionData: any, tableDataStructure: any, data: any): Promise<any> => {
+export const StartValidateSqlRequestDataStructure = (feature: IStoreFeatureList, tableDataStructure: IMySQLTableStructure[], set: any, where: any): boolean => {
     try {
-        console.log('StartValidateSqlRequestDataStructure :', dbPositionData, data);
+        console.log('StartValidateSqlRequestDataStructure :', feature, set, where);
 
-        if (dbPositionData.feature === 'create') {
-            await ValidateFieldsBeforeInsert(tableDataStructure, data?.set);
-        }
+        if (set && feature === 'create')
+            ValidateFieldsBeforeInsert(tableDataStructure, set);
 
-        const isValidDataKeyAndType = await ValidateFieldsAndType(tableDataStructure, { ...data });
+        const isValidDataKeyAndType = ValidateFieldsAndType(tableDataStructure, { set, where });
         console.log('StartValidateSqlRequestDataStructure (isValidDataKeyAndType):', isValidDataKeyAndType);
 
         return isValidDataKeyAndType;

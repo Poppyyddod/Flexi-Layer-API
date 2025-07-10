@@ -4,6 +4,7 @@ import { FetchSuccessDataResponseHttp } from '@SRC/Testing/tester.model';
 import { request, server, TestStoreRoute } from '@SRC/Testing/tester.config';
 import { sql } from '@Configs/Database';
 import { Response } from 'supertest';
+import { $Settings } from '@SRC/Helper/Middlewares/middleware.setting';
 
 let originalLog: any;
 let alreadyInit = false;
@@ -17,25 +18,26 @@ const Init = async (): Promise<void> => {
 
 beforeAll(async () => {
     originalLog = console.log;
-    console.log = jest.fn();
     await Init();
+    console.log = jest.fn();
 });
 
 afterAll(async () => {
     console.log = originalLog;
+
     await CloseHttpsServer();
 
     if (server && server.close) {
         await new Promise<void>((resolve) => server.close(() => resolve()));
     }
 
-    // if (sql && !sql._closed) {  // _closed เป็น internal property (mysql2 ไม่มี API เช็ค pool ว่ายังเปิดหรือปิด)
-    //     try {
-    //         await sql.end();
-    //     } catch (err) {
-    //         // console.warn('MySQL pool already closed or error on closing:', err);
-    //     }
-    // }
+    if (sql && !sql._closed) {  // _closed เป็น internal property (mysql2 ไม่มี API เช็ค pool ว่ายังเปิดหรือปิด)
+        try {
+            await sql.end();
+        } catch (err) {
+            // console.warn('MySQL pool already closed or error on closing:', err);
+        }
+    }
 });
 
 const dbBrand = 'mysql';
@@ -96,13 +98,16 @@ describe("> Test MySQL/Store/Fetch + some row + some column + limit", () => {
             .send(bodyData);
 
         // console.log('# [RESULT] : Fetch/All Row/MySQL : ', response);
+
+        console.log = originalLog;
+        const obj: FetchSuccessDataResponseHttp = await response.body;
+        console.log = originalLog;
+        console.log('# [OBJECT] : Fetch/Some Row/MySQL : ', obj);
+
         expect(
             response.status === 200
             || response.status === 404
         ).toBe(true);
-
-        const obj: FetchSuccessDataResponseHttp = await response.body;
-        console.log('# [OBJECT] : Fetch/Some Row/MySQL : ', obj);
 
         expect(
             obj.data?.length === 1

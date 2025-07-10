@@ -6,6 +6,9 @@
  * @throws {Error}
  */
 
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IStoreReturnToServiceCenter } from "@SRC/Store/models/store.controller.model";
+
 /**
  * 
  * @function Supplier
@@ -18,22 +21,25 @@
  * ສຳຫຼັບການປ່ຽນແປງ Request ເພື່ອສົ່ງໄປ Query ຢ່າງຖືກຕ້ອງຕາມທີ່ Request
  */
 
-export const FetchSqlStoreService = (helpers: any) => async (validRequestData: any): Promise<any> => {
+export const FetchSqlStoreService = (helpers: any) => async (validRequestData: IMyRequestData): Promise<IStoreReturnToServiceCenter> => {
     try {
         console.log('> FetchStoreService :');
         console.log('Request : ', validRequestData);
 
-        const { FixRequestFormat, Supplier } = helpers;
+        const { FixRequestFormat } = helpers;
+        const { db_type, store_code } = validRequestData;
 
         // Checked Data Structure
-        const { db_type, store, where, field_list } = validRequestData;
+        // const { db_type, store, where, field_list } = validRequestData as IMyRequestData;
 
         // Fixed Request format to SQL query format
         const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'select'});
         // console.log('FetchStoreService (fixedFormat) : ', fixedFormat);
 
-        const dataToServiceCenter = {
-            ...validRequestData,
+        const dataToServiceCenter: IStoreReturnToServiceCenter = {
+            // ...validRequestData,
+            db_type,
+            store_code,
             fixedFormat,
         };
         // console.log('FetchStoreService (dataToServiceCenter) :', dataToServiceCenter);

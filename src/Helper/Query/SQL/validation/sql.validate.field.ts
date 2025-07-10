@@ -1,24 +1,25 @@
 import { isArray, isObject, isString } from "@SRC/Helper/Utils";
 import { sqlNumberType, sqlStringType } from '../sql.datatype';
+import { IMySQLTableStructure } from "@SRC/Helper/Model/global.model";
 
 
 
 
 
-const CheckForFetchLastRow = async (whereData: any) => {
+const CheckForFetchLastRow = (whereData: any): any => {
     if (!isString(whereData)) return;
 
     console.log('ValidateFieldsAndType (where is string type):', whereData);
 
-    const splittedWhere = whereData.split(':');
+    const splittedWhere: string[] = whereData.split(':');
     console.log('ValidateFieldsAndType (splittedWhere):', splittedWhere);
 
     if (splittedWhere.length !== 2 || splittedWhere[1] !== 'LAST') {
         throw { kind: 'incomplete_request' };
     }
 
-    const primaryKeyField = splittedWhere[0];
-    const value = splittedWhere[1];
+    const primaryKeyField: string = splittedWhere[0];
+    const value: string = splittedWhere[1];
 
     const newWhereData = {
         [primaryKeyField]: 0
@@ -34,7 +35,7 @@ const CheckForFetchLastRow = async (whereData: any) => {
 
 
 
-const CheckerManFieldAndKey = (dataValue: any, reqKey: string) => {
+const CheckerManFieldAndKey = (dataValue: any, reqKey: string): void => {
     console.log('> CheckerFieldAndKey (dataValue):', dataValue, reqKey);
 
     // Set field value is array
@@ -58,7 +59,7 @@ const CheckerManFieldAndKey = (dataValue: any, reqKey: string) => {
 
 
 // obj is set or where
-const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: any, reqKey: string) => {
+const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: IMySQLTableStructure[], obj: any, reqKey: string): boolean => {
     console.log('* StartCheckFieldAndType (obj):', isValid, obj);
 
     // if (obj === undefined) return true;
@@ -66,7 +67,9 @@ const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: 
     for (const [dataKey, dataValue] of Object.entries(obj)) {
         console.log('* StartCheckFieldAndType (loop data):', dataKey, dataValue);
 
-        const matchingField = tableDataStructure.find((tableData: any) => tableData.field === dataKey);
+        const matchingField = tableDataStructure
+        .find((tableData: any) => tableData.field === dataKey) as IMySQLTableStructure | undefined;
+
         console.log('* StartCheckFieldAndType (matchingField):', matchingField);
 
         if (!matchingField) {
@@ -135,14 +138,14 @@ const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: any, obj: 
  * It's array to keep `string` data type for check request data type
  */
 
-export const ValidateFieldsAndType = async (tableDataStructure: any[], data: any) => {
+export const ValidateFieldsAndType = (tableDataStructure: IMySQLTableStructure[], data: any) => {
     try {
         let isValid = true;
         console.log('> ValidateFieldsAndType (tableDataStructure): ', tableDataStructure);
         console.log('> ValidateFieldsAndType (data)(1): ', data);
 
         if (data.where && isString(data.where)) {
-            const dataFromCheckForFetchLastRow = await CheckForFetchLastRow(data.where);
+            const dataFromCheckForFetchLastRow = CheckForFetchLastRow(data.where);
             console.log('* ValidateFieldsAndType (dataFromCheckForFetchLastRow):', dataFromCheckForFetchLastRow);
 
             if (dataFromCheckForFetchLastRow) {

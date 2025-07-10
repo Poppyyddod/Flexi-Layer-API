@@ -7,7 +7,7 @@
 //         fetch?: StoreFieldAction;
 //         create?: StoreFieldAction;
 //         edit?: StoreFieldAction;
-//         remove:? StoreFieldAction;
+//         delete:? StoreFieldAction;
 //     };
 // };
 
@@ -91,12 +91,12 @@ export const storeFields: any = {
                     }
                 }
             },
-            remove: {
+            delete: {
                 guide: {
                     request_format: {
                         db_type: "###### (postgresql | mysql)",
                         store_code: "###### (#store_code)",
-                        where: 'Key Object & Valid (Field & Data type) (not allow for remove without `where` key!!)'
+                        where: 'Key Object & Valid (Field & Data type) (not allow for delete without `where` key!!)'
                     },
                     example: {
                         db_type: "#db_type",
@@ -187,13 +187,13 @@ export const storeFields: any = {
                     }
                 }
             },
-            remove: {
+            delete: {
                 guide: {
                     request_format: {
                         db_type: "###### (postgresql | mysql)",
                         store_code: "###### (#store_code)",
                         nosql_supporter: 'Key Object & Valid (Field & Data type) <- For support NoSQL Database',
-                        where: 'Key Object & Valid (Field & Data type) (not allow for remove without `where` key!!)'
+                        where: 'Key Object & Valid (Field & Data type) (not allow for delete without `where` key!!)'
                     },
                     example: {
                         db_type: "#db_type",

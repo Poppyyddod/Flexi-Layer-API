@@ -1,7 +1,8 @@
 import { SQLmanagement } from "@Helper/Query/SQL";
 import { SqlStoreRespoMethods } from './features/methods';
-import { RespositoryMethodsModel, RespositoryKeys } from "@Store/models/store.respository.model";
-import { ValidDataAndFixedFormatModel } from "@Store/models/store.service.model";
+import { IStoreFeatureList } from "../models/store.global.model";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IFixedToQueryFormat } from "../models/store.controller.model";
 
 /**
  * SQL Helper Functions
@@ -28,12 +29,12 @@ const NoSqlHelperFunction = {
 
 
 const dbTypeRespository: any = {
-    sql: async (serviceData: ValidDataAndFixedFormatModel, theFeature: RespositoryKeys) => {
+    sql: async (validRequestData: IMyRequestData, fixedFormat: IFixedToQueryFormat, feature: IStoreFeatureList) => {
         try {
-            console.log('StoreRespository (dbTypeRespository)(SQL):', serviceData, theFeature);
+            console.log('StoreRespository (dbTypeRespository)(SQL):', validRequestData, fixedFormat, feature);
 
-            const respository = SqlStoreRespoMethods[theFeature];
-            const dataFromTheRespository = await respository(SqlHelperFunction)({ ...serviceData });
+            const respository = SqlStoreRespoMethods[feature];
+            const dataFromTheRespository = await respository(SqlHelperFunction)(validRequestData, fixedFormat, feature);
             // console.log('StoreRespository (dataFromTheRespository)(SQL) : ', dataFromTheRespository);
 
             return dataFromTheRespository;
@@ -46,14 +47,13 @@ const dbTypeRespository: any = {
 
 
 
-const StoreRespository = async (dbRelationshipType: string, feature: string, serviceData: any) => {
+const StoreRespository = async (dbRelationshipType: string, feature: IStoreFeatureList, validRequestData: IMyRequestData, fixedFormat: IFixedToQueryFormat) => {
     try {
-        console.log('StoreRespository : ', serviceData, feature);
+        console.log('StoreRespository : ', feature, validRequestData);
         // const { store, fixedFormat, db_type } = serviceData;
-        const theFeature = feature as RespositoryKeys;
 
-        const dataFromTheRespository = await dbTypeRespository[dbRelationshipType](serviceData, theFeature);
-        // console.log('StoreRespository (dataFromTheRespository) : ', dataFromTheRespository);
+        const dataFromTheRespository = await dbTypeRespository[dbRelationshipType](validRequestData, fixedFormat, feature);
+        console.log('StoreRespository (dataFromTheRespository) : ', dataFromTheRespository);
 
         return dataFromTheRespository;
     } catch (error) {

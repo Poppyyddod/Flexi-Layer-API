@@ -11,6 +11,8 @@
 
 import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isArray, isLengthZero, isNumber, isObject, isString } from "@Helper/Utils";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IStoreReturnToControllerCenter, IStoreReturnToServiceCenter } from "@SRC/Store/models/store.controller.model";
 import { Request, Response } from "express";
 
 /**
@@ -35,10 +37,10 @@ import { Request, Response } from "express";
  * @returns {Json Object} - HTTP Response
  */
 
-export const FetchStoreController = (helpers: any) => async (req: Request, res: Response) => {
+export const FetchStoreController = (helpers: any) => async (req: Request, res: Response): Promise<IStoreReturnToControllerCenter> => {
     try {
         const { StoreService, Logger } = helpers; // Helper functions
-        const { set, where, store_code, db_type, field_list, limit } = req.body; // Request
+        const { set, where, store_code, db_type, field_list, limit } = req.body as IMyRequestData; // Request
 
         if (set) {
             Logger('Store', 'warn', {
@@ -87,7 +89,7 @@ export const FetchStoreController = (helpers: any) => async (req: Request, res: 
             delete req.body['where'];
         }
 
-        const dataFromServiceCenter = await StoreService(req.body, 'fetch');
+        const dataFromServiceCenter: IStoreReturnToServiceCenter = await StoreService(req.body, 'fetch');
         // console.log('FetchStoreController', response);
 
         if (dataFromServiceCenter.kind === 'null_data') {
@@ -106,13 +108,13 @@ export const FetchStoreController = (helpers: any) => async (req: Request, res: 
             feature: 'fetch'
         });
 
-        const dataToControllerCenter = {
+        const dataToControllerCenter: IStoreReturnToControllerCenter = {
             response: {
                 message: dataFromServiceCenter.kind === "null_data" ?
                     `No row in the store!`
                     :
                     `Successfully fetch ${where !== undefined && !isLengthZero(where) && where !== "*" ? 'some' : 'all'} row!!`,
-                system: 'Store',
+                // system: 'Store',
                 feature: 'fetch',
                 data: dataFromServiceCenter.kind === "null_data" ? [] : dataFromServiceCenter
             },

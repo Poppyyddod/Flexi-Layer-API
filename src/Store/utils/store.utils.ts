@@ -9,27 +9,27 @@ import { IMySQLTableStructure } from '@SRC/Helper/Model/global.model';
 
 
 /**
- * @function StoreMapping - ສຳຫຼັບການກວດສອບຂອງ Store/Table name
+ * @function MapperStore - ສຳຫຼັບການກວດສອບຂອງ Store/Table name
  * @param code - ລະຫັດຂອງ Store
  * @returns {String} - Store/Table name
  */
 
 
-export const StoreMapping = async (db_type: string, storeCode: string): Promise<string> => {
+export const MapperStore = async (db_type: string, storeCode: string): Promise<string> => {
     try {
-        console.log('StoreMapping (db_type):', db_type);
-        console.log('StoreMapping (store):', storeCode);
+        console.log('MapperStore (db_type):', db_type);
+        console.log('MapperStore (store):', storeCode);
 
-        // console.log('StoreMapping (cachedTables):', gotCachedTables);
-        // console.log('StoreMapping (cachedTableStructure):', cachedTableStructure);
+        // console.log('MapperStore (cachedTables):', gotCachedTables);
+        // console.log('MapperStore (cachedTableStructure):', cachedTableStructure);
 
         const findedStoreCode = GetCachedTables().find((store: string) => store === storeCode);
         if (!findedStoreCode) throw { kind: 'invalid_store_code' };
-        console.log('StoreMapping (findedStoreCode) : ', findedStoreCode);
+        console.log('MapperStore (findedStoreCode) : ', findedStoreCode);
 
         return findedStoreCode;
     } catch (error) {
-        console.log('StoreMapping (Error):', error);
+        console.log('MapperStore (Error):', error);
         throw error;
     }
 };

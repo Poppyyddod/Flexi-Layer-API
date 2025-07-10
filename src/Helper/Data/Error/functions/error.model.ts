@@ -1,6 +1,6 @@
 // import { storeFields } from './list.sql.error';
 
-// type Features = 'fetch' | 'create' | 'edit' | 'remove';
+// type Features = 'fetch' | 'create' | 'edit' | 'delete';
 // type StoreFieldNames = keyof typeof storeFields; // Get the keys of storeFields
 
 // export type SystemParameterModel = {

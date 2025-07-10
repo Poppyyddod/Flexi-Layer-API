@@ -1,9 +1,10 @@
+import { $Settings } from "@SRC/Helper/Middlewares/middleware.setting";
 import { DbTypeListKey, supportForDbTypes } from "../../Center/list/list.db-type.support";
 import { noSqlSupporterList } from "../../Center/list/list.nosql-supporter";
 import { storeFields } from "./list.sql.error";
 
 
-type Features = 'fetch' | 'create' | 'edit' | 'remove';
+type Features = 'fetch' | 'create' | 'edit' | 'delete';
 type StoreFieldNames = keyof typeof storeFields;
 
 type ClientErrorModel = {
@@ -217,7 +218,7 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Cannot support the database type!',
             read_me: {
-                case_1: '`db_type` is not valid name',
+                case_1: '`db_type` name is not valid',
                 case_2: 'Forgot provide `db_type` key in the request'
             },
             support_for: `${Object.keys(supportForDbTypes)?.join(", ")}`
@@ -322,13 +323,33 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
-    'auth_setting_turn_off': {
+    'auth_token_setting_turn_off': {
         more: {
-            message: "Cannot support the `auth`:`myId` feature!",
+            message: "Cannot use the `{{user.id}}` auth feature!",
             read_me: {
-                case_1: "[Modify] the key has `myId` value to be normal value in the request.",
-                case_2: "Auth setting is turn off. Please turn on the auth setting in middleware setting file on server side."
+                case_1: "Fix the request key has `{{user.id}}` value to be other value.",
+                case_2: "Auth setting is turn off!. Please turn on the `useAuthToken` in `middleware.setting.ts` file on server side."
             }
+        },
+
+        code: 400
+    },
+
+    'invalid_placeholder_format': {
+        more: {
+            message: 'Invalid placeholder format!',
+            read_me: 'Please make sure the placeholder format is valid.',
+            guide: 'Placeholder must be like : {{token_key}}'
+        },
+
+        code: 400
+    },
+
+    'invalid_token_key': {
+        more: {
+            message: 'Invalid token key!',
+            read_me: 'Please make sure in the placeholder the token key is valid.',
+            support_for: $Settings.tokenKeys.join(', ')
         },
 
         code: 400
@@ -336,7 +357,7 @@ export const clientError: ClientErrorModel = {
 
     'incomplete_request': {
         more: {
-            message: 'Incomplete request!',
+            message: 'Incomplete child request!',
             read_me: 'Please provide the valid request format.',
             allowed: (errorOn: any) => {
                 try {
@@ -345,6 +366,40 @@ export const clientError: ClientErrorModel = {
                     return storeFields[errorOn?.systemName][theDbType?.type][errorOn?.feature];
                 } catch (error) {
                     console.log("[incomplete_request] ERROR : ", error);
+                }
+            }
+        },
+
+        code: 400
+    },
+
+    'incomplete_main_request': {
+        more: {
+            message: 'Incomplete main request!',
+            read_me: 'Please provide the valid request format.',
+            request_format: {
+                fetch: {
+                    db_type: 'string',
+                    store_code: 'string',
+                    field_list: 'array or string',
+                    where: 'object',
+                    limit: 'number'
+                },
+                create: {
+                    db_type: 'string',
+                    store_code: 'string',
+                    set: 'object or array(object)'
+                },
+                edit: {
+                    db_type: 'string',
+                    store_code: 'string',
+                    set: 'object',
+                    where: 'object'
+                },
+                delete: {
+                    db_type: 'string',
+                    store_code: 'string',
+                    where: 'object'
                 }
             }
         },

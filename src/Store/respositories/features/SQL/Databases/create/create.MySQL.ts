@@ -1,19 +1,24 @@
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IFixedToQueryFormat } from "@SRC/Store/models/store.controller.model";
 
 /**
  * @function GetPrimaryKeyFieldName ສຳຫຼັບການດືງເອົາ Primary key field
  * @param data - Object
  * @returns - Array
  */
-const GetPrimaryKeyFieldName = async (data: any) => {
+const GetPrimaryKeyFieldName = async (
+    SQLmanagement: any,
+    validRequestData: IMyRequestData
+) => {
     try {
-        const { SQLmanagement, store, db_type } = data;
+        const { store_code, db_type } = validRequestData;
 
         const getPrimaryKeyfieldnameCmd = `SELECT COLUMN_NAME 
         FROM INFORMATION_SCHEMA.COLUMNS 
         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ?
         AND COLUMN_KEY = 'PRI'`;
 
-        const response = await SQLmanagement(db_type, { cmd: getPrimaryKeyfieldnameCmd, params: [store], isReturn: true });
+        const response = await SQLmanagement(db_type, { cmd: getPrimaryKeyfieldnameCmd, params: [store_code], isReturn: true });
         console.log('primaryKey : ', response);
 
         return response
@@ -28,23 +33,28 @@ const GetPrimaryKeyFieldName = async (data: any) => {
  * @param data 
  * @returns 
  */
-export const CreateQueryForMySQL = async (data: any) => {
+export const CreateQueryForMySQL = async (
+    SQLmanagement: any,
+    validRequestData: IMyRequestData,
+    fixedFormat: IFixedToQueryFormat
+) => {
     try {
-        console.log('CreateQueryForMySQL (data) : ', data);
-        const { SQLmanagement, set, params, store, db_type } = data;
+        console.log('CreateQueryForMySQL (data) : ', validRequestData, fixedFormat);
+        const { set, params } = fixedFormat;
+        const { store_code, db_type } = validRequestData;
 
         const insertCMD = `INSERT INTO ?? ${set}`;
-        const newRecord = await SQLmanagement(db_type, { cmd: insertCMD, params: [store, ...params], isReturn: true });
+        const newRecord = await SQLmanagement(db_type, { cmd: insertCMD, params: [store_code, ...params], isReturn: true });
         console.log('CreateStoreRespo (newRecordId): ', newRecord);
 
-        const primaryKeyData = await GetPrimaryKeyFieldName(data);
+        const primaryKeyData = await GetPrimaryKeyFieldName(SQLmanagement, validRequestData);
 
         // const selectCMD = `SELECT * FROM ?? WHERE ${primaryKeyData[0]?.COLUMN_NAME} = ?`;
         const splitedValuesFromString = insertCMD.split('VALUES ');
         const lengthParamsForLimit = splitedValuesFromString[1].split('(').length - 1;
 
         const selectCMD = `SELECT * FROM ?? ${primaryKeyData[0]?.COLUMN_NAME} ORDER BY ${primaryKeyData[0]?.COLUMN_NAME} DESC LIMIT ${lengthParamsForLimit}`;
-        const newData = await SQLmanagement(db_type, { cmd: selectCMD, params: [store, newRecord.insertId], isReturn: true });
+        const newData = await SQLmanagement(db_type, { cmd: selectCMD, params: [store_code, newRecord.insertId], isReturn: true });
         console.log('CreateStoreRespo (new record data): ', newData);
 
         return newData;
