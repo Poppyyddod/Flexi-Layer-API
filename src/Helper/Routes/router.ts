@@ -22,6 +22,10 @@ const Init = async (): Promise<void> => {
 const GuiderRoutes = async (app: Router) => {
     await Init();
 
+    app.get("/professor", (req, res) => {
+        res.send("> Welcome to Professor!");
+    })
+
     storeRoute(app);
     authRoutes(app);
 

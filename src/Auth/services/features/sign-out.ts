@@ -1,5 +1,30 @@
 import { IReturnToCenterServiceData } from "@SRC/Auth/models/auth.global.model";
-import { IServiceFeatureProps } from "@SRC/Auth/models/auth.sign-in.model";
+import { IServiceFeatureProps, ISignInData, IUserAuthTableField } from "@SRC/Auth/models/auth.sign-in.model";
+
+
+
+/**
+ * Service function to update the authentication status of a user to "Signed Out".
+ * It edits the "auth_status_id" field in the "user_auth" table to 2 (Signed Out).
+ *
+ * @async
+ * @function EditAuthStatusToSignedOutState
+ * @param {any} StoreService - The data service function to perform database operations.
+ * @param {number} userId - The ID of the user to update the authentication status.
+ * @returns {Promise<void>} Resolves when the authentication status is updated.
+ */
+
+const EditAuthStatusToSignedOutState = async (StoreService: any, userId: number): Promise<void> => {
+    const dataToEdit = {
+        db_type: "mysql",
+        store_code: "user_auth",
+        where: { user_id: userId },
+        set: { auth_status_id: 2 }
+    };
+
+    const dataFromCenterService = await StoreService(dataToEdit, 'edit');
+    console.log('CreateUserRefreshToken (dataFromCenterService) : ', dataFromCenterService);
+}
 
 /**
  * Service function to handle user sign-out logic.
@@ -30,9 +55,14 @@ export const AuthSignOutService = (helpers: any) => async ({
         // Set the store code to the user refresh token table
         validRequestData['store_code'] = "user_refresh_tokens";
 
+        const whereObj = validRequestData.where as IUserAuthTableField;
+
         // Remove the refresh token entry from the data store
         const dataFromServiceCenter = await StoreService(validRequestData, 'remove');
         console.log('AuthSignOutService (dataFromCenterService) : ', dataFromServiceCenter);
+
+        // Update the auth status to signed out
+        await EditAuthStatusToSignedOutState(StoreService, whereObj.user_id!);
 
         // Prepare the response data for the controller
         const dataToAuthServiceCenter: IReturnToCenterServiceData = {
@@ -48,8 +78,13 @@ export const AuthSignOutService = (helpers: any) => async ({
         };
 
         return dataToAuthServiceCenter;
-    } catch (error) {
+    } catch (error: any) {
         console.log('AuthSignOutService (Error):', error);
+
+        if (error?.kind === 'not_found_data') {
+            throw { kind: 'already_signed_out', feature: 'sign-out' };
+        }
+
         throw error;
     }
 }

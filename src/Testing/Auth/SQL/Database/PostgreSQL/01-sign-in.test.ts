@@ -21,7 +21,7 @@ tester(`Test ${dbBrand}/Auth/${feature}`, () => {
     it("should return success message & data(array) & status code is 200", async () => {
         const bodyData = {
             db_type: dbBrand,
-            store_code: "user_privacy",
+            store_code: "user_auth",
             where: {
                 email: "test@gmail.com",
                 secretword: "554455"

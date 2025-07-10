@@ -114,10 +114,28 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
-    'incorrect_password': {
+    'incorrect_auth_data': {
         more: {
-            message: "Password is incorrect!",
+            message: "Email or Password is incorrect!",
             read_me: "Please check `user_email` and `user_password` in the request. Because it is incorrect."
+        },
+
+        code: 401
+    },
+
+    'already_signed_in': {
+        more: {
+            message: "Already signed in!",
+            read_me: "You must signed out first."
+        },
+
+        code: 401
+    },
+
+    'already_signed_out': {
+        more: {
+            message: "Already signed out!",
+            read_me: "You must signed in first."
         },
 
         code: 401
@@ -362,6 +380,18 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'The Refresh token is expired!',
             // read_me: 'Please check the store code in the request. Maybe it is invalid or not exist.'
+        },
+
+        code: 404
+    },
+
+    'refresh_token_revoked': {
+        more: {
+            message: 'The refresh token is revoked!',
+            read_me: {
+                case_1: 'You are signed out.',
+                case_2: 'You have used the refresh token.'
+            }
         },
 
         code: 404

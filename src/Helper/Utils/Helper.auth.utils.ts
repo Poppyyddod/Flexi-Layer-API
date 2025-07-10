@@ -69,3 +69,16 @@ export const JwtGenerateToken = async (
         throw error;
     }
 };
+
+
+
+export const JwtDecodeToken = async (token: string) => {
+    try {
+        console.log('JwtDecodeToken (token) : ', token);
+        const decoded = jwt.decode(token);
+        return decoded;
+    } catch (error) {
+        console.log('JwtDecodeToken (Error):', error);
+        throw error;
+    }
+}

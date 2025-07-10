@@ -33,8 +33,9 @@ const GetUserAuthData = async (StoreService: any, validRequestData: IMyRequestDa
 }
 
 
+// const CheckAlreayRefreshToken = () => {
 
-
+// }
 
 
 
@@ -69,6 +70,31 @@ const CreateUserRefreshToken = async (StoreService: any, userAuthData: any): Pro
 
 
 
+/**
+ * Update the authentication status of a user to "Signed In".
+ * It edits the "auth_status_id" field in the "user_auth" table to 3 (Signed In).
+ *
+ * @async
+ * @function EditAuthStatusToSignedInState
+ * @param {any} StoreService - The data service function to perform database operations.
+ * @param {any} userAuthData - The authenticated user data including user ID.
+ * @returns {Promise<void>} Resolves when the authentication status is updated.
+ */
+
+const EditAuthStatusToSignedInState = async (StoreService: any, userAuthData: IUserAuthTableField): Promise<void> => {
+    const dataToCreate = {
+        db_type: "mysql",
+        store_code: "user_auth",
+        where: { user_id: userAuthData.user_id! },
+        set: { auth_status_id: 3 }
+    };
+
+    const dataFromCenterService = await StoreService(dataToCreate, 'edit');
+    console.log('CreateUserRefreshToken (dataFromCenterService) : ', dataFromCenterService);
+}
+
+
+
 
 
 
@@ -99,25 +125,39 @@ export const AuthSignInService = (helpers: any) => async ({
         const { StoreService } = helpers;
         const whereObj = validRequestData.where as ISignInData;
 
+        // Get User Auth Data By Store System
         const dataFromServiceCenter = await GetUserAuthData(StoreService, validRequestData);
         console.log('AuthSignInService (dataFromCenterService) : ', dataFromServiceCenter);
 
+        // Auth Data
         const userAuthData = dataFromServiceCenter[0] as IUserAuthTableField;
 
+        // Check Auth Status
+        const allowToCreateRefreshToken = [1, 2];
+        if (!allowToCreateRefreshToken.includes(userAuthData.auth_status_id))
+            throw { kind: "already_signed_in", feature };
+
+        // Compare Password With Argon2
         const comparedPassword: boolean = await ArgonComparePassword(whereObj.user_password!, userAuthData.user_password!);
         console.log('AuthSignInService (comparedPassword) : ', comparedPassword);
 
         if (!comparedPassword) {
-            throw { kind: 'incorrect_password' };
+            throw { kind: 'incorrect_auth_data' };
         }
 
+        // Delete Password Key From User Auth Data
         delete userAuthData['user_password'];
 
+        // Generate Access Token (JWT)
         const generatedAccessToken = await JwtGenerateToken(userAuthData.user_id!, "1d");
         console.log('[AuthSignInService] Access Token generated successfully.');
         userAuthData['token'] = generatedAccessToken;
 
+        // Create Refresh Token
         await CreateUserRefreshToken(StoreService, userAuthData);
+
+        // Edit Auth Status To Signed In State
+        await EditAuthStatusToSignedInState(StoreService, userAuthData);
 
         const dataToAuthServiceCenter: IReturnToCenterServiceData = {
             response: {
@@ -129,8 +169,13 @@ export const AuthSignInService = (helpers: any) => async ({
         };
 
         return dataToAuthServiceCenter;
-    } catch (error) {
+    } catch (error: any) {
         console.log('AuthSignInService (Error):', error);
+
+        if (error?.kind === 'not_found_data') {
+            throw { kind: 'incorrect_auth_data', feature: 'sign-in' };
+        }
+
         throw error;
     }
 }

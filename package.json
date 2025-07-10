@@ -19,11 +19,11 @@
     "prod": "npm run fix-alias-prod && cross-env NODE_ENV=production node -r module-alias/register dist/src/index.js"
   },
   "_moduleAliases": {
-    "@SRC": "dist/src",
-    "@Helper": "dist/src/Helper",
-    "@Configs": "dist/Configs",
-    "@Store": "dist/src/Store",
-    "@Testing": "dist/src/Testing"
+    "@SRC": "src",
+    "@Helper": "src/Helper",
+    "@Configs": "Configs",
+    "@Store": "src/Store",
+    "@Testing": "src/Testing"
   },
   "jest": {
     "preset": "ts-jest",
