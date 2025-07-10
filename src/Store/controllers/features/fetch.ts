@@ -11,6 +11,7 @@
 
 import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isArray, isLengthZero, isNumber, isObject, isString } from "@Helper/Utils";
+import { Request, Response } from "express";
 
 /**
  * @function isLengthZero
@@ -34,7 +35,7 @@ import { isArray, isLengthZero, isNumber, isObject, isString } from "@Helper/Uti
  * @returns {Json Object} - HTTP Response
  */
 
-export const FetchStoreController = (helpers: any) => async (req: any, res: any) => {
+export const FetchStoreController = (helpers: any) => async (req: Request, res: Response) => {
     try {
         const { StoreService, Logger } = helpers; // Helper functions
         const { set, where, store_code, db_type, field_list, limit } = req.body; // Request
@@ -73,11 +74,13 @@ export const FetchStoreController = (helpers: any) => async (req: any, res: any)
                 throw { kind: 'incomplete_request', where };
             }
         }
-        
 
 
-        if (limit in req.body && !isNumber(limit) || limit <= 0) {
-            throw { kind: 'fetch_limit_feature_error' };
+        console.log('FetchStoreController (limit) : ', req.body.hasOwnProperty('limit'));
+        if (req.body.hasOwnProperty('limit')) {
+            if (!isNumber(limit) || limit <= 0) {
+                throw { kind: 'fetch_limit_feature_error' };
+            }
         }
 
         if (where !== undefined && where === "*") {

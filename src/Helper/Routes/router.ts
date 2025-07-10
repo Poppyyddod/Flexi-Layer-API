@@ -11,9 +11,9 @@ import { CacheInitMySqlTableStructure, isCacheReady } from '../Cache';
 
 let alreadyInit = false;
 
-const Init = async () => {
+const Init = async (): Promise<void> => {
     if (!isCacheReady() && !alreadyInit) {
-        console.warn("⚠️ Cache not ready — running lazy init...");
+        // console.warn("⚠️ Cache not ready — running lazy init...");
         await CacheInitMySqlTableStructure();
         alreadyInit = true;
     }

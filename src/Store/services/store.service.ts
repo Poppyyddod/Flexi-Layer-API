@@ -1,5 +1,5 @@
 import StoreRespository from '@Store/respositories';
-import { FixRequestFormat, FixWhereRequestFormat } from '@Store/utils';
+import { FixRequestFormat } from '@Store/utils';
 import { CheckTableDataStructure } from '@Store/validation';
 import { SqlServiceMethods } from './features/methods';
 import { FromControllerRequestDataModel, ServiceKeys } from '@Store/models/store.service.model';
@@ -21,9 +21,6 @@ const SqlHelperFunctions = {
  * NoSQL Helper Functions
  */
 
-const NoSqlHelperFunction = {
-    FixWhereRequestFormat,
-}
 
 
 /**

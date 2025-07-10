@@ -1,15 +1,11 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import {
-    convertStringToJson,
-    isArray,
-    isObject,
-    isString
-} from '@Helper/Utils';
+import { isArray, isObject, isString } from '@Helper/Utils';
 import { ObjectId } from 'mongodb';
-import { FixMySQLRequestFormat, FixPostgreSQLRequestFormat } from './FixRequestFormat/Databases';
-import { cachedTables, GetCachedTables, cachedTableStructure, isCacheReady, CacheInitMySqlTableStructure } from '../../Helper/Cache';
+import { FixMySQLRequestFormat } from './FixRequestFormat/Databases';
+import { GetCachedTables, GetCachedTableStructure } from '@Helper/Cache';
+import { IMySQLTableStructure } from '@SRC/Helper/Model/global.model';
 
 
 /**
@@ -19,40 +15,7 @@ import { cachedTables, GetCachedTables, cachedTableStructure, isCacheReady, Cach
  */
 
 
-// const dbTypeMapping: any = {
-//     postgresql: async () => {
-//         try {
-//             const codeToMapping = process.env.POSTGRESQL_STORE_MAPPING || '';
-//             return codeToMapping;
-//         } catch (error) {
-//             console.log('StoreMapping (dbTypeMapping)(PostgreSQL)(Error):', error);
-//             throw error;
-//         }
-//     },
-
-//     mysql: async () => {
-//         try {
-//             const codeToMapping = process.env.MYSQL_STORE_MAPPING || '';
-//             return codeToMapping;
-//         } catch (error) {
-//             console.log('StoreMapping (dbTypeMapping)(MySQL)(Error):', error);
-//             throw error;
-//         }
-//     },
-
-//     mongodb: async () => {
-//         try {
-//             const codeToMapping = process.env.MONGODB_STORE_MAPPING || '';
-//             return codeToMapping;
-//         } catch (error) {
-//             console.log('StoreMapping (dbTypeMapping)(MongoDB)(Error):', error);
-//             throw error;
-//         }
-//     }
-// }
-
-
-export const StoreMapping = async (db_type: string, storeCode: string) => {
+export const StoreMapping = async (db_type: string, storeCode: string): Promise<string> => {
     try {
         console.log('StoreMapping (db_type):', db_type);
         console.log('StoreMapping (store):', storeCode);
@@ -60,7 +23,7 @@ export const StoreMapping = async (db_type: string, storeCode: string) => {
         // console.log('StoreMapping (cachedTables):', gotCachedTables);
         // console.log('StoreMapping (cachedTableStructure):', cachedTableStructure);
 
-        const findedStoreCode = cachedTables.find((store: string) => store === storeCode);
+        const findedStoreCode = GetCachedTables().find((store: string) => store === storeCode);
         if (!findedStoreCode) throw { kind: 'invalid_store_code' };
         console.log('StoreMapping (findedStoreCode) : ', findedStoreCode);
 
@@ -72,184 +35,287 @@ export const StoreMapping = async (db_type: string, storeCode: string) => {
 };
 
 
-/**
- * @function FixRequestFormat - ສຳຫຼັບການປ່ຽນແປງຮູບແບບຂໍ້ມູນເພື່ອໄປ Query ໃຫ້ຖືກຕາມທີ່ Request
- * @param request - Object
- * @returns Object
- * @throws {error}
- */
+type RequestFormat = {
+    set?: Record<string, any> | any[];
+    where?: Record<string, any> | string;
+    db_type: string;
+    field_list?: string | string[];
+    feature?: string;
+    store_code: string;
+    params?: any[];
+};
 
-
-
-export const FixRequestFormat = async (request: any) => {
+export const FixRequestFormat = async (request: RequestFormat | null | undefined) => {
     try {
-        console.log('> FixRequestFormat : ');
-        console.log('- Request to fix : ', request);
+        if (!request) return { params: [], fields: null };
 
-        if (!request) {
-            return { params: [], fields: null };
+        const { set, where, db_type, store_code, field_list, feature } = request;
+        const params: any[] = [];
+        const result: Partial<RequestFormat> = {};
+
+        console.log("set !!!!!!!!!! : ", result);
+        if (set && (isObject(set) || Array.isArray(set))) {
+            const whereLength = isObject(where) ? Object.keys(where!).length : 0;
+            const { fields, params: setParams } = CreateFieldAndParams(db_type, set, whereLength, feature!, 'set');
+            result.set = fields;
+            params.push(...setParams);
         }
 
-        const dataToReturn: any = {};
-        request['params'] = [];
-        const { set, where, db_type, field_list, feature } = request;
-
-        if (set && (isObject(set) || isArray(set))) {
-            const whereDataLength = !where ? 0 : Object.keys(where).length;
-            const fixedSet = createFieldsAndParams(db_type, set, whereDataLength, feature, "set");
-            console.log('* Fixed Set : ', fixedSet);
-
-            request['set'] = fixedSet.fields;
-            request['params'] = [...request.params, ...fixedSet.params];
-            dataToReturn['set'] = request['set'];
+        console.log("where !!!!!!!!!! : ", result);
+        if (where && (isObject(where))) {
+            const setLength = isObject(set) ? Object.keys(set!).length : 0;
+            const { fields, params: whereParams } = CreateFieldAndParams(db_type, where, setLength, feature!, 'where');
+            result.where = fields;
+            params.push(...whereParams);
         }
 
-        if (where && (isObject(where) || isString(where))) {
-            const setDataLength = !set ? 0 : Object.keys(set).length;
-            const fixedWhere = createFieldsAndParams(db_type, where, setDataLength, feature, "where");
-            // console.log('* Fixed Where : ', fixedWhere);
+        // Special case: fetch:last
+        console.log("special case !!!!!!!!!! : ", result);
+        if (typeof where === 'string') {
+            const [primaryKey, typeValue] = where.split(':');
+            console.log('FixRequestFormat (splittedWhere):', primaryKey, typeValue);
 
-            request['where'] = fixedWhere.fields;
-            request['params'] = [...request.params, ...fixedWhere.params];
-            dataToReturn['where'] = request['where'];
-            console.log('* FixedRequestFormat (dataToReturn) : ', dataToReturn);
-        }
-
-        if (where && isString(where) && feature === 'fetch') {
-            const splittedWhere = where.split(':');
-            console.log('* Splitted Where : ', splittedWhere);
-
-            const primaryKeyField = splittedWhere[0];
-            const paramValue = splittedWhere[1];
-
-            if (paramValue !== "LAST") {
-                throw { kind: 'incomplete_request' };
-            }
-
-            // For fetch the last row
-            dataToReturn['where'] = `ORDER BY ${primaryKeyField} DESC`;
+            // if (typeValue !== 'LAST') throw { kind: 'incomplete_request' };
+            result.where = `ORDER BY ${primaryKey} DESC`;
         }
 
         if (field_list) {
-            if (isArray(field_list)) {
-                const fixedFormatFieldList = field_list.join(', ');
-                console.log('* Fixed Field List : ', fixedFormatFieldList);
-
-                request['field_list'] = fixedFormatFieldList;
-                dataToReturn['field_list'] = request['field_list'];
-            }
-
-            if (isString(field_list)) {
-                dataToReturn['field_list'] = field_list;
-            }
+            result.field_list = Array.isArray(field_list) ? field_list.join(', ') : field_list;
         }
 
-        console.log('* FixedRequestFormat (return) : ', request);
-        return {
-            params: request['params'],
-            ...dataToReturn
-        };
+        return { ...result, params };
     } catch (error: any) {
-        console.log('FixRequestFormat (Error): ', error.message);
-        throw error;
-    }
-}
-
-
-
-
-
-
-export const FixWhereRequestFormat = async (validRequestData: any) => {
-    try {
-        console.log('FixNoSqlRequestFormat : ', validRequestData);
-
-        const { db_type, store, feature, set, where } = validRequestData;
-
-        if (!where || (where && !("_id" in where)))
-            return validRequestData;
-
-        if (Object.keys(where).length > 1)
-            throw { kind: "cannot_mix_where_data_with_nosql" };
-
-        if (!isArray(where['_id']))
-            throw { kind: "object_id_must_be_array" };
-
-        const objectIds = where['_id'].map((id: any) => new ObjectId(id));
-        const whereData = { _id: { $in: objectIds } }
-
-        validRequestData['where'] = whereData;
-
-        return validRequestData;
-    } catch (error) {
-        console.log('FixNoSqlRequestFormat (Error):', error);
-        throw error;
-    }
-}
-
-
-
-
-
-
-const dbTypeCreateFieldsAndParams: any = {
-    // postgresql: (obj: any, setDataLength: number, feature: string, reqKey: string) => {
-    //     // const fields = Object.keys(obj)
-    //     //     .map((key, index) => `${key} = $${index + setDataLength + 1}`)
-    //     //     .join(feature === 'set' ? ', ' : ' AND ');
-    //     // console.log('createFieldsAndParams (PostgreSQL) : ', fields);
-
-    //     // return fields;
-
-    //     const type = feature === 'set' ? ', ' : ' AND ';
-    //     const fields: string[] = [];
-    //     const values: any[] = [];
-    //     let paramIndex = 1;
-
-    //     Object.entries(obj).forEach(([key, value]) => {
-    //         if (Array.isArray(value)) {
-    //             console.log("* Array Field Value : ", key, value);
-    //             const placeholders = value.map(() => `$${paramIndex++}`).join(', ');
-    //             fields.push(`${key} IN (${placeholders})`);
-    //             values.push(...value);
-    //         } else {
-    //             fields.push(`${key} = $${paramIndex++}`);
-    //             values.push(value);
-    //         }
-    //     });
-
-    //     const queryString = fields.join(type);
-    //     console.log('createFieldsAndParams (PostgreSQL) :', queryString);
-    //     console.log('Params:', values);
-
-    //     return {
-    //         fields: queryString,
-    //         params: values
-    //     };
-    // },
-
-    postgresql: (dataToFix: any) => FixPostgreSQLRequestFormat(dataToFix),
-    mysql: (dataToFix: any) => FixMySQLRequestFormat(dataToFix),
-}
-
-// obj is set or where
-const createFieldsAndParams = (db_type: string, obj: any, beforeObjLength: number, feature: string, reqKey: string) => {
-    try {
-        console.log('- createFieldsAndParams : ', obj, feature, reqKey);
-
-        const dataToFix = {
-            obj, beforeObjLength, feature, reqKey
-        }
-
-        const fixedData = dbTypeCreateFieldsAndParams[db_type](dataToFix);
-        console.log('Fixed Fields : ', fixedData);
-
-        return {
-            fields: fixedData.fields,
-            params: fixedData.params
-        };
-    } catch (error) {
-        console.log('createFieldsAndParams : ', error);
+        console.error('FixRequestFormat (Error):', error?.message ?? error);
         throw error;
     }
 };
+
+const dbTypeCreateFieldAndParams: Record<string, (dataToFix: any) => { fields: any; params: any[] }> = {
+    mysql: (dataToFix) => FixMySQLRequestFormat(dataToFix),
+};
+
+const CreateFieldAndParams = (
+    db_type: string,
+    obj: any,
+    beforeObjLength: number,
+    feature: string,
+    reqKey: string
+) => {
+    const dataToFix = { obj, beforeObjLength, feature, reqKey };
+    const handler = dbTypeCreateFieldAndParams[db_type];
+    if (!handler) throw new Error(`Unsupported db_type: ${db_type}`);
+    return handler(dataToFix);
+};
+
+
+// type RequestFormat = {
+//     set?: Record<string, any> | any[];
+//     where?: Record<string, any> | string;
+//     db_type: string;
+//     field_list?: string | string[];
+//     feature?: string;
+//     params?: any[];
+// };
+
+// export const FixRequestFormat = async (request: RequestFormat | null | undefined) => {
+//     try {
+//         if (!request) {
+//             return { params: [], fields: null };
+//         }
+
+//         const { set, where, db_type, field_list, feature } = request;
+//         request.params = [];
+
+//         const dataToReturn: Partial<RequestFormat> = {};
+
+//         if (set && (isObject(set) || Array.isArray(set))) {
+//             const whereLength = where && typeof where === 'object' ? Object.keys(where).length : 0;
+//             const fixedSet = CreateFieldAndParams(db_type, set, whereLength, feature!, 'set');
+
+//             request.set = fixedSet.fields;
+//             request.params.push(...fixedSet.params);
+//             dataToReturn.set = fixedSet.fields;
+//             dataToReturn.params = request.params;
+//         }
+
+//         if (where && (isObject(where) || typeof where === 'string')) {
+//             const setLength = set && typeof set === 'object' ? Object.keys(set).length : 0;
+//             const fixedWhere = CreateFieldAndParams(db_type, where, setLength, feature!, 'where');
+
+//             request.where = fixedWhere.fields;
+//             request.params.push(...fixedWhere.params);
+//             dataToReturn.where = fixedWhere.fields;
+//             dataToReturn.params = request.params;
+//         }
+
+//         if (typeof where === 'string' && feature === 'fetch') {
+//             const [primaryKeyField, paramValue] = where.split(':');
+
+//             if (paramValue !== 'LAST') {
+//                 throw { kind: 'incomplete_request' };
+//             }
+
+//             dataToReturn.where = `ORDER BY ${primaryKeyField} DESC`;
+//         }
+
+//         if (field_list) {
+//             if (Array.isArray(field_list)) {
+//                 const formattedFieldList = field_list.join(', ');
+//                 request.field_list = formattedFieldList;
+//                 dataToReturn.field_list = formattedFieldList;
+//             } else if (typeof field_list === 'string') {
+//                 dataToReturn.field_list = field_list;
+//             }
+//         }
+
+//         return {
+//             params: request.params,
+//             ...dataToReturn,
+//         };
+//     } catch (error: any) {
+//         console.error('FixRequestFormat (Error):', error?.message ?? error);
+//         throw error;
+//     }
+// };
+
+// const dbTypeCreateFieldAndParams: Record<string, (dataToFix: any) => { fields: any; params: any[] }> = {
+//     mysql: (dataToFix) => FixMySQLRequestFormat(dataToFix),
+// };
+
+// const CreateFieldAndParams = (
+//     db_type: string,
+//     obj: any,
+//     beforeObjLength: number,
+//     feature: string,
+//     reqKey: string
+// ) => {
+//     try {
+//         const dataToFix = { obj, beforeObjLength, feature, reqKey };
+//         const fixedData = dbTypeCreateFieldAndParams[db_type](dataToFix);
+
+//         if (!fixedData) {
+//             throw new Error(`Unsupported db_type: ${db_type}`);
+//         }
+
+//         return {
+//             fields: fixedData.fields,
+//             params: fixedData.params,
+//         };
+//     } catch (error) {
+//         console.error('CreateFieldAndParams (Error):', error);
+//         throw error;
+//     }
+// };
+
+
+
+// /**
+//  * @function FixRequestFormat - ສຳຫຼັບການປ່ຽນແປງຮູບແບບຂໍ້ມູນເພື່ອໄປ Query ໃຫ້ຖືກຕາມທີ່ Request
+//  * @param request - Object
+//  * @returns Object
+//  * @throws {error}
+//  */
+
+
+
+// export const FixRequestFormat = async (request: any) => {
+//     try {
+//         console.log('> FixRequestFormat : ');
+//         console.log('- Request to fix : ', request);
+
+//         if (!request) {
+//             return { params: [], fields: null };
+//         }
+
+//         const dataToReturn: any = {};
+//         request['params'] = [];
+//         const { set, where, db_type, field_list, feature } = request;
+
+//         if (set && (isObject(set) || isArray(set))) {
+//             const whereDataLength = !where ? 0 : Object.keys(where).length;
+//             const fixedSet = CreateFieldAndParams(db_type, set, whereDataLength, feature, "set");
+//             console.log('* Fixed Set : ', fixedSet);
+
+//             request['set'] = fixedSet.fields;
+//             request['params'] = [...request.params, ...fixedSet.params];
+//             dataToReturn['set'] = request['set'];
+//         }
+
+//         if (where && (isObject(where) || isString(where))) {
+//             const setDataLength = !set ? 0 : Object.keys(set).length;
+//             const fixedWhere = CreateFieldAndParams(db_type, where, setDataLength, feature, "where");
+//             // console.log('* Fixed Where : ', fixedWhere);
+
+//             request['where'] = fixedWhere.fields;
+//             request['params'] = [...request.params, ...fixedWhere.params];
+//             dataToReturn['where'] = request['where'];
+//             console.log('* FixedRequestFormat (dataToReturn) : ', dataToReturn);
+//         }
+
+//         if (where && isString(where) && feature === 'fetch') {
+//             const splittedWhere = where.split(':');
+//             console.log('* Splitted Where : ', splittedWhere);
+
+//             const primaryKeyField = splittedWhere[0];
+//             const paramValue = splittedWhere[1];
+
+//             if (paramValue !== "LAST") {
+//                 throw { kind: 'incomplete_request' };
+//             }
+
+//             // For fetch the last row
+//             dataToReturn['where'] = `ORDER BY ${primaryKeyField} DESC`;
+//         }
+
+//         if (field_list) {
+//             if (isArray(field_list)) {
+//                 const fixedFormatFieldList = field_list.join(', ');
+//                 console.log('* Fixed Field List : ', fixedFormatFieldList);
+
+//                 request['field_list'] = fixedFormatFieldList;
+//                 dataToReturn['field_list'] = request['field_list'];
+//             }
+
+//             if (isString(field_list)) {
+//                 dataToReturn['field_list'] = field_list;
+//             }
+//         }
+
+//         console.log('* FixedRequestFormat (return) : ', request);
+//         return {
+//             params: request['params'],
+//             ...dataToReturn
+//         };
+//     } catch (error: any) {
+//         console.log('FixRequestFormat (Error): ', error.message);
+//         throw error;
+//     }
+// }
+
+
+
+// const dbTypeCreateFieldAndParams: any = {
+//     mysql: (dataToFix: any) => FixMySQLRequestFormat(dataToFix),
+// }
+
+// // obj is set or where
+// const CreateFieldAndParams = (db_type: string, obj: any, beforeObjLength: number, feature: string, reqKey: string) => {
+//     try {
+//         console.log('- CreateFieldAndParams : ', obj, feature, reqKey);
+
+//         const dataToFix = {
+//             obj, beforeObjLength, feature, reqKey
+//         }
+
+//         const fixedData = dbTypeCreateFieldAndParams[db_type](dataToFix);
+//         console.log('Fixed Fields : ', fixedData);
+
+//         return {
+//             fields: fixedData.fields,
+//             params: fixedData.params
+//         };
+//     } catch (error) {
+//         console.log('CreateFieldAndParams : ', error);
+//         throw error;
+//     }
+// };

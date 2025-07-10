@@ -1,47 +1,71 @@
-import { EditSuccessDataResponseHttp } from '@Testing/tester.model';
-import { TestStoreRoute, server, request } from '@Testing/tester.config';
+import { CacheInitMySqlTableStructure, isCacheReady } from '@SRC/Helper/Cache';
+import { CloseHttpsServer } from '@SRC/Helper/Middlewares/runner.https';
+import { EditSuccessDataResponseHttp, FetchSuccessDataResponseHttp } from '@SRC/Testing/tester.model';
+import { request, server, TestStoreRoute } from '@SRC/Testing/tester.config';
 import { format } from 'date-fns';
+import { Response } from 'supertest';
+import { sql } from '@Configs/Database';
 
 let originalLog: any;
+let alreadyInit = false;
+
+const Init = async (): Promise<void> => {
+    if (!isCacheReady() && !alreadyInit) {
+        await CacheInitMySqlTableStructure();
+        alreadyInit = true;
+    }
+};
 
 beforeAll(async () => {
     originalLog = console.log;
-    console.log = jest.fn(); // ปิด console.log
+    console.log = jest.fn();
+    await Init();
+});
 
-    if (server) {
-        await server.close();
-    } else {
-        await server.connect();
+afterAll(async () => {
+    console.log = originalLog;
+    await CloseHttpsServer();
+
+    if (server && server.close) {
+        await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
+
+    if (sql && !sql._closed) {  // _closed เป็น internal property (mysql2 ไม่มี API เช็ค pool ว่ายังเปิดหรือปิด)
+        try {
+            await sql.end();
+        } catch (err) {
+            // console.warn('MySQL pool already closed or error on closing:', err);
+        }
     }
 });
 
 const dbBrand = 'mysql';
 const feature = 'edit';
-const tester = describe;
 
 /**
  * @Edit by where object key
  */
-tester(`Test ${dbBrand}/Store/${feature}`, () => {
+describe(`Test ${dbBrand}/Store/${feature}`, () => {
     it("(One) should return success message & affectedRow > 0 & status code is 200", async () => {
         const bodyData = {
             db_type: dbBrand,
-            store_code: "testing_table",
+            store_code: "store_testing",
             set: {
                 timestamp_field: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
             },
             where: {
-                test_id: 69
+                store_testing_id: 69
             }
         }
 
-        const response: any = await request(server).patch(TestStoreRoute[feature])
+        const response: Response = await request(server).post(TestStoreRoute[feature])
             .set('x_z_token', `${process.env.TESTING_TOKEN}`)
             .send(bodyData);
 
-        // console.log(`# [RESULT] : Store/${dbBrand}/${feature} : `, response);
+        // console.log = originalLog;
+        console.log(`# [RESULT] : Store/${dbBrand}/${feature} : `, response.body);
         expect(
-            response.status === 200 
+            response.status === 200
             || response.status === 404
         ).toBe(true);
 
@@ -60,21 +84,21 @@ tester(`Test ${dbBrand}/Store/${feature}`, () => {
 /**
  * @Edit by where array field
  */
-tester(`Test ${dbBrand}/Store/${feature}`, () => {
+describe(`Test ${dbBrand}/Store/${feature}`, () => {
     it("(Many) should return success message & affectedRow > 0 & status code is 200", async () => {
         const bodyData = {
             db_type: dbBrand,
-            store_code: "testing_table",
+            store_code: "store_testing",
             set: {
                 timestamp_field: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
             },
             where: {
-                test_id: [69],
+                store_testing_id: [69],
                 number_field: 2
             }
         }
 
-        const response: any = await request(server).patch(TestStoreRoute[feature])
+        const response: any = await request(server).post(TestStoreRoute[feature])
             .set('x_z_token', `${process.env.TESTING_TOKEN}`)
             .send(bodyData);
 
