@@ -1,10 +1,11 @@
-import Supplier from '@Helper/Supplier';
 import StoreRespository from '@Store/respositories';
-import { FixRequestFormat, FixWhereRequestFormat } from '@Store/utils';
+import { FixRequestFormat } from '@Store/utils';
 import { CheckTableDataStructure } from '@Store/validation';
 import { SqlServiceMethods } from './features/methods';
-import { FromControllerRequestDataModel, ServiceKeys } from '@Store/models/store.service.model';
 import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.db-type.support';
+import { IMyRequestData } from '@SRC/Helper/Model/global.model';
+import { IStoreFeatureList } from '../models/store.global.model';
+import { IStoreReturnToServiceCenter } from '../models/store.controller.model';
 
 
 /**
@@ -13,7 +14,6 @@ import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.
 
 const SqlHelperFunctions = {
     FixRequestFormat,
-    Supplier,
     // CheckTableDataStructure,
     // StoreRespository
 };
@@ -23,15 +23,12 @@ const SqlHelperFunctions = {
  * NoSQL Helper Functions
  */
 
-const NoSqlHelperFunction = {
-    FixWhereRequestFormat,
-}
 
 
 /**
  * @function StoreService - ສຳຫຼັບ Methods Mapping ຂອງ Service ແຕ່ລະ Feature
  * @param request - Request Body
- * @param feature - Feature such as ('fetch', 'create', 'edit', 'remove')
+ * @param feature - Feature such as ('fetch', 'create', 'edit', 'delete')
  * @returns - Object ທີ່ມາຈາກ Service Feature Function
  * @throws {Error}
  */
@@ -60,23 +57,18 @@ const NoSqlHelperFunction = {
 
 
 const dbTypeService: any = {
-    sql: async (reqBodyData: FromControllerRequestDataModel, dbRelationshipType: string, theFeature: ServiceKeys) => {
+    sql: async (validRequestData: IMyRequestData, dbRelationshipType: string, feature: IStoreFeatureList) => {
         try {
-            const validData = await CheckTableDataStructure({ ...reqBodyData, feature: theFeature });
-            console.log('StoreService (validData)(SQL) : ', validData);
+            const validStructureData = await CheckTableDataStructure(validRequestData, feature);
+            console.log('StoreService (validData)(SQL) : ', validStructureData);
 
-            const serviceMappedMethod = SqlServiceMethods[theFeature];
-            const dataFromtheService = await serviceMappedMethod(SqlHelperFunctions)(validData);
-            // console.log('StoreService (dataFromtheService)(SQL) : ', dataFromtheService);
+            const serviceMappedMethod = SqlServiceMethods[feature];
+            const dataFromtheService: IStoreReturnToServiceCenter = await serviceMappedMethod(SqlHelperFunctions)(validRequestData);
+            console.log('StoreService (dataFromtheService)(SQL) : ', dataFromtheService.fixedFormat);
 
-            const { db_type, store, fixedFormat } = dataFromtheService;
+            const { fixedFormat } = dataFromtheService;
 
-            const dataToResposCenter = {
-                ...validData,
-                fixedFormat
-            };
-
-            const dataFromResposCenter = await StoreRespository(dbRelationshipType, theFeature, dataToResposCenter);
+            const dataFromResposCenter: any = await StoreRespository(dbRelationshipType, feature, validStructureData, fixedFormat);
             // console.log('StoreService (dataFromResposCenter)(SQL) : ', dataFromResposCenter);
 
             return dataFromResposCenter;
@@ -88,17 +80,17 @@ const dbTypeService: any = {
 }
 
 
-const StoreService = async (reqBodyData: FromControllerRequestDataModel, feature: string) => {
+const StoreService = async (validRequestData: IMyRequestData, feature: IStoreFeatureList) => {
     try {
-        console.log('> StoreService Request Data :', reqBodyData, feature);
-        const theFeature = feature as ServiceKeys;
+        console.log('> StoreService Request Data :', validRequestData, feature);
+
         // console.log(`Request route: ${route}`);
         // console.log('> StoreService :', theFeature);
 
-        const { db_type } = reqBodyData;
+        const { db_type } = validRequestData;
 
-        const dbRelationshipType = supportForDbTypes[db_type as DbTypeListKey].type;
-        const dataFromResposCenter = await dbTypeService[dbRelationshipType](reqBodyData, dbRelationshipType, theFeature);
+        const dbRelationshipType: string = supportForDbTypes[db_type as DbTypeListKey].type;
+        const dataFromResposCenter = await dbTypeService[dbRelationshipType](validRequestData, dbRelationshipType, feature);
         console.log('StoreService (dataFromResposCenter) : ', dataFromResposCenter);
 
         return dataFromResposCenter;

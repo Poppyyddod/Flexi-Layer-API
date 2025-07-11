@@ -1,8 +1,9 @@
 # Project environment
 NODE_ENV=#environment
 
-# Server port
+# HTTP Server Port For Testing
 HTTP_PORT=#port_number
+# HTTPS Server Port For Production
 HTTPS_PORT=#port_number
 
 # Hostname
@@ -14,15 +15,11 @@ MYSQL_USER=#username
 MYSQL_PASSWORD=#password
 # MySQL database name
 MYSQL_DATABASE=#database_name
-# MySQL/Tables
-MYSQL_STORE_MAPPING="
-#table_name:table_name,
-..."
 
 # JWT
 SECRET_KEY=#access
 REFRESH_KEY=#refresh
 
-# Discord
-DISCORD_BOT_TOKEN=#BOT_TOKEN
-DISCORD_CHANNEL_ID=#CHANNEL_ID
+# # Discord
+# DISCORD_BOT_TOKEN=#BOT_TOKEN
+# DISCORD_CHANNEL_ID=#CHANNEL_ID

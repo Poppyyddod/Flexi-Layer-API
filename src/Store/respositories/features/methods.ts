@@ -11,5 +11,5 @@ export const SqlStoreRespoMethods: RespositoryMethodsModel = {
     'fetch': (helpers) => { return FetchSqlStoreRespo(helpers) },
     'create': (helpers) => { return CreateSqlStoreRespo(helpers) },
     'edit': (helpers) => { return EditSqlStoreRespo(helpers) },
-    'remove': (helpers) => { return DeleteSqlStoreRespo(helpers) }
+    'delete': (helpers) => { return DeleteSqlStoreRespo(helpers) }
 };

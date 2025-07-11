@@ -8,10 +8,11 @@ export interface ISignInData {
 }
 
 export interface IUserAuthTableField {
-    user_id?: string
+    user_id?: number
     user_name?: string
     user_email?: string
     user_password?: string
+    auth_status_id: number
     token?: string
 }
 

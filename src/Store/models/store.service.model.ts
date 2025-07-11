@@ -8,7 +8,7 @@ export interface ServiceMappedFeature {
 }
 
 // Model List ສຳຫຼັບ Service features
-export type ServiceKeys = 'fetch' | 'create' | 'edit' | 'remove';
+export type ServiceKeys = 'fetch' | 'create' | 'edit' | 'delete';
 
 // Model ໃຫ້ການບໍລິການສົ່ງຂໍ້ມູນກັບມາເປັນແບບເທົ່ານັ້ນ DataToServiceCenterModel
 export type ServiceMethodsModel = {

@@ -4,7 +4,10 @@ import { authControllerMethods, AuthControllerKeyRoutes } from "./method";
 import AuthCenterService from "../services/auth.service";
 import { Request, Response } from "express";
 import { IReturnToCenterServiceData } from "../models/auth.global.model";
+import { loadEnvConfig } from "@Configs/env";
+import { sendDiscordWebhook } from "@SRC/Helper/Supplier";
 
+const RAW_ENV = loadEnvConfig();
 
 // Helper Function
 const helperFunctions = {
@@ -69,6 +72,9 @@ const AuthCenterController = async (req: Request, res: Response): Promise<Respon
         });
 
         const { response, status_code } = dataFromCenterService;
+
+        if (RAW_ENV.NODE_ENV === 'production') 
+            await sendDiscordWebhook('signup', `${response.data?.[0]?.user_name} has signed up successfully.`);
 
         return res.status(status_code).json({
             ...response

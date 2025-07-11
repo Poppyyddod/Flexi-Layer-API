@@ -1,3 +1,3 @@
-import StoreController from './store.controller';
+import StoreControllerCenter from './store.controller';
 
-export default StoreController;
+export default StoreControllerCenter;

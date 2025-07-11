@@ -150,8 +150,13 @@ export const AuthRefreshTokenService = (helpers: any) => async ({
         }
 
         return dataToAuthServiceCenter;
-    } catch (error) {
+    } catch (error: any) {
         console.log('AuthRefreshTokenService (Error):', error);
+
+        if (error?.kind === "not_found_data") {
+            throw { kind: 'refresh_token_revoked' };
+        }
+
         throw error;
     }
 };

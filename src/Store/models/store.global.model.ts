@@ -1,0 +1,1 @@
+export type IStoreFeatureList = 'fetch' | 'create' | 'edit' | 'delete';

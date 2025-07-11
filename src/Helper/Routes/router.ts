@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import storeRoute from 'src/Store/routes/store.route';
-import authRoutes from 'src/Auth/routes/auth.route';
+import storeRoute from '@SRC/Store/routes/store.route';
+import authRoutes from '@SRC/Auth/routes/auth.route';
+import { CacheInitMySqlTableStructure, isCacheReady } from '../Cache';
 
 /**
  * @function MainRoutes - ສຳຫຼັບການເກັບ Route ແຕ່ລະ System ເພື່ອໄປໃຊ້ໃນ Main index ອີກເທື່ອຫນື່ງ (Cleaner code)
@@ -8,7 +9,23 @@ import authRoutes from 'src/Auth/routes/auth.route';
  * @returns 
  */
 
-const GuiderRoutes = (app: Router) => {
+let alreadyInit = false;
+
+const Init = async (): Promise<void> => {
+    if (!isCacheReady() && !alreadyInit) {
+        // console.warn("⚠️ Cache not ready — running lazy init...");
+        await CacheInitMySqlTableStructure();
+        alreadyInit = true;
+    }
+}
+
+const GuiderRoutes = async (app: Router) => {
+    await Init();
+
+    app.get("/professor", (req, res) => {
+        res.send("> Welcome to Professor!");
+    })
+
     storeRoute(app);
     authRoutes(app);
 

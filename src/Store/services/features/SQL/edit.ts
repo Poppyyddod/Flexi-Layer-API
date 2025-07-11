@@ -6,6 +6,9 @@
  * @throws {Error}
  */
 
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { IStoreReturnToServiceCenter } from "@SRC/Store/models/store.controller.model";
+
 /**
  * 
  * @function CheckDataStructure
@@ -29,21 +32,21 @@
  * ສຳຫຼັບການສື່ສານກັບ Database
  */
 
-export const EditSqlStoreService = (helpers: any) => async (validRequestData: any): Promise<any> => {
+export const EditSqlStoreService = (helpers: any) => async (validRequestData: IMyRequestData): Promise<IStoreReturnToServiceCenter> => {
     try {
         console.log('> EditStoreService :');
         const { FixRequestFormat, Supplier } = helpers;
 
         // Check Data 
-        const { db_type, store, set, where } = validRequestData;
+        const { db_type, store_code, set, where } = validRequestData;
         console.log('- Request : ', validRequestData);
 
-        const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'update'});
+        const fixedFormat: any = await FixRequestFormat({...validRequestData, feature: 'update'});
         // console.log('EditStoreService (fixedFormat) : ', fixedFormat);
 
-        const dataToServiceCenter = {
+        const dataToServiceCenter: IStoreReturnToServiceCenter = {
             db_type,
-            store,
+            store_code,
             fixedFormat
         };
 

@@ -1,28 +1,51 @@
 {
-  "name": "dynamic_stores",
-  "version": "1.0.0",
-  "description": "",
+  "name": "professor",
+  "version": "1.2.0",
+  "description": "Dynamic API~~",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
+    "// ----- test dev auth -----": "Auth (MySQL) (src)",
+    "test:dev:auth:sign-in": "jest src/Testing/Auth/SQL/Database/MySQL/01-sign-in.test.ts",
+    "test:dev:auth:sign-up": "jest src/Testing/Auth/SQL/Database/MySQL/02-sign-up.test.ts",
+    "test:dev:auth:sign-out": "jest src/Testing/Auth/SQL/Database/MySQL/03-sign-out.test.ts",
+    "test:dev:auth": "npm run test:dev:auth:sign-up && npm run test:dev:auth:sign-in && npm run test:dev:auth:sign-out",
+    "// ----- test dev store -----": "Store (MySQL) (src)",
+    "test:dev:mysql:create": "jest src/Testing/Store/SQL/Database/MySQL/success/01-create.test.ts",
+    "test:dev:mysql:fetch": "jest src/Testing/Store/SQL/Database/MySQL/success/02-fetch.test.ts",
+    "test:dev:mysql:edit": "jest src/Testing/Store/SQL/Database/MySQL/success/03-edit.test.ts",
+    "test:dev:mysql:delete": "jest src/Testing/Store/SQL/Database/MySQL/success/04-delete.test.ts",
+    "test:dev:mysql": "npm run test:dev:mysql:create && npm run test:dev:mysql:fetch && npm run test:dev:mysql:edit && npm run test:dev:mysql:delete",
+    "// ----- test prod auth -----": "Auth (MySQL) (dist/src)",
+    "test:prod:auth:sign-in": "jest dist/src/Testing/Auth/SQL/Database/MySQL/01-sign-in.test.js",
+    "test:prod:auth:sign-up": "jest dist/src/Testing/Auth/SQL/Database/MySQL/02-sign-up.test.js",
+    "test:prod:auth:sign-out": "jest dist/src/Testing/Auth/SQL/Database/MySQL/03-sign-out.test.js",
+    "test:prod:auth": "npm run test:prod:auth:sign-up && npm run test:prod:auth:sign-in && npm run test:prod:auth:sign-out",
+    "// ----- test prod store -----": "Store (MySQL) (dist/src)",
+    "test:prod:mysql:create": "jest dist/src/Testing/Store/SQL/Database/MySQL/success/01-create.test.js",
+    "test:prod:mysql:fetch": "jest dist/src/Testing/Store/SQL/Database/MySQL/success/02-fetch.test.js",
+    "test:prod:mysql:edit": "jest dist/src/Testing/Store/SQL/Database/MySQL/success/03-edit.test.js",
+    "test:prod:mysql:delete": "jest dist/src/Testing/Store/SQL/Database/MySQL/success/04-delete.test.js",
+    "test:prod:mysql": "npm run test:prod:mysql:create && npm run test:prod:mysql:fetch && npm run test:prod:mysql:edit && npm run test:prod:mysql:delete",
+    "// ----- builder -----": "Configs",
     "postinstall": "module-alias",
-    "build": "tsc --project tsconfig.json",
-    "dev": "nodemon",
-    "prod": "cross-env NODE_ENV=production node -r module-alias/register dist/src/index.js"
+    "clean": "if exist dist (rmdir /s /q dist) else (echo Folder dist does not exist.)",
+    "build": "npm run clean && tsc --project tsconfig.json",
+    "fix-alias-dev": "cross-env NODE_ENV=development node ./scripts/fix-alias.js",
+    "fix-alias-prod": "cross-env NODE_ENV=production node ./scripts/fix-alias.js",
+    "dev": "npm run fix-alias-dev && nodemon",
+    "prod": "npm run fix-alias-prod && cross-env NODE_ENV=production node -r module-alias/register dist/src/index.js"
   },
   "_moduleAliases": {
-    "src": "dist/src",
-    "@SRC": "dist/src",
-    "@Helper": "dist/src/Helper",
-    "@Configs": "dist/Configs",
-    "@Store": "dist/src/Store",
-    "@Testing": "dist/src/Testing"
+    "@SRC": "src",
+    "@Helper": "src/Helper",
+    "@Configs": "Configs",
+    "@Store": "src/Store",
+    "@Testing": "src/Testing"
   },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "testMatch": [
-      "**/src/Testing/Store/**/MySQL/success/*.test.ts"
-    ],
     "moduleFileExtensions": [
       "ts",
       "js",
@@ -36,6 +59,12 @@
     },
     "setupFiles": [
       "tsconfig-paths/register"
+    ],
+    "testMatch": [
+      "**/dist/src/Testing/Store/**/MySQL/success/*.test.js",
+      "**/dist/src/Testing/Auth/**/SQL/Database/MySQL/*.test.js",
+      "**/src/Testing/Store/**/MySQL/success/*.test.ts",
+      "**/src/Testing/Auth/**/SQL/Database/MySQL/*.test.ts"
     ],
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/src/$1",

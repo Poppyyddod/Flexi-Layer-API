@@ -1,10 +1,13 @@
+import { loadEnvConfig } from "@Configs/env";
 import { ArgonHashPassword } from "@Helper/Utils/Helper.auth.utils";
 import { IReturnToCenterServiceData } from "@SRC/Auth/models/auth.global.model";
 import { IServiceFeatureProps } from "@SRC/Auth/models/auth.sign-in.model";
 import { ISignUpData } from "@SRC/Auth/models/auth.sign-up.model";
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import { sendDiscordWebhook } from "@SRC/Helper/Supplier";
 import { Response } from "express";
 
+const RAW_ENV = loadEnvConfig();
 
 /**
  * List of forbidden words that are not allowed in usernames.

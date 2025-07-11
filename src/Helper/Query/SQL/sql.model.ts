@@ -8,12 +8,3 @@ export interface SQLmanagementModel {
     params: any;
     isReturn: boolean;
 }
-
-
-// export type SqlTableDescData = [
-//     {
-//         fields: string,
-//         type: string,
-//         comment: string
-//     }
-// ]

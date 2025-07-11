@@ -1,41 +1,60 @@
-import { EditSuccessDataResponseHttp } from '@Testing/tester.model';
-import { TestStoreRoute, server, request } from '@Testing/tester.config';
+import { CacheInitMySqlTableStructure, isCacheReady } from '@SRC/Helper/Cache';
+import { CloseHttpsServer } from '@SRC/Helper/Middlewares/runner.https';
+import { EditSuccessDataResponseHttp, FetchSuccessDataResponseHttp } from '@SRC/Testing/tester.model';
+import { request, server, TestStoreRoute } from '@SRC/Testing/tester.config';
+import { Response } from 'supertest';
+import { sql } from '@Configs/Database';
 
 let originalLog: any;
+let alreadyInit = false;
+
+const Init = async (): Promise<void> => {
+    if (!isCacheReady() && !alreadyInit) {
+        await CacheInitMySqlTableStructure();
+        alreadyInit = true;
+    }
+};
 
 beforeAll(async () => {
     originalLog = console.log;
-    console.log = jest.fn(); // ปิด console.log
-
-    if (server) {
-        await server.close();
-    } else {
-        await server.connect();
-    }
+    console.log = jest.fn();
+    await Init();
 });
 
-afterAll(() => {
-    console.log = originalLog; // คืนค่าฟังก์ชันเดิม
+afterAll(async () => {
+    console.log = originalLog;
+    await CloseHttpsServer();
+
+    if (server && server.close) {
+        await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
+
+    if (sql && !sql._closed) {  // _closed เป็น internal property (mysql2 ไม่มี API เช็ค pool ว่ายังเปิดหรือปิด)
+        try {
+            await sql.end();
+        } catch (err) {
+            // console.warn('MySQL pool already closed or error on closing:', err);
+        }
+    }
 });
 
 const dbBrand = 'mysql';
 const feature = 'delete';
-const tester = describe;
 
 /**
  * @Delete same as column data in one request
  */
-tester(`Test ${dbBrand}/Store/${feature}`, () => {
+describe(`Test ${dbBrand}/Store/${feature}`, () => {
     it("(Same) should return & affectedRow > 0 & status code is 200", async () => {
         const bodyData = {
             db_type: dbBrand,
-            store_code: "testing_table",
+            store_code: "store_testing",
             where: {
                 number_field: 1
             }
         }
 
-        const response: any = await request(server).delete(TestStoreRoute[feature])
+        const response: Response = await request(server).post(TestStoreRoute[feature])
             .set('x_z_token', `${process.env.TESTING_TOKEN}`)
             .send(bodyData);
 
@@ -59,17 +78,17 @@ tester(`Test ${dbBrand}/Store/${feature}`, () => {
 /**
  * @Delete not same column data in one request
  */
-tester(`Test ${dbBrand}/Store/${feature}`, () => {
+describe(`Test ${dbBrand}/Store/${feature}`, () => {
     it("(Not Same) should return & affectedRow > 0 & status code is 200", async () => {
         const bodyData = {
             db_type: dbBrand,
-            store_code: "testing_table",
+            store_code: "store_testing",
             where: {
                 string_field: ["Success testing", "Success testing Many 1", "Success testing Many 2"]
             }
         }
 
-        const response: any = await request(server).delete(TestStoreRoute[feature])
+        const response: Response = await request(server).post(TestStoreRoute[feature])
             .set('x_z_token', `${process.env.TESTING_TOKEN}`)
             .send(bodyData);
 

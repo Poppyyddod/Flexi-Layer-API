@@ -5,7 +5,7 @@ import { isObject } from "@Helper/Utils";
  * @param limit 
  * @returns 
  */
-const LimitFeature = (limit: any) => limit === undefined ? '' : `LIMIT ${limit}`;
+const LimitFeature = (limit: number) => limit === undefined ? '' : `LIMIT ${limit}`;
 
 /**
  * @function IsGetLastRow - ກວດສອບວ່າ where ເປັນຮູບແບບການດືງຂໍ້ມູນສຸດທ້າຍຫຼືບໍ
@@ -26,18 +26,18 @@ const IsGetSomeRow = (where: any) => where && where.includes('?');
  * @param data 
  * @returns 
  */
-export const FetchQueryForMySQL = (data: any) => {
+export const FetchQueryForMySQL = (dataToQuery: any) => {
     try {
-        const { store, field_list, where, limit, params } = data;
-        console.log('FetchQueryForMySQL (data) : ', data);
+        const { store_code, field_list, where, limit, params } = dataToQuery;
+        console.log('FetchQueryForMySQL (dataToQuery) : ', dataToQuery);
 
         const cmd = where === undefined ? // Get all row
             `SELECT ${field_list} FROM ?? ${LimitFeature(limit)};`
             : IsGetLastRow(where) ? // Get the last row
-                `SELECT ${field_list} FROM ${store} ${where} ${LimitFeature(limit)};`
+                `SELECT ${field_list} FROM ${store_code} ${where} ${LimitFeature(limit)};`
                 : IsGetSomeRow(where) ?
-                `SELECT ${field_list} FROM ?? WHERE ${where} ${LimitFeature(limit)};`
-                : 'Not match';
+                    `SELECT ${field_list} FROM ?? WHERE ${where} ${LimitFeature(limit)};`
+                    : 'Not match';
 
         console.log('FetchQueryForMySQL (cmd) : ', cmd);
 
@@ -45,7 +45,7 @@ export const FetchQueryForMySQL = (data: any) => {
             throw { kind: 'cmd_is_not_match_the_condition' };
         }
 
-        const paramsToQuery = [store, ...params];
+        const paramsToQuery = [store_code, ...params];
 
         const dataToReturn = {
             cmd,

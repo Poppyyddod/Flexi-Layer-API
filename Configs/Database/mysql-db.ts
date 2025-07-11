@@ -26,6 +26,7 @@ if (supportForDbTypes.mysql.connect_state) {
         password: MYSQL_PASSWORD,
         database: MYSQL_DATABASE,
         waitForConnections: true,
+        charset: 'utf8mb4'
         // connectionLimit: 10,
         // queueLimit: 0,
     });
@@ -36,10 +37,10 @@ if (supportForDbTypes.mysql.connect_state) {
      */
 
     connection.getConnection()
-        .then(() => console.log('* MySQL connected successfully!'))
+        .then(() => console.log('📦 MySQL connected successfully!'))
         .catch((error) => {
             console.error('* (Error): MySQL connection failed:', error);
-            process.exit(1);
+            throw error;
         });
 } else {
     console.log(
