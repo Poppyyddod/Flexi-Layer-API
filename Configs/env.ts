@@ -17,7 +17,6 @@ export function loadEnvConfig() {
         MYSQL_USER: process.env.MYSQL_USER!,
         MYSQL_PASSWORD: process.env.MYSQL_PASSWORD!,
         MYSQL_DATABASE: process.env.MYSQL_DATABASE!,
-        MYSQL_STORE_MAPPING: process.env.MYSQL_STORE_MAPPING || "",
         SECRET_KEY: process.env.SECRET_KEY!,
         REFRESH_KEY: process.env.REFRESH_KEY!,
         DISCORD_CHANNEL_NEW_CLIENT: process.env.DISCORD_CHANNEL_NEW_CLIENT!,

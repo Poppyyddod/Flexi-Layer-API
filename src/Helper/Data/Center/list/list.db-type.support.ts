@@ -13,17 +13,5 @@ export const supportForDbTypes: DbTypeModel = {
         name: 'MySQL',
         type: 'sql',
         connect_state: true
-    },
-
-    // postgresql: {
-    //     name: 'PostgreSQL',
-    //     type: 'sql',
-    //     connect_state: true
-    // },
-
-    // mongodb: {
-    //     name: 'MongoDB',
-    //     type: 'nosql',
-    //     connect_state: true
-    // }
+    }
 }

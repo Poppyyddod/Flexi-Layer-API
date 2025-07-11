@@ -1,8 +1,54 @@
 interface IServerSettings {
-    useAuthToken: boolean;
+    /**
+     *  @description
+     *  Use `JwtVerifyToken` middleware to verify authentication.
+     *  
+     *  @listens
+     *  Recommended:
+     *  For security
+     *  
+     *  @cahce req.user
+     *  @key useAuthToken
+     *  @default true
+     */
+    useAuthToken: boolean; // <- about `JwtVerifyToken`, `tokenKeys`, `useCheckTokenPlaceholder`
 
-    tokenKeys: string[];
-    useCheckTokenPlaceholder: boolean;
+
+
+    /**
+     *  @description
+     *  Use it check to resolve placeholder keys from jwt token.
+     *  
+     *  @description
+     *  Example : "user_id": "{{userId}}" -> "user_id": "123"
+     *  
+     *  Use it to combo:
+     *  @function $SettingFunctions.ResolveRequestPlaceholdersUsingToken()
+     *  
+     *  @default string[]
+     */
+    tokenKeys: string[]; // <- about `useCheckTokenPlaceholder`
+
+    /**
+     *  @overload +1
+     *  @description
+     *  
+     *  Use it to check & resolve placeholder keys from jwt token.
+     *  Example : You can send request : "user_id": "{{userId}}"
+     *  
+     *  Use it to combo:
+     *  @interface $Settings.tokenKeys
+     *  @function $SettingFunctions.ResolveRequestPlaceholdersUsingToken()
+     *  
+     *  @listens Recommended:
+     *  Large Project -> Use it ||
+     *  Small Project -> Do not need
+     *  
+     *  @key useCheckTokenPlaceholder
+     *  (For system need more flexible)
+     *  @default true
+     */
+    useCheckTokenPlaceholder: boolean; // <- about `tokenKeys`
 }
 
 /**
@@ -12,32 +58,7 @@ interface IServerSettings {
  *  $SettingFunctions is an object containing all the system setting.
  */
 export const $Settings: IServerSettings = {
-    /**
-     *  @description
-     *  Use `JwtVerifyToken` middleware to verify authentication.
-     *  
-     *  Recommended:
-     *  For security
-     *  
-     *  @key useAuthToken
-     *  @default true
-     */
     useAuthToken: false,
-
-
-    /**
-     *  @description
-     *  Use `CheckMyIdFromJwtToken` middleware to check user id from jwt token.
-     *  You can send request : "user_id": "{{user.id}}"
-     *  # For system need more flexible `CheckMyIdFromJwtToken`
-     *  
-     *  Recommended:
-     *  Large Project -> Use it
-     *  Small Project -> Do not need
-     *  
-     *  @key useCheckTokenUserId
-     *  @default true
-     */
     tokenKeys: ["userId"],
     useCheckTokenPlaceholder: false,
 }

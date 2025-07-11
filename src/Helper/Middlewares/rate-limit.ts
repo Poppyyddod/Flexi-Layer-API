@@ -1,7 +1,6 @@
 import rateLimit from 'express-rate-limit';
 import { Request, Response, NextFunction } from 'express';
 
-// ✅ ฟังก์ชันรับ config เพื่อให้ใช้ซ้ำได้
 export const rateLimiter = (maxReq: number, windowMs: number) => {
     return rateLimit({
         windowMs,

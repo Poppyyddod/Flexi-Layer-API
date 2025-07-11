@@ -18,8 +18,8 @@ const Init = async (): Promise<void> => {
 
 beforeAll(async () => {
     originalLog = console.log;
-    await Init();
     console.log = jest.fn();
+    await Init();
 });
 
 afterAll(async () => {
@@ -99,9 +99,7 @@ describe("> Test MySQL/Store/Fetch + some row + some column + limit", () => {
 
         // console.log('# [RESULT] : Fetch/All Row/MySQL : ', response);
 
-        console.log = originalLog;
         const obj: FetchSuccessDataResponseHttp = await response.body;
-        console.log = originalLog;
         console.log('# [OBJECT] : Fetch/Some Row/MySQL : ', obj);
 
         expect(

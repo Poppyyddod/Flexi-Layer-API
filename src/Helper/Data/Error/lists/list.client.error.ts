@@ -1,6 +1,5 @@
 import { $Settings } from "@SRC/Helper/Middlewares/middleware.setting";
 import { DbTypeListKey, supportForDbTypes } from "../../Center/list/list.db-type.support";
-import { noSqlSupporterList } from "../../Center/list/list.nosql-supporter";
 import { storeFields } from "./list.sql.error";
 
 
@@ -156,17 +155,17 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Invalid `nosql_supporter` feature name!',
             read_me: 'Please check the request key `nosql_supporter`. Provide the valid feature name for `nosql_supporter` the feature.',
-            allowed: (errorOn: any) => {
-                try {
-                    return {
-                        list_nosql_supporter: {
-                            [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
-                        }
-                    };
-                } catch (error) {
-                    console.log("[invalid_nosql_supporter_feature] ERROR : ", error);
-                }
-            },
+            // allowed: (errorOn: any) => {
+            //     try {
+            //         return {
+            //             list_nosql_supporter: {
+            //                 [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
+            //             }
+            //         };
+            //     } catch (error) {
+            //         console.log("[invalid_nosql_supporter_feature] ERROR : ", error);
+            //     }
+            // },
         },
 
         code: 400
@@ -188,17 +187,17 @@ export const clientError: ClientErrorModel = {
         more: {
             message: 'Invalid `nosql_supporter` key data type!',
             read_me: 'Please check the request key `nosql_supporter`. Provide the valid data type for `nosql_supporter` the feature.',
-            allowed: (errorOn: any) => {
-                try {
-                    return {
-                        list_nosql_supporter: {
-                            [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
-                        }
-                    };
-                } catch (error) {
-                    console.log("[invalid_nosql_supporter_feature] ERROR : ", error);
-                }
-            },
+            // allowed: (errorOn: any) => {
+            //     try {
+            //         return {
+            //             list_nosql_supporter: {
+            //                 [`${errorOn.feature}_feature`]: { ...noSqlSupporterList[errorOn.feature], ...noSqlSupporterList['mix'] }
+            //             }
+            //         };
+            //     } catch (error) {
+            //         console.log("[invalid_nosql_supporter_feature] ERROR : ", error);
+            //     }
+            // },
         },
 
         code: 400
