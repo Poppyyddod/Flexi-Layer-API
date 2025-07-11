@@ -4,6 +4,7 @@ dotenv.config();
 import request from 'supertest';
 import app from 'src/index'; // เปลี่ยนจาก index → app
 import { sql } from '@Configs/Database';
+import { IStoreFeatureList } from '@SRC/Store/models/store.global.model';
 
 const mysql = sql;
 

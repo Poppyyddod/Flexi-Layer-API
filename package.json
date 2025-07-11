@@ -5,6 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "test:auth:sign-in": "jest src/Testing/Auth/SQL/Database/MySQL/01-sign-in.test.ts",
+    "test:auth:sign-up": "jest src/Testing/Auth/SQL/Database/MySQL/02-sign-up.test.ts",
+    "test:auth:sign-out": "jest src/Testing/Auth/SQL/Database/MySQL/03-sign-out.test.ts",
+    "test:auth": "npm run test:auth:sign-up && npm run test:auth:sign-in && npm run test:auth:sign-out",
     "test:mysql:create": "jest src/Testing/Store/SQL/Database/MySQL/success/01-create.test.ts",
     "test:mysql:fetch": "jest src/Testing/Store/SQL/Database/MySQL/success/02-fetch.test.ts",
     "test:mysql:edit": "jest src/Testing/Store/SQL/Database/MySQL/success/03-edit.test.ts",
@@ -43,7 +47,8 @@
       "tsconfig-paths/register"
     ],
     "testMatch": [
-      "**/src/Testing/Store/**/MySQL/success/*.test.ts"
+      "**/src/Testing/Store/**/MySQL/success/*.test.ts",
+      "**/src/Testing/Auth/**/SQL/Database/MySQL/*.test.ts"
     ],
     "moduleNameMapper": {
       "^src/(.*)$": "<rootDir>/src/$1",
