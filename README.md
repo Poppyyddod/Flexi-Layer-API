@@ -3,18 +3,16 @@
 - **Step 1 :** Install dependencies:
 ```sh
 npm install
-```
-- **Step 2 :** Build Dist:
-```sh
 npm run build
 ```
-- **Step 3 :** Fix your `.env` file
+- **Step 2 :** Create your `.env`, `.env.development` and `.env.production` files.
 ```sh
 # Project environment
 NODE_ENV=#environment
 
-# Server port
+# HTTP Server Port For Testing
 HTTP_PORT=#port_number
+# HTTPS Server Port For Production
 HTTPS_PORT=#port_number
 
 # Hostname
@@ -26,21 +24,14 @@ MYSQL_USER=#username
 MYSQL_PASSWORD=#password
 # MySQL database name
 MYSQL_DATABASE=#database_name
-# MySQL/Tables
-MYSQL_STORE_MAPPING="
-#table_name:table_name,
-..."
 
 # JWT
 SECRET_KEY=#access
 REFRESH_KEY=#refresh
 ```
-- **Step 4 :** Run the server
+- **Step 3 :** Run the server : `dev` or `prod`
 ```sh
-#For development
 npm run dev
-
-#For Production
 npm run prod
 ```
 ## Enjoy the project!
