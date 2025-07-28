@@ -47,10 +47,12 @@ const Logger = async (system: string, level: LogLevel, more: any) => {
             ]
         });
 
-        if (env === 'production') {
-            await recordLevel(winstonLogger, level, more);
-            // console.log(`* A new logged in : (${system} system)`);
-        }
+        await recordLevel(winstonLogger, level, more);
+
+        // if (env === 'production') {
+        //     await recordLevel(winstonLogger, level, more);
+        //     // console.log(`* A new logged in : (${system} system)`);
+        // }
     } catch (err) {
         console.log('Logger (winstion) : ', err);
         throw err;

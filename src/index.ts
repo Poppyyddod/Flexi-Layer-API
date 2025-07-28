@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser';
 import GuiderRoutes from '@Helper/Routes';
 import { RunHttpsMiddleware } from './Helper/Middlewares/runner.https';
 import { RunHttpMiddleware } from './Helper/Middlewares/runner.http';
+import { imageStoragePath } from './Upload/utils/upload.utils';
 
 const app = express();
 const router = express.Router();
@@ -24,6 +25,7 @@ const router = express.Router();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use('/v1', await GuiderRoutes(router));
+    app.use('/storages/images', express.static(imageStoragePath));
     app.set('json spaces', 2);
 })();
 
