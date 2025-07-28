@@ -39,66 +39,79 @@ import { Request, Response } from "express";
  * @returns {Json Object} - HTTP Response
  */
 
+
+const ValidateRequestBody = (req: Request, res: Response, helpers: any) => {
+    const { set, where, store_code, db_type, field_list, join, limit } = req.body as IMyRequestData;
+
+    const { Logger } = helpers;
+
+    if (set) {
+        Logger('Store', 'warn', {
+            message: `Set key object is not required for fetch !!`,
+            system: 'Store',
+            feature: 'fetch'
+        })
+
+        console.warn('\x1b[33m[WARNING] : `set` key object is not required for fetch !!\x1b[0m');
+        delete req.body['set'];
+    }
+
+    if (!store_code
+        || !db_type
+        || (supportForDbTypes[db_type as DbTypeListKey].type === 'sql' && !field_list)
+        || (field_list && !isArray(field_list) && field_list !== "*")
+    ) {
+
+        Logger('Store', 'error', {
+            message: 'Incomplete request!',
+            system: 'Store',
+            store: store_code,
+            feature: 'fetch',
+            request_data: req.body
+        });
+
+        throw { kind: 'incomplete_request' };
+    }
+
+    if (req.body.hasOwnProperty('where')) {
+        if (!isObject(where) && where !== "*" && !(isString(where) && where.split(':').length === 2)) {
+            console.log('Invalid "where" value');
+            throw { kind: 'incomplete_request', where };
+        }
+    }
+
+
+    console.log('FetchStoreController (limit) : ', req.body.hasOwnProperty('limit'));
+    if (req.body.hasOwnProperty('limit')) {
+        if (!isNumber(limit) || limit <= 0) {
+            throw { kind: 'fetch_limit_feature_error' };
+        }
+    }
+
+    if (where !== undefined && where === "*") {
+        delete req.body['where'];
+    }
+
+    if (join && !isArray(join)) {
+        throw { kind: 'invalid_join_structure' };
+    }
+
+    // Check Join Table Feature
+    if (join) {
+        if (join.length > 0) {
+            CheckJoinFeature(req, res);
+        } else {
+            delete req.body['join'];
+        }
+    }
+}
+
 export const FetchStoreController = (helpers: any) => async (req: Request, res: Response): Promise<IStoreReturnToControllerCenter> => {
     try {
         const { StoreService, Logger } = helpers; // Helper functions
-        const { set, where, store_code, db_type, field_list, join, limit } = req.body as IMyRequestData; // Request
+        const { where, store_code } = req.body as IMyRequestData; // Request
 
-        if (set) {
-            Logger('Store', 'warn', {
-                message: `Set key object is not required for fetch !!`,
-                system: 'Store',
-                feature: 'fetch'
-            })
-
-            console.warn('\x1b[33m[WARNING] : `set` key object is not required for fetch !!\x1b[0m');
-            delete req.body['set'];
-        }
-
-        if (!store_code
-            || !db_type
-            || (supportForDbTypes[db_type as DbTypeListKey].type === 'sql' && !field_list)
-            || (field_list && !isArray(field_list) && field_list !== "*")
-        ) {
-
-            Logger('Store', 'error', {
-                message: 'Incomplete request!',
-                system: 'Store',
-                store: store_code,
-                feature: 'fetch',
-                request_data: req.body
-            });
-
-            throw { kind: 'incomplete_request' };
-        }
-
-        if (req.body.hasOwnProperty('where')) {
-            if (!isObject(where) && where !== "*" && !(isString(where) && where.split(':').length === 2)) {
-                console.log('Invalid "where" value');
-                throw { kind: 'incomplete_request', where };
-            }
-        }
-
-
-        console.log('FetchStoreController (limit) : ', req.body.hasOwnProperty('limit'));
-        if (req.body.hasOwnProperty('limit')) {
-            if (!isNumber(limit) || limit <= 0) {
-                throw { kind: 'fetch_limit_feature_error' };
-            }
-        }
-
-        if (where !== undefined && where === "*") {
-            delete req.body['where'];
-        }
-
-        if (!isArray(join)) {
-            throw { kind: 'invalid_join_structure' };
-        }
-
-        // Check Join Table Feature
-        if (join) {
-            CheckJoinFeature(req, res);
-        }
+        ValidateRequestBody(req, res, helpers);
 
         const dataFromServiceCenter: IStoreReturnToServiceCenter = await StoreService(req.body, 'fetch');
         // console.log('FetchStoreController', response);
