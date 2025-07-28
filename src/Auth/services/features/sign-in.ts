@@ -132,10 +132,12 @@ export const AuthSignInService = (helpers: any) => async ({
         // Auth Data
         const userAuthData = dataFromServiceCenter[0] as IUserAuthTableField;
 
-        // Check Auth Status
-        const allowToCreateRefreshToken = [1, 2];
-        if (!allowToCreateRefreshToken.includes(userAuthData.auth_status_id))
-            throw { kind: "already_signed_in", feature };
+        if (userAuthData) {
+            // Check Auth Status
+            const allowToCreateRefreshToken = [1, 2];
+            if (!allowToCreateRefreshToken.includes(userAuthData.auth_status_id))
+                throw { kind: "already_signed_in", feature };
+        }
 
         // Compare Password With Argon2
         const comparedPassword: boolean = await ArgonComparePassword(whereObj.user_password!, userAuthData.user_password!);

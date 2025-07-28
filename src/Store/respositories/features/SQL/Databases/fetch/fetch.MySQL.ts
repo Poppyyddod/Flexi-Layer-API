@@ -7,6 +7,9 @@ import { isObject } from "@Helper/Utils";
  */
 const LimitFeature = (limit: number) => limit === undefined ? '' : `LIMIT ${limit}`;
 
+
+const JoinFeature = (join: string) => join === undefined ? '' : join;
+
 /**
  * @function IsGetLastRow - ກວດສອບວ່າ where ເປັນຮູບແບບການດືງຂໍ້ມູນສຸດທ້າຍຫຼືບໍ
  * @param where 
@@ -28,16 +31,28 @@ const IsGetSomeRow = (where: any) => where && where.includes('?');
  */
 export const FetchQueryForMySQL = (dataToQuery: any) => {
     try {
-        const { store_code, field_list, where, limit, params } = dataToQuery;
+        const { store_code, field_list, where, limit, params, join } = dataToQuery;
         console.log('FetchQueryForMySQL (dataToQuery) : ', dataToQuery);
 
-        const cmd = where === undefined ? // Get all row
-            `SELECT ${field_list} FROM ?? ${LimitFeature(limit)};`
-            : IsGetLastRow(where) ? // Get the last row
-                `SELECT ${field_list} FROM ${store_code} ${where} ${LimitFeature(limit)};`
-                : IsGetSomeRow(where) ?
-                    `SELECT ${field_list} FROM ?? WHERE ${where} ${LimitFeature(limit)};`
-                    : 'Not match';
+        let cmd;
+
+        if (where === undefined) {
+            cmd = `SELECT ${field_list} FROM ?? ${JoinFeature(join)} ${LimitFeature(limit)};`;
+        } else if (IsGetLastRow(where)) {
+            cmd = `SELECT ${field_list} FROM ${store_code} ${JoinFeature(join)} ${where} ${LimitFeature(limit)};`;
+        } else if (IsGetSomeRow(where)) {
+            cmd = `SELECT ${field_list} FROM ?? ${JoinFeature(join)} WHERE ${where} ${LimitFeature(limit)};`;
+        } else {
+            cmd = 'Not match';
+        }
+
+        // const cmd = where === undefined ? // Get all row
+        //     `SELECT ${field_list} FROM ?? ${LimitFeature(limit)};`
+        //     : IsGetLastRow(where) ? // Get the last row
+        //         `SELECT ${field_list} FROM ${store_code} ${where} ${LimitFeature(limit)};`
+        //         : IsGetSomeRow(where) ?
+        //             `SELECT ${field_list} FROM ?? WHERE ${where} ${LimitFeature(limit)};`
+        //             : 'Not match';
 
         console.log('FetchQueryForMySQL (cmd) : ', cmd);
 

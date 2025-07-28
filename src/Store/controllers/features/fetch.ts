@@ -11,8 +11,10 @@
 
 import { DbTypeListKey, supportForDbTypes } from "@Helper/Data/Center/list/list.db-type.support";
 import { isArray, isLengthZero, isNumber, isObject, isString } from "@Helper/Utils";
+import { GetCachedTableStructure } from "@SRC/Helper/Cache";
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
 import { IStoreReturnToControllerCenter, IStoreReturnToServiceCenter } from "@SRC/Store/models/store.controller.model";
+import { CheckJoinFeature } from "@SRC/Store/utils/join.table";
 import { Request, Response } from "express";
 
 /**
@@ -40,7 +42,7 @@ import { Request, Response } from "express";
 export const FetchStoreController = (helpers: any) => async (req: Request, res: Response): Promise<IStoreReturnToControllerCenter> => {
     try {
         const { StoreService, Logger } = helpers; // Helper functions
-        const { set, where, store_code, db_type, field_list, limit } = req.body as IMyRequestData; // Request
+        const { set, where, store_code, db_type, field_list, join, limit } = req.body as IMyRequestData; // Request
 
         if (set) {
             Logger('Store', 'warn', {
@@ -87,6 +89,15 @@ export const FetchStoreController = (helpers: any) => async (req: Request, res: 
 
         if (where !== undefined && where === "*") {
             delete req.body['where'];
+        }
+
+        if (!isArray(join)) {
+            throw { kind: 'invalid_join_structure' };
+        }
+
+        // Check Join Table Feature
+        if (join) {
+            CheckJoinFeature(req, res);
         }
 
         const dataFromServiceCenter: IStoreReturnToServiceCenter = await StoreService(req.body, 'fetch');

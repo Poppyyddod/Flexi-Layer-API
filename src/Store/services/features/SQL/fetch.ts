@@ -8,6 +8,7 @@
 
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
 import { IStoreReturnToServiceCenter } from "@SRC/Store/models/store.controller.model";
+import { CheckJoinFeature } from "@SRC/Store/utils/join.table";
 
 /**
  * 
@@ -26,15 +27,27 @@ export const FetchSqlStoreService = (helpers: any) => async (validRequestData: I
         console.log('> FetchStoreService :');
         console.log('Request : ', validRequestData);
 
-        const { FixRequestFormat } = helpers;
+        const { FixRequestFormat, FixJoinFormatRequest } = helpers;
         const { db_type, store_code } = validRequestData;
 
         // Checked Data Structure
         // const { db_type, store, where, field_list } = validRequestData as IMyRequestData;
 
         // Fixed Request format to SQL query format
-        const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'select'});
+        const fixedFormat = await FixRequestFormat({ ...validRequestData, feature: 'select' });
         // console.log('FetchStoreService (fixedFormat) : ', fixedFormat);
+
+        const joinQuery = FixJoinFormatRequest(validRequestData);
+        console.log('FetchStoreService (joinQuery) : ', joinQuery);
+        if (joinQuery === "") throw { kind: 'invalid_join_structure' };
+
+        fixedFormat.join = joinQuery;
+
+        // console.log('FetchStoreService (joinQuery) : -------------------------------------------');
+        // console.log('FetchStoreService (joinQuery) : -------------------------------------------');
+        // console.log('FetchStoreService (joinQuery) : -------------------------------------------');
+        // console.log('FetchStoreService (joinQuery) : -------------------------------------------');
+        // console.log('FetchStoreService (joinQuery) : -------------------------------------------');
 
         const dataToServiceCenter: IStoreReturnToServiceCenter = {
             // ...validRequestData,
