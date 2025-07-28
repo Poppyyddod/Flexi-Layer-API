@@ -151,7 +151,7 @@ export const AuthSignInService = (helpers: any) => async ({
         delete userAuthData['user_password'];
 
         // Generate Access Token (JWT)
-        const generatedAccessToken = await JwtGenerateToken(userAuthData.user_id!, "1d");
+        const generatedAccessToken = await JwtGenerateToken(userAuthData, "1d");
         console.log('[AuthSignInService] Access Token generated successfully.');
         userAuthData['token'] = generatedAccessToken;
 
