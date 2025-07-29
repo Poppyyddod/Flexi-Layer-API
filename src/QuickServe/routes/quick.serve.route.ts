@@ -13,7 +13,7 @@ const quickServeRoutes = (router: Router) => {
 
     // Get Employee Salary Counter
     router.get('/quickserve/employee/salary-counter', JwtVerifyToken, GetAllSalaryCounter);
-    router.get('/quickserve/employee/salary-counter/:empId', JwtVerifyToken, GetOneSalaryCounter);
+    router.get('/quickserve/employee/:empId/salary-counter', JwtVerifyToken, GetOneSalaryCounter);
 
     // Get Employee
     router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);

@@ -13,7 +13,7 @@ import { getAllEmployeesRequestPreset, getOneEmployeesRequestPreset } from "../p
  * @returns {Promise<Response>} JSON response containing the employee data or an error message.
  *
  * @example
- * GET /quickserve/employees/1
+ * GET /quickserve/employee/1
  */
 export const GetOneEmployee = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -60,7 +60,7 @@ export const GetOneEmployee = async (req: Request, res: Response): Promise<any> 
  * @returns {Promise<Response>} JSON response containing the list of employees or an error message.
  *
  * @example
- * GET /quickserve/employees
+ * GET /quickserve/employee
  */
 export const GetAllEmployee = async (req: Request, res: Response): Promise<any> => {
     try {
