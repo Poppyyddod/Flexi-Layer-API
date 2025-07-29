@@ -4,7 +4,7 @@ export interface IMyRequestData {
     where?: any
     set?: any
     field_list?: string | string[]
-    join?: IJoinTableFeature
+    join?: IJoinTableFeature[]
     limit?: number
 }
 

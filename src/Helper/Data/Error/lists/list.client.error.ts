@@ -335,11 +335,21 @@ export const clientError: ClientErrorModel = {
 
     'auth_token_setting_turn_off': {
         more: {
-            message: "Cannot use the `{{user.id}}` auth feature!",
+            message: "Cannot use `placeholder {{user.id}}` and `Get me` auth feature!",
             read_me: {
                 case_1: "Fix the request key has `{{user.id}}` value to be other value.",
                 case_2: "Auth setting is turn off!. Please turn on the `useAuthToken` in `middleware.setting.ts` file on server side."
             }
+        },
+
+        code: 400
+    },
+
+    'param_ids_not_match_with_token_data': {
+        more: {
+            kind: 'param_ids_not_match_with_token_data',
+            message: "Token data is not match with the param id value!",
+            read_me: "Please make sure the param id is correct."
         },
 
         code: 400

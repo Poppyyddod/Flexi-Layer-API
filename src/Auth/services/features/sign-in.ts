@@ -49,7 +49,7 @@ const GetUserAuthData = async (StoreService: any, validRequestData: IMyRequestDa
  * @returns {Promise<void>} Resolves when the refresh token is created and stored.
  */
 const CreateUserRefreshToken = async (StoreService: any, userAuthData: any): Promise<void> => {
-    const generatedRefreshToken = await JwtGenerateToken(userAuthData.user_id, "7d");
+    const generatedRefreshToken = await JwtGenerateToken(userAuthData, "7d");
     console.log('[AuthSignInService] Refresh Token generated successfully.');
 
     const dataToCreate = {

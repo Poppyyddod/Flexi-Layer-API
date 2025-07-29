@@ -76,9 +76,15 @@ export const UploadImageWithLocal = async (req: Request, res: Response): Promise
     } catch (error) {
         console.log('UploadImageWithLocal (Error) : ', error);
 
-        await errorHandles(error, res, {
-            systemName: 'Upload',
-            feature: 'upload-local-image'
+        return res.status(500).json({
+            success: false,
+            message: 'Unexpected error occurred during image upload',
+            error: error instanceof Error ? error.message : 'Unknown error'
         });
+
+        // await errorHandles(error, res, {
+        //     systemName: 'Upload',
+        //     feature: 'upload-local-image'
+        // });
     }
 }
