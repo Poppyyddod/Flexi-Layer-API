@@ -27,23 +27,28 @@ import { IStoreFeatureList } from '../models/store.global.model';
  */
 
 
-const CheckFieldListFieldName = (tableDataStructure: IMySQLTableStructure[], field_list: string[]): void => {
+const CheckFieldListFieldName = (validRequestData: IMyRequestData, tableDataStructure: IMySQLTableStructure[], field_list: string[]): void => {
     try {
         console.log('> CheckFieldListFieldName :', tableDataStructure, field_list);
+        if (validRequestData.join) return;
 
-        // ดึงเฉพาะชื่อ field จาก tableDataStructure
-        const existingFields = new Set(tableDataStructure.map((data: IMySQLTableStructure) => data.field));
-
-        // ตรวจสอบ field_list ว่ามีอยู่ใน tableDataStructure หรือไม่
-        const invalidFields = field_list.filter((fieldName: string) => !existingFields.has(fieldName));
-
-        if (invalidFields.length > 0) {
-            console.log(`❌ Field(s) not found in table structure:`, invalidFields);
-            throw { kind: 'field_list_child_error' };
-        }
+        CheckFieldListWithoutJoin(tableDataStructure, field_list);
     } catch (error) {
         console.log('CheckFieldListFieldName (Error):', error);
         throw error;
+    }
+}
+
+const CheckFieldListWithoutJoin = (tableDataStructure: IMySQLTableStructure[], field_list: string[]) => {
+    // ดึงเฉพาะชื่อ field จาก tableDataStructure
+    const existingFields = new Set(tableDataStructure.map((data: IMySQLTableStructure) => data.field));
+
+    // ตรวจสอบ field_list ว่ามีอยู่ใน tableDataStructure หรือไม่
+    const invalidFields = field_list.filter((fieldName: string) => !existingFields.has(fieldName));
+
+    if (invalidFields.length > 0) {
+        console.log(`❌ Field(s) not found in table structure:`, invalidFields);
+        throw { kind: 'field_list_child_error' };
     }
 }
 
@@ -64,10 +69,10 @@ export const CheckTableDataStructure = async (validRequestData: IMyRequestData, 
 
         // Check field list
         if (field_list && isArray(field_list))
-            CheckFieldListFieldName(tableDataStructure, field_list);
+            CheckFieldListFieldName(validRequestData, tableDataStructure, field_list);
 
         // Check data key and data type
-        const isValidFieldsAndType: boolean = StartValidateSqlRequestDataStructure(feature, tableDataStructure, set, where);
+        const isValidFieldsAndType: boolean = StartValidateSqlRequestDataStructure(feature, tableDataStructure, validRequestData);
         console.log('* Checked data key and data type : ', isValidFieldsAndType);
 
         // Throw error if invalid data type

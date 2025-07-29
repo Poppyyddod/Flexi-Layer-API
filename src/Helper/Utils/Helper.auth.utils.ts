@@ -3,6 +3,7 @@ dotenv.config();
 
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
+import { IUserAuthTableField } from '@SRC/Auth/models/auth.sign-in.model';
 
 
 /**
@@ -53,14 +54,21 @@ export const ArgonComparePassword = async (password: string, hashedPassword: str
  * @returns 
  */
 export const JwtGenerateToken = async (
-    userId: string | number,
+    userAuthData: IUserAuthTableField,
     expireTime: "1h" | "1d" | "7d"
 ): Promise<string> => {
     try {
-        console.log('JwtGenerateToken (parameter) : ', userId);
+        console.log('JwtGenerateToken (parameter) : ', userAuthData);
         const secretKey = process.env.SECRET_KEY;
 
-        const token = jwt.sign({ userId }, `${secretKey}`, { expiresIn: expireTime });
+        const { user_id, user_email, user_name } = userAuthData;
+
+        const token = jwt.sign(
+            { user_id, user_email, user_name },
+            `${secretKey}`,
+            { expiresIn: expireTime }
+        );
+
         console.log('JwtGenerateToken (token) : ', token);
 
         return token;

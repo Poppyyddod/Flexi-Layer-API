@@ -4,7 +4,14 @@ export interface IMyRequestData {
     where?: any
     set?: any
     field_list?: string | string[]
+    join?: IJoinTableFeature
     limit?: number
+}
+
+export interface IJoinTableFeature {
+    table: string;
+    type: string;
+    on: Record<string, string>;
 }
 
 export interface IMySQLTableStructure {

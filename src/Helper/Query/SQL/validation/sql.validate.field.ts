@@ -1,6 +1,6 @@
 import { isArray, isObject, isString } from "@SRC/Helper/Utils";
 import { sqlNumberType, sqlStringType } from '../sql.datatype';
-import { IMySQLTableStructure } from "@SRC/Helper/Model/global.model";
+import { IMyRequestData, IMySQLTableStructure } from "@SRC/Helper/Model/global.model";
 
 
 
@@ -68,7 +68,7 @@ const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: IMySQLTabl
         console.log('* StartCheckFieldAndType (loop data):', dataKey, dataValue);
 
         const matchingField = tableDataStructure
-        .find((tableData: any) => tableData.field === dataKey) as IMySQLTableStructure | undefined;
+            .find((tableData: any) => tableData.field === dataKey) as IMySQLTableStructure | undefined;
 
         console.log('* StartCheckFieldAndType (matchingField):', matchingField);
 
@@ -138,26 +138,32 @@ const StartCheckFieldAndType = (isValid: boolean, tableDataStructure: IMySQLTabl
  * It's array to keep `string` data type for check request data type
  */
 
-export const ValidateFieldsAndType = (tableDataStructure: IMySQLTableStructure[], data: any) => {
+export const ValidateFieldsAndType = (tableDataStructure: IMySQLTableStructure[], validRequestData: IMyRequestData) => {
     try {
-        let isValid = true;
         console.log('> ValidateFieldsAndType (tableDataStructure): ', tableDataStructure);
-        console.log('> ValidateFieldsAndType (data)(1): ', data);
+        console.log('> ValidateFieldsAndType (data)(1): ', validRequestData);
 
-        if (data.where && isString(data.where)) {
-            const dataFromCheckForFetchLastRow = CheckForFetchLastRow(data.where);
+        const { where, set, join } = validRequestData;
+
+        if(join) return true;
+
+        let isValid = true;
+        let data = {};
+
+        if (where && isString(where)) {
+            const dataFromCheckForFetchLastRow = CheckForFetchLastRow(where);
             console.log('* ValidateFieldsAndType (dataFromCheckForFetchLastRow):', dataFromCheckForFetchLastRow);
 
             if (dataFromCheckForFetchLastRow) {
                 data = { ...data, ...dataFromCheckForFetchLastRow };
             }
         } else {
-            console.log('# ValidateFieldsAndType (data.where is not string):', data.where);
+            console.log('# ValidateFieldsAndType (data.where is not string):', where);
 
             // const testFixData = { ...data, ...data.where };
             // console.log('# ValidateFieldsAndType (testFixData):', testFixData);
 
-            data = { ...data, ...data.where };
+            data = { ...data, ...where };
 
             console.log('* ValidateFieldsAndType (current data):', data);
         }
@@ -165,21 +171,21 @@ export const ValidateFieldsAndType = (tableDataStructure: IMySQLTableStructure[]
         // delete data['where'];
         console.log('> ValidateFieldsAndType (data)(2): ', data);
 
-        if (isArray(data.set)) {
-            data.set.forEach((obj: any) => {
+        if (isArray(set)) {
+            set.forEach((obj: any) => {
                 isValid = StartCheckFieldAndType(isValid, tableDataStructure, obj, "set");
             });
-        } else if (isObject(data?.set) || isObject(data?.where)) {
+        } else if (isObject(set) || isObject(where)) {
             console.log('> ValidateFieldsAndType (Object): isObject(data.set) || isObject(data.where)');
-            if (data.set) {
-                isValid = StartCheckFieldAndType(isValid, tableDataStructure, data.set, "set");
+            if (set) {
+                isValid = StartCheckFieldAndType(isValid, tableDataStructure, set, "set");
             }
 
-            if (data.where) {
-                isValid = StartCheckFieldAndType(isValid, tableDataStructure, data.where, "where");
+            if (where) {
+                isValid = StartCheckFieldAndType(isValid, tableDataStructure, where, "where");
             }
         } else {
-            console.log('* ValidateFieldsAndType (data.set is not object or array):', data.set);
+            console.log('* ValidateFieldsAndType (data.set is not object or array):', set);
             // throw { kind: 'invalid_data_type' };
         }
 

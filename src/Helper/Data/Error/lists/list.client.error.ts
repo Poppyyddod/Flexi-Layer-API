@@ -1,6 +1,8 @@
 import { $Settings } from "@SRC/Helper/Middlewares/middleware.setting";
 import { DbTypeListKey, supportForDbTypes } from "../../Center/list/list.db-type.support";
 import { storeFields } from "./list.sql.error";
+import { allowedJoinType } from "@SRC/Store/utils/join.table";
+import { ConnectionCheckOutStartedEvent } from "mongodb";
 
 
 type Features = 'fetch' | 'create' | 'edit' | 'delete';
@@ -213,6 +215,15 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
+    'invalid_join_structure': {
+        more: {
+            message: 'Invalid join structure!',
+            read_me: 'Please check your request fields. Maybe its missing required fields or invalid field name.',
+        },
+
+        code: 400
+    },
+
     'cannot_support_the_database_type': {
         more: {
             message: 'Cannot support the database type!',
@@ -406,9 +417,67 @@ export const clientError: ClientErrorModel = {
         code: 400
     },
 
-    'forget_send_db_type': {
+    'invalid_store_code_join': {
         more: {
-            message: "forget_send_db_type"
+            allowed: (errorOn: any) => {
+                // console.log("[invalid_join_relation] ERROR : ", errorOn);
+                return errorOn?.err;
+            },
+            message: 'Invalid table name at join feature!',
+        },
+
+        code: 400
+    },
+
+    'invalid_join_type': {
+        more: {
+            message: 'Invalid join type at join feature!',
+            allowed: (errorOn: any) => {
+                try {
+                    return {
+                        allowed: allowedJoinType.join(', ')
+                    };
+                } catch (error) {
+                    console.log("[invalid_join_type] ERROR : ", error);
+                }
+            }
+        },
+
+        code: 400
+    },
+
+    'invalid_field_name_join': {
+        more: {
+            allowed: (errorOn: any) => {
+                // console.log("[invalid_join_relation] ERROR : ", errorOn);
+                return errorOn?.err;
+            },
+            message: 'Invalid field name at join feature!',
+        },
+
+        code: 400
+    },
+
+    'invalid_join_relation': {
+        more: {
+            allowed: (errorOn: any) => {
+                // console.log("[invalid_join_relation] ERROR : ", errorOn);
+                return errorOn?.err;
+            },
+            message: "Invalid join relation at join feature!",
+            read_me: 'Please check the request fields name in`join` keys!!',
+        },
+
+        code: 400
+    },
+
+    'invalid_join_format': {
+        more: {
+            allowed: (errorOn: any) => {
+                return errorOn.err;
+            },
+            message: "Invalid join format at join feature!",
+            read_me: 'Please check the request fields name in `join` keys!!',
         },
 
         code: 400

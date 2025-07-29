@@ -1,4 +1,4 @@
-import { IServiceFeatureProps } from "@SRC/Auth/models/auth.sign-in.model";
+import { IServiceFeatureProps, IUserAuthTableField } from "@SRC/Auth/models/auth.sign-in.model";
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
 import { JwtGenerateToken } from "@SRC/Helper/Utils/Helper.auth.utils";
 import { Request, Response } from "express";
@@ -25,10 +25,10 @@ import { IReturnToCenterServiceData } from "@SRC/Auth/models/auth.global.model";
 export const UpdateUserRefreshToken = async (
     StoreService: any,
     oldRefreshToken: string,
-    userId: number | string
+    userAuthData: IUserAuthTableField
 ): Promise<string> => {
     try {
-        const newRefreshToken = await JwtGenerateToken(userId, "7d");
+        const newRefreshToken = await JwtGenerateToken(userAuthData, "7d");
 
         const expiresAt = ToMySQLDateTime(
             new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
@@ -100,6 +100,33 @@ const GetRefreshTokenData = async (validRequestData: IMyRequestData, StoreServic
 
 
 
+const GetUserAuthData = async (StoreService: any, userId: string | number) => {
+    try {
+        const dataToUpdate = {
+            db_type: "mysql",
+            store_code: "user_auth",
+            field_list: "*",
+            where: {
+                user_id: userId
+            }
+        };
+
+        const userAuthData = await StoreService(dataToUpdate, "edit");
+        console.log('GetUserAuthData (userAuthData) : ', userAuthData);
+
+        delete userAuthData['user_password'];
+
+        return userAuthData;
+    } catch (error) {
+        console.log('GetUserAuthData (Error):', error);
+    }
+}
+
+
+
+
+
+
 
 
 /**
@@ -134,8 +161,11 @@ export const AuthRefreshTokenService = (helpers: any) => async ({
             throw { kind: 'refresh_token_expired' };
         }
 
-        const newAccessToken = await JwtGenerateToken(refreshTokenData.user_id, "1d");
-        const newRefreshToken = await UpdateUserRefreshToken(StoreService, refreshTokenData.refresh_token, refreshTokenData.user_id);
+        const userAuthData: any = await GetUserAuthData(StoreService, refreshTokenData.user_id);
+        console.log('AuthRefreshTokenService (userAuthData) : ', userAuthData);
+
+        const newAccessToken = await JwtGenerateToken(userAuthData, "1d");
+        const newRefreshToken = await UpdateUserRefreshToken(StoreService, refreshTokenData.refresh_token, userAuthData);
 
         const dataToAuthServiceCenter: IReturnToCenterServiceData = {
             response: {

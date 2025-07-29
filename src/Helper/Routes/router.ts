@@ -2,6 +2,7 @@ import { Router } from 'express';
 import storeRoute from '@SRC/Store/routes/store.route';
 import authRoutes from '@SRC/Auth/routes/auth.route';
 import { CacheInitMySqlTableStructure, isCacheReady } from '../Cache';
+import uploadRoutes from '@SRC/Upload/routes/upload.route';
 
 /**
  * @function MainRoutes - ສຳຫຼັບການເກັບ Route ແຕ່ລະ System ເພື່ອໄປໃຊ້ໃນ Main index ອີກເທື່ອຫນື່ງ (Cleaner code)
@@ -28,6 +29,7 @@ const GuiderRoutes = async (app: Router) => {
 
     storeRoute(app);
     authRoutes(app);
+    uploadRoutes(app);
 
     return app;
 }

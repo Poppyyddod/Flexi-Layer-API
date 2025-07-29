@@ -6,6 +6,7 @@ import { DbTypeListKey, supportForDbTypes } from '@Helper/Data/Center/list/list.
 import { IMyRequestData } from '@SRC/Helper/Model/global.model';
 import { IStoreFeatureList } from '../models/store.global.model';
 import { IStoreReturnToServiceCenter } from '../models/store.controller.model';
+import { FixJoinFormatRequest } from '../utils/join.table';
 
 
 /**
@@ -14,6 +15,7 @@ import { IStoreReturnToServiceCenter } from '../models/store.controller.model';
 
 const SqlHelperFunctions = {
     FixRequestFormat,
+    FixJoinFormatRequest
     // CheckTableDataStructure,
     // StoreRespository
 };

@@ -8,6 +8,7 @@
 
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
 import { IStoreReturnToServiceCenter } from "@SRC/Store/models/store.controller.model";
+import { CheckJoinFeature } from "@SRC/Store/utils/join.table";
 
 /**
  * 
@@ -21,20 +22,32 @@ import { IStoreReturnToServiceCenter } from "@SRC/Store/models/store.controller.
  * ສຳຫຼັບການປ່ຽນແປງ Request ເພື່ອສົ່ງໄປ Query ຢ່າງຖືກຕ້ອງຕາມທີ່ Request
  */
 
+const JoinTableFeature = (helpers: any, validRequestData: IMyRequestData, fixedFormat: any) => {
+    const { FixJoinFormatRequest } = helpers;
+
+    const joinQuery = FixJoinFormatRequest(validRequestData);
+    console.log('FetchStoreService (joinQuery) : ', joinQuery);
+    if (joinQuery === "") throw { kind: 'invalid_join_structure' };
+
+    fixedFormat.join = joinQuery;
+}
+
 export const FetchSqlStoreService = (helpers: any) => async (validRequestData: IMyRequestData): Promise<IStoreReturnToServiceCenter> => {
     try {
         console.log('> FetchStoreService :');
         console.log('Request : ', validRequestData);
 
-        const { FixRequestFormat } = helpers;
+        const { FixRequestFormat, FixJoinFormatRequest } = helpers;
         const { db_type, store_code } = validRequestData;
 
-        // Checked Data Structure
-        // const { db_type, store, where, field_list } = validRequestData as IMyRequestData;
-
         // Fixed Request format to SQL query format
-        const fixedFormat = await FixRequestFormat({...validRequestData, feature: 'select'});
+        const fixedFormat = await FixRequestFormat({ ...validRequestData, feature: 'select' });
         // console.log('FetchStoreService (fixedFormat) : ', fixedFormat);
+
+        // IF EXIST `join` -> Check And Fix Join Feature
+        if (validRequestData.join) {
+            JoinTableFeature(helpers, validRequestData, fixedFormat);
+        }
 
         const dataToServiceCenter: IStoreReturnToServiceCenter = {
             // ...validRequestData,

@@ -67,5 +67,5 @@ export const authControllerMethods: AuthControllerMethodsModel = {
     },
     '/auth/refresh-token': (helpers: any) => {
         return AuthRefreshTokenController(helpers);
-    }
+    },
 };

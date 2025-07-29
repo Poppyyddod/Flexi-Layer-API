@@ -30,14 +30,16 @@ import { IMyRequestData, IMySQLTableStructure } from '@SRC/Helper/Model/global.m
  * @returns {Boolean}
  */
 
-export const StartValidateSqlRequestDataStructure = (feature: IStoreFeatureList, tableDataStructure: IMySQLTableStructure[], set: any, where: any): boolean => {
+export const StartValidateSqlRequestDataStructure = (feature: IStoreFeatureList, tableDataStructure: IMySQLTableStructure[], validRequestData: IMyRequestData): boolean => {
     try {
+        const { set, where } = validRequestData;
+
         console.log('StartValidateSqlRequestDataStructure :', feature, set, where);
 
         if (set && feature === 'create')
             ValidateFieldsBeforeInsert(tableDataStructure, set);
 
-        const isValidDataKeyAndType = ValidateFieldsAndType(tableDataStructure, { set, where });
+        const isValidDataKeyAndType = ValidateFieldsAndType(tableDataStructure, validRequestData);
         console.log('StartValidateSqlRequestDataStructure (isValidDataKeyAndType):', isValidDataKeyAndType);
 
         return isValidDataKeyAndType;
