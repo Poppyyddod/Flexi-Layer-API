@@ -1,9 +1,10 @@
 import { IReturnToControllerCenter } from "@SRC/Auth/models/auth.global.model";
 import errorHandles from "@SRC/Helper/Data/Error";
 import { $Settings } from "@SRC/Helper/Middlewares/middleware.setting";
+import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 
-export const AuthGetMeController = async (req: any, res: Response): Promise<any> => {
+export const GetMyData = async (req: any, res: Response): Promise<any> => {
     try {
         console.log('AuthGetMeController (req.params) :', req.params);
         console.log('AuthGetMeController (req.user) :', req.user);

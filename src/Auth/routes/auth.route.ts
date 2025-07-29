@@ -2,7 +2,7 @@ import { Router } from "express";
 import AuthCenterController from "../controllers/auth.controller";
 import { rateLimiter } from "@SRC/Helper/Middlewares/rate-limit";
 import { JwtVerifyToken } from "@SRC/Helper/Middlewares";
-import { AuthGetMeController } from "../controllers/features";
+// import { AuthGetMeController } from "../controllers/features";
 
 /**
  * @function authRoutes
@@ -24,7 +24,7 @@ const authRoutes = (app: Router): Router => {
     app.post('/auth/sign-in', rateLimiter(10, 60 * 1000), AuthCenterController);
     app.post('/auth/sign-out', rateLimiter(30, 60 * 1000), AuthCenterController);
     app.post('/auth/refresh-token', rateLimiter(20, 60 * 1000), AuthCenterController);
-    app.get('/auth/getMe/:id', rateLimiter(10, 60 * 1000), JwtVerifyToken, AuthGetMeController);
+    // app.get('/auth/getMe/:id', rateLimiter(10, 60 * 1000), JwtVerifyToken, AuthGetMeController);
 
     return app;
 }

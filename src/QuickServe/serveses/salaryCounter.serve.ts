@@ -1,6 +1,6 @@
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { PersonSalaryCounterRequestPreset, SalaryCounterRequestPreset } from "../presets/salaryCounter.request-preset";
+import { PersonSalaryCounterRequestPreset, SalaryCounterRequestPreset } from "../presets/salaryCounter.preset";
 import useSalaryCounter from "../composables/useSalaryCounter";
 
 

@@ -1,6 +1,6 @@
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getAllEmployeesRequestPreset, getOneEmployeesRequestPreset } from "../presets/getEmployees.request-preset";
+import { getAllEmployeesRequestPreset, getOneEmployeesRequestPreset } from "../presets/getEmployees.preset";
 
 
 
@@ -22,7 +22,7 @@ export const GetOneEmployee = async (req: Request, res: Response): Promise<any> 
         const empId = req.params.empId;
         if (!empId) {
             res.status(400).json({
-                message: "Param empId is required",
+                message: "Param employeeId is required",
                 quick_serve_name: 'GetOneEmployee',
                 success: false
             });
@@ -68,6 +68,14 @@ export const GetAllEmployee = async (req: Request, res: Response): Promise<any> 
 
         const response = await StoreService(getAllEmployeesRequestPreset(), 'fetch');
         console.log('GetAllEmployee (response) : ', response);
+
+        if (response.length === 0) {
+            return res.status(200).json({
+                message: "No row in the table!",
+                quick_serve_name: 'GetAllEmployee',
+                success: false
+            });
+        }
 
         return res.status(200).json({
             message: "Successfully GetAllEmployee Served!",

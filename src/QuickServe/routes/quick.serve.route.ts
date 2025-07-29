@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { JwtVerifyToken } from '@Helper/Middlewares';
-import { GetAllSalaryCounter, GetOneSalaryCounter, GetAllEmployee, GetOneEmployee } from '../employees';
+import { GetAllSalaryCounter, GetOneSalaryCounter, GetAllEmployee, GetOneEmployee, GetAllPosition, GetOnePosition, GetAllDepartment, GetOneDepartment, GetMe } from '../serveses';
 
 /**
  * @function storeRoutes - ສຳຫຼັບການກຳໜົດ Route ຂອງ Store
@@ -11,13 +11,24 @@ import { GetAllSalaryCounter, GetOneSalaryCounter, GetAllEmployee, GetOneEmploye
 const quickServeRoutes = (router: Router) => {
     // console.log('Store routes');
 
-    // Get Employee Salary Counter
+    // My Data
+    router.get('/quickserve/getMe/:userId', JwtVerifyToken, GetMe);
+
+    // Employee Salary Counter
     router.get('/quickserve/employee/salary-counter', JwtVerifyToken, GetAllSalaryCounter);
     router.get('/quickserve/employee/:empId/salary-counter', JwtVerifyToken, GetOneSalaryCounter);
 
-    // Get Employee
+    // Employee
     router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);
     router.get('/quickserve/employee/:empId', JwtVerifyToken, GetOneEmployee);
+
+    // Position
+    router.get('/quickserve/position', JwtVerifyToken, GetAllPosition);
+    router.get('/quickserve/position/:posId', JwtVerifyToken, GetOnePosition);
+
+    // Department
+    router.get('/quickserve/department', JwtVerifyToken, GetAllDepartment);
+    router.get('/quickserve/department/:depId', JwtVerifyToken, GetOneDepartment);
 
     return router;
 }
