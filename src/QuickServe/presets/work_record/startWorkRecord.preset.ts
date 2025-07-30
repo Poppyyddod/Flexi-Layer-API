@@ -25,7 +25,8 @@ export const startWorkRecordRequestPreset = (setData: StartWorkRecordType): IMyR
         set: {
             ...setData,
             work_record_date: mysqlDate,
-            work_record_state: "working"
+            work_record_state: "working",
+            approve_state: "approved"
         }
     };
 

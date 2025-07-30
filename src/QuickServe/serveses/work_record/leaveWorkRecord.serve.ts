@@ -27,15 +27,25 @@ export const LeaveWorkRecord = async (req: Request, res: Response): Promise<any>
         console.log('LeaveWorkRecord : ', req.body);
 
         const bodyData = req.body;
-        if (!bodyData || !bodyData.emp_id || !bodyData.start_latitude || !bodyData.start_longitude)
-            throw { kind: 'incomplete_request' };
+        if (!bodyData || !bodyData.emp_id || !bodyData.start_latitude || !bodyData.start_longitude) {
+            return res.status(400).json({
+                message: "Invalid request format!",
+                quick_serve_name: 'LeaveWorkRecord',
+                guide: {
+                    emp_id: "number",
+                    start_latitude: "string",
+                    start_longitude: "string",
+                },
+                success: false
+            });
+        }
 
         const preset = leaveWorkRecordRequestPreset(bodyData);
 
         const response = await StoreService(preset, 'create');
         console.log('LeaveWorkRecord (response) : ', response);
 
-        return res.status(200).json({
+        return res.status(201).json({
             message: "Successfully LeaveWorkRecord Served!",
             quick_serve_name: 'LeaveWorkRecord',
             success: true,

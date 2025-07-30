@@ -40,7 +40,18 @@ export const StartWorkRecord = async (req: Request, res: Response): Promise<any>
         console.log('StartWorkRecord : ', req.body);
 
         const shouldContinue = ValidateStartWorkRecord(req, res);
-        if (!shouldContinue) throw { kind: 'incomplete_request' };
+        if (!shouldContinue) {
+            return res.status(400).json({
+                message: "Invalid request format!",
+                quick_serve_name: 'StartWorkRecord',
+                guide: {
+                    emp_id: "number",
+                    start_latitude: "string",
+                    start_longitude: "string",
+                },
+                success: false
+            });
+        }
 
         const bodyData = req.body as StartWorkRecordType;
         const preset = startWorkRecordRequestPreset(bodyData);
@@ -48,7 +59,7 @@ export const StartWorkRecord = async (req: Request, res: Response): Promise<any>
         const response = await StoreService(preset, 'create');
         console.log('StartWorkRecord (response) : ', response);
 
-        return res.status(200).json({
+        return res.status(201).json({
             message: "Successfully StartWorkRecord Served!",
             quick_serve_name: 'StartWorkRecord',
             success: true,

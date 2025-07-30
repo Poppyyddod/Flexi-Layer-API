@@ -19,3 +19,8 @@ export type LeaveWorkRecordType = {
 
     work_record_state: string;
 }
+
+
+export type ApproveLeaveWorkRecordType = {
+    approve_state: 'considering' | 'approved' | 'rejected';
+}

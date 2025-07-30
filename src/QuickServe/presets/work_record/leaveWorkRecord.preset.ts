@@ -31,7 +31,8 @@ export const leaveWorkRecordRequestPreset = (bodyData: LeaveWorkRecordType): IMy
             start_at: mysqlDateTime,
             start_latitude,
             start_longitude,
-            work_record_state: 'leave'
+            work_record_state: 'leave',
+            approve_state: 'considering'
         }
     };
 
