@@ -3,6 +3,7 @@ import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 import { getMeEmployeeRequestPreset } from "../../presets/my_data/getMe.preset";
 import errorHandles from "@SRC/Helper/Data/Error";
+import { GetMeData } from "@SRC/QuickServe/models/getMe.model";
 
 /**
  * Controller to get the authenticated employee's data.
@@ -34,10 +35,11 @@ export const GetMe = async (req: any, res: Response): Promise<any> => {
         const empRes = await StoreService(getMeEmployeeRequestPreset(userId), 'fetch');
         console.log('GetMe (empData) :', empRes);
 
-        const empData = empRes[0];
+        const empData: GetMeData = empRes[0];
 
         res.status(200).json({
-            message: 'Successfully get data!',
+            message: 'Successfully GetMe Served!',
+            success: true,
             data: empData
         });
     } catch (error: any) {

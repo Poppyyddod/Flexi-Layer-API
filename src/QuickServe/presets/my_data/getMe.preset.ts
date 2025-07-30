@@ -20,7 +20,7 @@ export const getMeEmployeeRequestPreset = (userId: number | string): IMyRequestD
         db_type: "mysql",
         store_code: "employees",
         field_list: [
-            "employees.emp_id", "employees.user_id", "employees.emp_name", "employees.emp_email",
+            "employees.emp_id", "employees.user_id", "employees.emp_name", "employees.emp_bank_account", "employees.emp_img", "employees.emp_email",
             "employees.emp_gender", "employees.emp_religion", "employees.emp_tel", "employees.emp_birth_date",
             "positions.position_name", "positions.position_salary",
             "departments.department_name", "departments.department_code"

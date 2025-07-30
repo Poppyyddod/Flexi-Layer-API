@@ -15,11 +15,13 @@
 export type CreateEmployee = {
     emp_id: number;
     emp_name: string;
+    emp_position_id: number;
+    emp_department_id: number;
+    emp_bank_account: string;
+    emp_img: string;
     emp_email: string;
     emp_gender: string;
     emp_religion: string;
     emp_tel: string;
     emp_birth_date: string;
-    emp_position_id: number;
-    emp_department_id: number;
 };

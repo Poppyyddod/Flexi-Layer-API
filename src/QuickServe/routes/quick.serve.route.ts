@@ -1,6 +1,20 @@
 import { Router } from 'express';
 import { JwtVerifyToken } from '@Helper/Middlewares';
-import { GetAllSalaryCounter, GetOneSalaryCounter, GetAllEmployee, GetOneEmployee, GetAllPosition, GetOnePosition, GetAllDepartment, GetOneDepartment, GetMe, CreateOneEmployee } from '../serveses';
+import {
+    GetAllSalaryCounter,
+    GetOneSalaryCounter,
+    GetAllEmployee,
+    GetOneEmployee,
+    GetAllPosition,
+    GetOnePosition,
+    GetAllDepartment,
+    GetOneDepartment,
+    GetMe,
+    CreateOneEmployee,
+    EndWorkRecord,
+    StartWorkRecord,
+    LeaveWorkRecord
+} from '../serveses';
 
 /**
  * @function storeRoutes - ສຳຫຼັບການກຳໜົດ Route ຂອງ Store
@@ -17,6 +31,11 @@ const quickServeRoutes = (router: Router) => {
     // Employee Salary Counter
     router.get('/quickserve/employee/salary-counter', JwtVerifyToken, GetAllSalaryCounter);
     router.get('/quickserve/employee/:empId/salary-counter', JwtVerifyToken, GetOneSalaryCounter);
+
+    // Work Record
+    router.post('/quickserve/employee/work-record/start', JwtVerifyToken, StartWorkRecord);
+    router.patch('/quickserve/employee/:empId/work-record/end', JwtVerifyToken, EndWorkRecord);
+    router.post('/quickserve/employee/work-record/leave', JwtVerifyToken, LeaveWorkRecord);
 
     // Employee
     router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);

@@ -1,5 +1,5 @@
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
-import { CreateEmployee } from "@SRC/QuickServe/models/employee/employee.model";
+import { CreateEmployee } from "@SRC/QuickServe/models/employee.model";
 
 /**
  * Generates a request preset to create a new employee record.
