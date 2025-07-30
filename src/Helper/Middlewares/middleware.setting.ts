@@ -58,7 +58,7 @@ interface IServerSettings {
  *  $SettingFunctions is an object containing all the system setting.
  */
 export const $Settings: IServerSettings = {
-    useAuthToken: true,
+    useAuthToken: false,
     tokenKeys: ["userId"],
     useCheckTokenPlaceholder: false,
 }

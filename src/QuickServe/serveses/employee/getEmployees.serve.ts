@@ -1,6 +1,6 @@
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getAllEmployeesRequestPreset, getOneEmployeesRequestPreset } from "../presets/getEmployees.preset";
+import { getAllEmployeesRequestPreset, getOneEmployeesRequestPreset } from "../../presets/employee/getEmployees.preset";
 
 
 
