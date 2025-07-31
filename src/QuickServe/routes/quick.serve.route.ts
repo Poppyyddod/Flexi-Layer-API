@@ -15,7 +15,9 @@ import {
     StartWorkRecord,
     LeaveWorkRecord,
     ApproveLeaveWorkRecord,
-    AddDeduction
+    AddDeduction,
+    GetOneWorkRecord,
+    GetAllWorkRecord
 } from '../serveses';
 
 /**
@@ -39,6 +41,8 @@ const quickServeRoutes = (router: Router) => {
     router.patch('/quickserve/employee/:empId/work-record/end', JwtVerifyToken, EndWorkRecord);
     router.post('/quickserve/employee/work-record/leave', JwtVerifyToken, LeaveWorkRecord);
     router.patch('/quickserve/employee/:empId/work-record/approve', JwtVerifyToken, ApproveLeaveWorkRecord);
+    router.get('/quickserve/employee/:empId/work-record/:workRecordState/:approveState', JwtVerifyToken, GetOneWorkRecord);
+    router.get('/quickserve/employee/work-record/:workRecordState/:approveState', JwtVerifyToken, GetAllWorkRecord);
 
     // Employee
     router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);

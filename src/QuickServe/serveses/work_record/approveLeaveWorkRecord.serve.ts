@@ -1,10 +1,8 @@
 import errorHandles from "@SRC/Helper/Data/Error";
-import { isString } from "@SRC/Helper/Utils";
 import useDeduction from "@SRC/QuickServe/composables/useDeduction";
 import useSalary from "@SRC/QuickServe/composables/useSalary";
 import { ApproveLeaveWorkRecordType } from "@SRC/QuickServe/models/workRecord.model";
 import { approveLeaveWorkRecordPreset, approveRejectedWorkRecordPreset } from "@SRC/QuickServe/presets/work_record/approveLeaveWorkRecord.preset";
-import { endWorkRecordRequestPreset } from "@SRC/QuickServe/presets/work_record/endWorkRecord.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 
@@ -13,16 +11,15 @@ import { Request, Response } from "express";
  * Validates the request body and route parameter for ApproveLeaveWorkRecord.
  *
  * @param {Request} req - Express request object containing the request body and route parameter.
- * @param {Response} res - Express response object used to return the result.
  * @returns {boolean} - Returns `true` if all required fields are present, otherwise `false`.
  */
 const ValidateApproveLeaveWorkRecord = (req: Request): boolean => {
     const { approve_state } = req.body as ApproveLeaveWorkRecordType;
 
-    if (!approve_state || !approve_state) return false;
+    if (!approve_state)
+        return false;
 
     const empId = req.params.empId;
-
     if (!empId) return false;
 
     return true;
@@ -52,9 +49,9 @@ export const ApproveLeaveWorkRecord = async (req: Request, res: Response): Promi
         if (!shouldContinue) {
             return res.status(400).json({
                 message: "Invalid request format!",
-                quick_serve_name: 'StartWorkRecord',
+                quick_serve_name: 'ApproveLeaveWorkRecord',
                 guide: {
-                    approve_state: "string"
+                    approve_state: "considering | approved | rejected",
                 },
                 success: false
             });
@@ -95,7 +92,7 @@ export const ApproveLeaveWorkRecord = async (req: Request, res: Response): Promi
         console.log('ApproveLeaveWorkRecord (Error):', error);
 
         if (error?.kind) {
-            await errorHandles(error, res, { systemName: 'QuickServe', feature: 'end-work-record' });
+            await errorHandles(error, res, { systemName: 'QuickServe', feature: 'approve-leave-work-record' });
         } else {
             HandleError(res, error, 'ApproveLeaveWorkRecord');
         }
