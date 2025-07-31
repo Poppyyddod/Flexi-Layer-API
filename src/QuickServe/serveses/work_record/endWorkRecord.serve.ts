@@ -1,4 +1,5 @@
 import errorHandles from "@SRC/Helper/Data/Error";
+import useTime from "@SRC/QuickServe/composables/useMySQLTime";
 import { EndWorkRecordType } from "@SRC/QuickServe/models/workRecord.model";
 import { endWorkRecordRequestPreset } from "@SRC/QuickServe/presets/work_record/endWorkRecord.preset";
 import StoreService from "@SRC/Store/services";
@@ -62,12 +63,15 @@ export const EndWorkRecord = async (req: Request, res: Response): Promise<any> =
         const response = await StoreService(preset, 'edit');
         console.log('EndWorkRecord (response) : ', response);
 
+        const currentDateTime = useTime().getLocalTimeAsISOString();
+
         return res.status(200).json({
             message: "Successfully EndWorkRecord Served!",
             quick_serve_name: 'EndWorkRecord',
             success: true,
             data: {
-                affectedRows: response.affectedRows
+                affectedRows: response.affectedRows,
+                updated_at: currentDateTime
             }
         });
     } catch (error: any) {

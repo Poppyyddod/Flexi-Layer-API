@@ -110,6 +110,15 @@ export const GetAllWorkRecord = async (req: Request, res: Response): Promise<any
         const response = await StoreService(getAllWorkRecordRequestPreset(paramWorkRecordState, paramApproveState), 'fetch');
         console.log('GetAllWorkRecord (response) : ', response);
 
+        if (response?.kind === "null_data") {
+            return res.status(200).json({
+                message: "No rows found!",
+                quick_serve_name: 'GetOneWorkRecord',
+                success: true,
+                data: []
+            });
+        }
+
         return res.status(200).json({
             message: "Successfully GetAllWorkRecord Served!",
             quick_serve_name: 'GetAllWorkRecord',

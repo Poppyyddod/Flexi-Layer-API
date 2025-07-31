@@ -25,3 +25,9 @@ export type CreateEmployee = {
     emp_tel: string;
     emp_birth_date: string;
 };
+
+
+export type CreateEmployeeImage = {
+    emp_id: number;
+    image_name: string;
+}

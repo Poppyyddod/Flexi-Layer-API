@@ -2,11 +2,13 @@
 
 function useWorkRecord() {
     const paramWorkRecordStateArr = ["nofilter", "approved", "leave", "rejected"];
-    const paramApproveStateArr = ["nofilter", "approved", "considering", "rejected"];
+    const paramApproveStateArr = ["nofilter", "approved", "pending", "rejected"];
+    const paramLeaveStateArr = ["nofilter", "approved", "pending", "rejected"];
 
     return {
         paramApproveStateArr,
-        paramWorkRecordStateArr
+        paramWorkRecordStateArr,
+        paramLeaveStateArr
     }
 }
 

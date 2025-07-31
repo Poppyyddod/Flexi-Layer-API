@@ -59,11 +59,12 @@ export const GetAllPosition = async (req: Request, res: Response): Promise<any> 
         const response = await StoreService(getAllPositionsRequestPreset(), 'fetch');
         console.log('GetAllPosition (response) : ', response);
 
-        if (response.length === 0) {
+        if (response?.kind === "null_data") {
             return res.status(200).json({
-                message: "No row in the table!",
+                message: "No rows found!",
                 quick_serve_name: 'GetAllPosition',
-                success: false
+                success: false,
+                data: []
             });
         }
 

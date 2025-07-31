@@ -13,11 +13,13 @@ import {
     CreateOneEmployee,
     EndWorkRecord,
     StartWorkRecord,
-    LeaveWorkRecord,
-    ApproveLeaveWorkRecord,
+    CreateLeaveDetail,
+    ApproveLeaveDetailRecord,
     AddDeduction,
     GetOneWorkRecord,
-    GetAllWorkRecord
+    GetAllWorkRecord,
+    GetOneLeaveDetail,
+    GetAllLeaveDetail
 } from '../serveses';
 
 /**
@@ -39,10 +41,14 @@ const quickServeRoutes = (router: Router) => {
     // Work Record
     router.post('/quickserve/employee/work-record/start', JwtVerifyToken, StartWorkRecord);
     router.patch('/quickserve/employee/:empId/work-record/end', JwtVerifyToken, EndWorkRecord);
-    router.post('/quickserve/employee/work-record/leave', JwtVerifyToken, LeaveWorkRecord);
-    router.patch('/quickserve/employee/:empId/work-record/approve', JwtVerifyToken, ApproveLeaveWorkRecord);
     router.get('/quickserve/employee/:empId/work-record/:workRecordState/:approveState', JwtVerifyToken, GetOneWorkRecord);
     router.get('/quickserve/employee/work-record/:workRecordState/:approveState', JwtVerifyToken, GetAllWorkRecord);
+
+    // Level Details
+    router.post('/quickserve/employee/leave-detail/add', JwtVerifyToken, CreateLeaveDetail);
+    router.patch('/quickserve/employee/:empId/leave-detail', JwtVerifyToken, ApproveLeaveDetailRecord);
+    router.get('/quickserve/employee/:empId/leave-detail/:leaveState', JwtVerifyToken, GetOneLeaveDetail);
+    router.get('/quickserve/employee/leave-detail/:leaveState', JwtVerifyToken, GetAllLeaveDetail);
 
     // Employee
     router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);

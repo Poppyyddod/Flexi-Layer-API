@@ -11,16 +11,16 @@ export type EndWorkRecordType = {
     end_longitude: string;
 }
 
-export type LeaveWorkRecordType = {
+export type CreateLeaveDetailType = {
     emp_id?: number;
-
-    start_latitude: string;
-    start_longitude: string;
-
-    work_record_state: string;
+    leave_type_name: string;
+    leave_start_at: string;
+    leave_end_at: string;
+    detail: string;
+    image?: string;
 }
 
 
-export type ApproveLeaveWorkRecordType = {
-    approve_state: 'considering' | 'approved' | 'rejected';
+export type ApproveLeaveDetailType = {
+    leave_state: 'pending' | 'approved' | 'rejected';
 }

@@ -1,9 +1,6 @@
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+import useTime from "@SRC/QuickServe/composables/useMySQLTime";
 import { StartWorkRecordType } from "@SRC/QuickServe/models/workRecord.model";
-
-const now = new Date();
-const mysqlDate = now.toISOString().slice(0, 10);
-const mysqlDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
 
 /**
  * Generates a request preset to create a new work record.
@@ -17,14 +14,15 @@ const mysqlDateTime = now.toISOString().slice(0, 19).replace('T', ' ');
  */
 export const startWorkRecordRequestPreset = (setData: StartWorkRecordType): IMyRequestData => {
 
-    setData.start_at = mysqlDateTime;
+    const currentMySQlDateTime = useTime().getLocalMysqlDatetime();
+    setData.start_at = currentMySQlDateTime;
 
     const preset: IMyRequestData = {
         db_type: "mysql",
         store_code: "work_record",
         set: {
             ...setData,
-            work_record_date: mysqlDate,
+            work_record_date: useTime().mysqlDate,
             work_record_state: "working",
             approve_state: "approved"
         }

@@ -69,9 +69,9 @@ export const GetAllEmployee = async (req: Request, res: Response): Promise<any> 
         const response = await StoreService(getAllEmployeesRequestPreset(), 'fetch');
         console.log('GetAllEmployee (response) : ', response);
 
-        if (response.length === 0) {
+        if (response?.kind === "null_data") {
             return res.status(200).json({
-                message: "No row in the table!",
+                message: "No rows found!",
                 quick_serve_name: 'GetAllEmployee',
                 success: false
             });

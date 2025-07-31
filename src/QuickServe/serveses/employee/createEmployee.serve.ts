@@ -1,5 +1,6 @@
 import errorHandles from "@SRC/Helper/Data/Error";
-import { createOneEmployeeRequestPreset } from "@SRC/QuickServe/presets/employee/createEmployee.preset";
+import { CreateEmployeeImage } from "@SRC/QuickServe/models/employee.model";
+import { createOneEmployeeImageRequestPreset, createOneEmployeeRequestPreset } from "@SRC/QuickServe/presets/employee/createEmployee.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 
@@ -31,11 +32,38 @@ export const CreateOneEmployee = async (req: Request, res: Response): Promise<an
         console.log('CreateEmployee : ', req.body);
 
         const shouldContinue = ValidateCreateOneEmployee(req, res);
-        if (!shouldContinue) throw { kind: 'incomplete_request' };
+        if (!shouldContinue) {
+            return res.status(400).json({
+                message: "Invalid request format!",
+                quick_serve_name: 'CreateOneEmployee',
+                guide: {
+                    user_id: "number",
+                    emp_name: "string",
+                    emp_department_id: "number",
+                    emp_position_id: "number",
+                    emp_bank_account: "string",
+                    emp_img: "string",
+                    emp_email: "string",
+                    emp_gender: "string",
+                    emp_religion: "string",
+                    emp_tel: "string",
+                    emp_birth_date: "string",
+                },
+                success: false
+            });
+        }
 
         const preset = createOneEmployeeRequestPreset(req.body);
         const response = await StoreService(preset, 'create');
         console.log('CreateEmployee (response) : ', response);
+
+        const imagePayload: CreateEmployeeImage = {
+            emp_id: response[0].emp_id,
+            image_name: response[0].emp_img
+        }
+
+        const imageResponse = await CreateOneEmployeeImage(imagePayload);
+        console.log('CreateOneEmployeeImage (response) : ', imageResponse);
 
         res.status(200).json({
             message: "Successfully CreateOneEmployee Served!",
@@ -53,6 +81,24 @@ export const CreateOneEmployee = async (req: Request, res: Response): Promise<an
         }
     }
 };
+
+
+
+const CreateOneEmployeeImage = async (setData: CreateEmployeeImage): Promise<any> => {
+    try {
+        console.log("CreateOneEmployeeImage : ", setData);
+
+        const response = await StoreService(createOneEmployeeImageRequestPreset(setData), 'create');
+        console.log("CreateOneEmployeeImage (response) : ", response);
+
+        return response;
+    } catch (error: any) {
+        console.log("CreateOneEmployeeImage (Error):", error);
+        throw error;
+    }
+}
+
+
 
 /**
  * Generic error handler for database-related and unknown errors.

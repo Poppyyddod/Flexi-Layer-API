@@ -1,7 +1,8 @@
 
 
 import errorHandles from "@SRC/Helper/Data/Error";
-import { leaveWorkRecordRequestPreset } from "@SRC/QuickServe/presets/work_record/leaveWorkRecord.preset";
+import { CreateLeaveDetailType } from "@SRC/QuickServe/models/workRecord.model";
+import { createLeaveDetailRequestPreset } from "@SRC/QuickServe/presets/work_record/leaveWorkRecord.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 
@@ -22,49 +23,54 @@ import { Request, Response } from "express";
  * @returns {Promise<any>} - The JSON response indicating success or failure of the operation.
  */
 
-export const LeaveWorkRecord = async (req: Request, res: Response): Promise<any> => {
+export const CreateLeaveDetail = async (req: Request, res: Response): Promise<any> => {
     try {
-        console.log('LeaveWorkRecord : ', req.body);
+        console.log('CreateLeaveDetail : ', req.body);
 
-        const bodyData = req.body;
-        if (!bodyData || !bodyData.emp_id || !bodyData.start_latitude || !bodyData.start_longitude) {
+        const bodyData = req.body as CreateLeaveDetailType;
+        if (!bodyData.emp_id
+            || !bodyData.leave_type_name || !bodyData.leave_start_at
+            || !bodyData.leave_end_at) {
             return res.status(400).json({
                 message: "Invalid request format!",
-                quick_serve_name: 'LeaveWorkRecord',
+                quick_serve_name: 'CreateLeaveDetail',
                 guide: {
                     emp_id: "number",
-                    start_latitude: "string",
-                    start_longitude: "string",
+                    leave_type_name: "string",
+                    leave_start_at: "string",
+                    leave_end_at: "string",
+                    detail: "string",
+                    image: "optional"
                 },
                 success: false
             });
         }
 
-        const preset = leaveWorkRecordRequestPreset(bodyData);
+        const preset = createLeaveDetailRequestPreset(bodyData);
 
         const response = await StoreService(preset, 'create');
-        console.log('LeaveWorkRecord (response) : ', response);
+        console.log('CreateLeaveDetail (response) : ', response);
 
         return res.status(201).json({
-            message: "Successfully LeaveWorkRecord Served!",
-            quick_serve_name: 'LeaveWorkRecord',
+            message: "Successfully CreateLeaveDetail Served!",
+            quick_serve_name: 'CreateLeaveDetail',
             success: true,
             data: response
         });
     } catch (error: any) {
-        console.log('LeaveWorkRecord (Error):', error);
+        console.log('CreateLeaveDetail (Error):', error);
 
         if (error?.kind) {
             await errorHandles(error, res, { systemName: 'QuickServe', feature: 'create-one-employee' });
         } else {
-            HandleError(res, error, 'LeaveWorkRecord');
+            HandleError(res, error, 'CreateLeaveDetail');
         }
     }
 };
 
 
 /**
- * Handles errors for the LeaveWorkRecord controller.
+ * Handles errors for the CreateLeaveDetail controller.
  * 
  * - Sends a 404 response if error code is `ER_NO_REFERENCED_ROW_2`.
  * - Sends a 500 response for other errors.

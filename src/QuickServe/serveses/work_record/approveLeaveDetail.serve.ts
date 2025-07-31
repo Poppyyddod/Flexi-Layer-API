@@ -1,22 +1,23 @@
 import errorHandles from "@SRC/Helper/Data/Error";
 import useDeduction from "@SRC/QuickServe/composables/useDeduction";
+import useTime from "@SRC/QuickServe/composables/useMySQLTime";
 import useSalary from "@SRC/QuickServe/composables/useSalary";
-import { ApproveLeaveWorkRecordType } from "@SRC/QuickServe/models/workRecord.model";
-import { approveLeaveWorkRecordPreset, approveRejectedWorkRecordPreset } from "@SRC/QuickServe/presets/work_record/approveLeaveWorkRecord.preset";
+import { ApproveLeaveDetailType } from "@SRC/QuickServe/models/workRecord.model";
+import { approveLeaveDetailPreset, approveRejectedPreset } from "@SRC/QuickServe/presets/work_record/approveLeaveDetail.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 
 
 /**
- * Validates the request body and route parameter for ApproveLeaveWorkRecord.
+ * Validates the request body and route parameter for ApproveLeaveDetailRecord.
  *
  * @param {Request} req - Express request object containing the request body and route parameter.
  * @returns {boolean} - Returns `true` if all required fields are present, otherwise `false`.
  */
-const ValidateApproveLeaveWorkRecord = (req: Request): boolean => {
-    const { approve_state } = req.body as ApproveLeaveWorkRecordType;
+const ValidateApproveLeaveDetailRecord = (req: Request): boolean => {
+    const { leave_state } = req.body as ApproveLeaveDetailType;
 
-    if (!approve_state)
+    if (!leave_state)
         return false;
 
     const empId = req.params.empId;
@@ -25,6 +26,8 @@ const ValidateApproveLeaveWorkRecord = (req: Request): boolean => {
     return true;
 }
 
+
+const mysqlDatetime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
 /**
  * Handles the request to update an existing work record's end details.
@@ -39,62 +42,64 @@ const ValidateApproveLeaveWorkRecord = (req: Request): boolean => {
  * @returns {Promise<any>} - JSON response indicating success or failure of the operation.
  */
 
-const approveStatus = ['approved', 'considering', 'rejected'];
+const approveStatus = ['approved', 'pending', 'rejected'];
 
-export const ApproveLeaveWorkRecord = async (req: Request, res: Response): Promise<any> => {
+export const ApproveLeaveDetailRecord = async (req: Request, res: Response): Promise<any> => {
     try {
-        console.log('ApproveLeaveWorkRecord : ', req.body);
+        console.log('ApproveLeaveDetailRecord : ', req.body);
 
-        const shouldContinue = ValidateApproveLeaveWorkRecord(req);
+        const shouldContinue = ValidateApproveLeaveDetailRecord(req);
         if (!shouldContinue) {
             return res.status(400).json({
                 message: "Invalid request format!",
-                quick_serve_name: 'ApproveLeaveWorkRecord',
+                quick_serve_name: 'ApproveLeaveDetailRecord',
                 guide: {
-                    approve_state: "considering | approved | rejected",
+                    approve_state: "pending | approved | rejected",
                 },
                 success: false
             });
         }
 
         const empIdParam = req.params.empId;
-        const bodyData = req.body as ApproveLeaveWorkRecordType
+        const bodyData = req.body as ApproveLeaveDetailType
 
-        if (!approveStatus.includes(bodyData.approve_state)) {
+        if (!approveStatus.includes(bodyData.leave_state)) {
             return res.status(400).json({
-                message: "Invalid approve state!",
-                quick_serve_name: 'ApproveLeaveWorkRecord',
-                details: `Unknown '${bodyData.approve_state}' approve state.`,
+                message: "Invalid leave state!",
+                quick_serve_name: 'ApproveLeaveDetailRecord',
+                details: `Unknown '${bodyData.leave_state}' approve state.`,
                 allowed: `${approveStatus.join(', ')}`,
                 success: false
             });
         }
 
-        const preset = approveLeaveWorkRecordPreset(empIdParam, bodyData);
+        const preset = approveLeaveDetailPreset(empIdParam, bodyData);
 
         const response = await StoreService(preset, 'edit');
-        console.log('ApproveLeaveWorkRecord (response) : ', response);
+        console.log('ApproveLeaveDetailRecord (response) : ', response);
 
-        // #This feature is considering
-        if (bodyData.approve_state === "rejected") {
+        if (bodyData.leave_state === "rejected") {
             await OnApproveLeaveRejected(req, res);
         }
 
+        const currentDateTime = useTime().getLocalTimeAsISOString();
+
         return res.status(200).json({
-            message: "Successfully ApproveLeaveWorkRecord Served!",
-            quick_serve_name: 'ApproveLeaveWorkRecord',
+            message: "Successfully ApproveLeaveDetailRecord Served!",
+            quick_serve_name: 'ApproveLeaveDetailRecord',
             success: true,
             data: {
-                affectedRows: response.affectedRows
+                affectedRows: response.affectedRows,
+                updated_at: currentDateTime
             }
         });
     } catch (error: any) {
-        console.log('ApproveLeaveWorkRecord (Error):', error);
+        console.log('ApproveLeaveDetailRecord (Error):', error);
 
         if (error?.kind) {
             await errorHandles(error, res, { systemName: 'QuickServe', feature: 'approve-leave-work-record' });
         } else {
-            HandleError(res, error, 'ApproveLeaveWorkRecord');
+            HandleError(res, error, 'ApproveLeaveDetailRecord');
         }
     }
 }
@@ -121,7 +126,7 @@ const OnApproveLeaveRejected = async (req: Request, res: Response): Promise<void
         }
 
         const response = await useDeduction().addNewOne(bodyDataToPreset);
-        console.log('ApproveLeaveWorkRecord (response) : ', response);
+        console.log('ApproveLeaveDetailRecord (response) : ', response);
     } catch (error: any) {
         console.log('OnApproveLeaveRejected (Error):', error);
         throw error;
@@ -134,7 +139,7 @@ const OnApproveLeaveRejected = async (req: Request, res: Response): Promise<void
 
 
 /**
- * Handles errors for the ApproveLeaveWorkRecord controller.
+ * Handles errors for the ApproveLeaveDetailRecord controller.
  * 
  * - Sends a 404 response if error kind is `not_found_data`.
  * - Sends a 500 response for other errors.
@@ -152,7 +157,7 @@ const HandleError = (res: Response, error: any, quick_serve_name: string): Recor
     if (error?.code === "WARN_DATA_TRUNCATED" && error?.sqlState === "01000") {
         return res.status(404).json({
             message: "Unknown the approve state!",
-            read_me: "Please check the approve state. It must be `considering`, `approved` or `rejected`",
+            read_me: "Please check the approve state. It must be `pending`, `approved` or `rejected`",
             quick_serve_name,
             success: false
         });
