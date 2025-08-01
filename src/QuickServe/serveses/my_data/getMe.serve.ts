@@ -1,7 +1,7 @@
 import { $Settings } from "@SRC/Helper/Middlewares/middleware.setting";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getMeEmployeeRequestPreset } from "../../presets/my_data/getMe.preset";
+import { getMeEmployeeRequestPreset } from "../../presets/getMe.preset";
 import errorHandles from "@SRC/Helper/Data/Error";
 import { GetMeData } from "@SRC/QuickServe/models/getMe.model";
 

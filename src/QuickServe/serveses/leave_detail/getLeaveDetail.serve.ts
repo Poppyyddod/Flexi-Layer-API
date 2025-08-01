@@ -1,7 +1,7 @@
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 import useWorkRecord from "@SRC/QuickServe/composables/useWorkRecord";
-import { getAllLeaveDetailRequestPreset, getOneLeaveDetailRequestPreset } from "@SRC/QuickServe/presets/leave_detail/getLeaveDetail.preset";
+import { getAllLeaveDetailRequestPreset, getOneLeaveDetailRequestPreset } from "@SRC/QuickServe/presets/leaveDetail.preset";
 
 
 

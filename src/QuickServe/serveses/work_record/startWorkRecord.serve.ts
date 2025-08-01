@@ -1,7 +1,6 @@
 import errorHandles from "@SRC/Helper/Data/Error";
 import { StartWorkRecordType } from "@SRC/QuickServe/models/workRecord.model";
-
-import { startWorkRecordRequestPreset } from "@SRC/QuickServe/presets/work_record/startWorkRecord.preset";
+import { startWorkRecordRequestPreset } from "@SRC/QuickServe/presets/workRecord.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 

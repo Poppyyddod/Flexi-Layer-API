@@ -1,6 +1,6 @@
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getAllBonusRequestPreset, getOneBonusRequestPreset } from "../../presets/bonus/getBonus.preset";
+import { getAllBonusRequestPreset, getOneBonusRequestPreset } from "../../presets/bonus.preset";
 
 
 

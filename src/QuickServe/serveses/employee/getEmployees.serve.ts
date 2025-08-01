@@ -1,6 +1,6 @@
+import { getAllEmployeesRequestPreset, getOneEmployeesRequestPreset } from "@SRC/QuickServe/presets/employee.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getAllEmployeesRequestPreset, getOneEmployeesRequestPreset } from "../../presets/employee/getEmployees.preset";
 
 
 

@@ -1,5 +1,6 @@
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
 import { isString } from "@SRC/Helper/Utils";
+import { UpdateDeductionType } from "../models/deduction.model";
 
 /**
  * Generates a request preset to fetch a single employee by their ID.
@@ -10,14 +11,14 @@ import { isString } from "@SRC/Helper/Utils";
  * @param {string | number} empId - The ID of the employee to retrieve.
  * @returns {IMyRequestData} - A query preset object for fetching one employee.
  */
-export const getOneBonusRequestPreset = (empId: string | number): IMyRequestData => {
+export const getOneDeductionRequestPreset = (empId: string | number): IMyRequestData => {
     if (isString(empId)) {
         empId = parseInt(empId);
     }
 
     const preset: IMyRequestData = {
         db_type: "mysql",
-        store_code: "bonuses",
+        store_code: "deductions",
         field_list: "*",
         where: {
             emp_id: empId
@@ -28,19 +29,37 @@ export const getOneBonusRequestPreset = (empId: string | number): IMyRequestData
 };
 
 /**
- * Generates a request preset to fetch all bonuses.
+ * Generates a request preset to fetch all deductions.
  *
  * - Does not include any filter conditions.
- * - Returns all fields from the `bonuses` table.
+ * - Returns all fields from the `deductions` table.
  *
- * @returns {IMyRequestData} - A query preset object for fetching all bonuses.
+ * @returns {IMyRequestData} - A query preset object for fetching all deductions.
  */
-export const getAllBonusRequestPreset = (): IMyRequestData => {
+export const getAllDeductionRequestPreset = (): IMyRequestData => {
     const preset: IMyRequestData = {
         db_type: "mysql",
-        store_code: "bonuses",
+        store_code: "deductions",
         field_list: "*"
     };
 
     return preset;
 };
+
+
+
+export const updateDeductionRequestPreset = (depId: number | string, bodyData: UpdateDeductionType): IMyRequestData => {
+    if (isString(depId))
+        depId = parseInt(depId);
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "deductions",
+        where: {
+            deduction_id: depId
+        },
+        set: bodyData
+    };
+
+    return preset;
+}

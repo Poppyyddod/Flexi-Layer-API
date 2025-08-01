@@ -1,7 +1,7 @@
 import errorHandles from "@SRC/Helper/Data/Error";
 import useTime from "@SRC/QuickServe/composables/useMySQLTime";
 import { EndWorkRecordType } from "@SRC/QuickServe/models/workRecord.model";
-import { endWorkRecordRequestPreset } from "@SRC/QuickServe/presets/work_record/endWorkRecord.preset";
+import { endWorkRecordRequestPreset } from "@SRC/QuickServe/presets/workRecord.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 

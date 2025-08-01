@@ -59,7 +59,7 @@ export const AddBonus = async (req: Request, res: Response): Promise<any> => {
         const bonusPayload = {
             emp_id: bodyData.emp_id,
             bonus_type: bodyData.bonus_type,
-            amount: 50000,
+            amount: 50000, // <- In Testing
             note: bodyData.note
         }
 

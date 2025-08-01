@@ -1,6 +1,7 @@
+import { getAllDepartmentRequestPreset, getOneDepartmentRequestPreset } from "@SRC/QuickServe/presets/department.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getAllDepartmentRequestPreset, getOneDepartmentRequestPreset } from "../../presets/department/getDepartments.preset";
+
 
 /**
  * Handles the API request to retrieve one department by its ID.

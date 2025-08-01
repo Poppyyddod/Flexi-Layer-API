@@ -1,6 +1,6 @@
+import { getAllDeductionRequestPreset, getOneDeductionRequestPreset } from "@SRC/QuickServe/presets/deduction.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getAllDeductionRequestPreset, getOneDeductionRequestPreset } from "../../presets/deduction/getDeduction.preset";
 
 
 

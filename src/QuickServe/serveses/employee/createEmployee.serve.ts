@@ -1,6 +1,6 @@
 import errorHandles from "@SRC/Helper/Data/Error";
 import { CreateEmployeeImage } from "@SRC/QuickServe/models/employee.model";
-import { createOneEmployeeImageRequestPreset, createOneEmployeeRequestPreset } from "@SRC/QuickServe/presets/employee/createEmployee.preset";
+import { createOneEmployeeImageRequestPreset, createOneEmployeeRequestPreset } from "@SRC/QuickServe/presets/employee.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 
@@ -65,7 +65,7 @@ export const CreateOneEmployee = async (req: Request, res: Response): Promise<an
         const imageResponse = await CreateOneEmployeeImage(imagePayload);
         console.log('CreateOneEmployeeImage (response) : ', imageResponse);
 
-        res.status(200).json({
+        res.status(201).json({
             message: "Successfully CreateOneEmployee Served!",
             quick_serve_name: 'CreateOneEmployee',
             success: true,

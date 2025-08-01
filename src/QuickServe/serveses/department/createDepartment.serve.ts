@@ -1,6 +1,6 @@
 import errorHandles from "@SRC/Helper/Data/Error";
 import { AddDepartmentType } from "@SRC/QuickServe/models/department.model";
-import { createDepartmentRequestPreset } from "@SRC/QuickServe/presets/department/createDepartment.preset";
+import { createDepartmentRequestPreset } from "@SRC/QuickServe/presets/department.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 

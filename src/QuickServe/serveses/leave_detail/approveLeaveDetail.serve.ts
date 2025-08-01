@@ -3,7 +3,7 @@ import useDeduction from "@SRC/QuickServe/composables/useDeduction";
 import useTime from "@SRC/QuickServe/composables/useMySQLTime";
 import useSalary from "@SRC/QuickServe/composables/useSalary";
 import { ApproveLeaveDetailType } from "@SRC/QuickServe/models/workRecord.model";
-import { approveLeaveDetailPreset, approveRejectedPreset } from "@SRC/QuickServe/presets/leave_detail/approveLeaveDetail.preset";
+import { approveLeaveDetailPreset } from "@SRC/QuickServe/presets/leaveDetail.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 

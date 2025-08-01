@@ -1,6 +1,6 @@
 import errorHandles from "@SRC/Helper/Data/Error";
 import { AddPositionType } from "@SRC/QuickServe/models/position.model";
-import { createPositionRequestPreset } from "@SRC/QuickServe/presets/position/createPosition.preset";
+import { createPositionRequestPreset } from "@SRC/QuickServe/presets/position.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 

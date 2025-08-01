@@ -13,3 +13,11 @@ export type AddBonusType = {
     bonus_type: string,
     note: string
 }
+
+export type UpdateBonusType = {
+    emp_id?: number,
+    salary_month?: string,
+    amount?: number,
+    bonus_type?: string,
+    note?: string
+}

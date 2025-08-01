@@ -1,6 +1,6 @@
+import { getAllPositionsRequestPreset, getOnePositionRequestPreset } from "@SRC/QuickServe/presets/position.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getAllPositionsRequestPreset, getOnePositionRequestPreset } from "../../presets/position/getPositions.preset";
 
 
 

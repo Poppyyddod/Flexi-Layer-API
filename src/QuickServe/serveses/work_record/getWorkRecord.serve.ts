@@ -1,7 +1,7 @@
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { getAllWorkRecordRequestPreset, getOneWorkRecordRequestPreset } from "@SRC/QuickServe/presets/work_record/getWorkRecord.preset";
 import useWorkRecord from "@SRC/QuickServe/composables/useWorkRecord";
+import { getAllWorkRecordRequestPreset, getOneWorkRecordRequestPreset } from "@SRC/QuickServe/presets/workRecord.preset";
 
 
 /**

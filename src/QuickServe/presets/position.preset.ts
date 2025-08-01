@@ -43,3 +43,38 @@ export const getAllPositionsRequestPreset = (): IMyRequestData => {
 
     return preset;
 };
+
+
+
+
+
+import { AddPositionType } from "@SRC/QuickServe/models/position.model";
+
+export const createPositionRequestPreset = (bodyData: AddPositionType): IMyRequestData => {
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "positions",
+        set: bodyData
+    };
+
+    return preset;
+}
+
+
+import { UpdatePositionType } from "@SRC/QuickServe/models/position.model";
+
+export const updatePositionRequestPreset = (posId: number | string, bodyData: UpdatePositionType): IMyRequestData => {
+    if (isString(posId))
+        posId = parseInt(posId);
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "positions",
+        where: {
+            position_id: posId
+        },
+        set: bodyData
+    };
+
+    return preset;
+}

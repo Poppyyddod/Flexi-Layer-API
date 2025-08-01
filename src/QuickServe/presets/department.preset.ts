@@ -43,3 +43,35 @@ export const getAllDepartmentRequestPreset = (): IMyRequestData => {
 
     return preset;
 };
+
+
+import { AddDepartmentType } from "@SRC/QuickServe/models/department.model";
+
+export const createDepartmentRequestPreset = (bodyData: AddDepartmentType): IMyRequestData => {
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "departments",
+        set: bodyData
+    };
+
+    return preset;
+}
+
+
+import { UpdateDepartmentType } from "@SRC/QuickServe/models/department.model";
+
+export const updateDepartmentRequestPreset = (departmentId: number | string, bodyData: UpdateDepartmentType): IMyRequestData => {
+    if (isString(departmentId))
+        departmentId = parseInt(departmentId);
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "departments",
+        where: {
+            department_id: departmentId
+        },
+        set: bodyData
+    };
+
+    return preset;
+}

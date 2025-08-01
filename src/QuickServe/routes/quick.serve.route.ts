@@ -26,7 +26,11 @@ import {
     GetOneDeduction,
     GetAllDeduction,
     AddPosition,
-    AddDepartment
+    AddDepartment,
+    UpdateDepartment,
+    UpdatePosition,
+    UpdateBonus,
+    UpdateDeduction
 } from '../serveses';
 
 
@@ -62,21 +66,25 @@ const quickServeRoutes = (router: Router): Router => {
     router.get('/quickserve/employee/leave-detail/:leaveState', JwtVerifyToken, GetAllLeaveDetail);
 
     // Position
+    router.patch('/quickserve/position/:posId/update', JwtVerifyToken, UpdatePosition);
     router.post('/quickserve/position/add', JwtVerifyToken, AddPosition);
     router.get('/quickserve/position', JwtVerifyToken, GetAllPosition);
     router.get('/quickserve/position/:posId', JwtVerifyToken, GetOnePosition);
 
     // Department
+    router.patch('/quickserve/department/:depId/update', JwtVerifyToken, UpdateDepartment);
     router.post('/quickserve/department/add', JwtVerifyToken, AddDepartment);
     router.get('/quickserve/department', JwtVerifyToken, GetAllDepartment);
     router.get('/quickserve/department/:depId', JwtVerifyToken, GetOneDepartment);
 
     // Deduction
+    router.patch('/quickserve/employee/deduction/:depId/update', JwtVerifyToken, UpdateDeduction);
     router.post('/quickserve/employee/deduction/add', JwtVerifyToken, AddDeduction);
     router.get('/quickserve/employee/:empId/deduction', JwtVerifyToken, GetOneDeduction);
     router.get('/quickserve/employee/deduction', JwtVerifyToken, GetAllDeduction);
 
     // Bonus
+    router.patch('/quickserve/employee/bonus/:bonusId/update', JwtVerifyToken, UpdateBonus);
     router.post('/quickserve/employee/bonus/add', JwtVerifyToken, AddBonus);
     router.get('/quickserve/employee/:empId/bonus', JwtVerifyToken, GetOneBonus);
     router.get('/quickserve/employee/bonus', JwtVerifyToken, GetAllBonus);

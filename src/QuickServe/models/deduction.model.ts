@@ -13,3 +13,11 @@ export type AddDeductionType = {
     deduction_type: DeductionMapperType,
     note: string
 }
+
+export type UpdateDeductionType = {
+    emp_id?: number,
+    salary_month?: string,
+    amount?: number,
+    deduction_type?: DeductionMapperType,
+    note?: string
+}
