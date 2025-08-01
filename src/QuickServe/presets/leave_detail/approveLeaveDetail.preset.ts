@@ -15,9 +15,7 @@ export const approveLeaveDetailPreset = (empId: number | string, bodyData: Appro
         store_code: "leave_details",
         where: {
             emp_id: empId,
-            // work_record_date: mysqlDate,
-            // work_record_state: "leave",
-            // approve_state: "pending"
+            leave_detail_id: bodyData.leave_detail_id
         },
         set: bodyData
     }

@@ -3,21 +3,21 @@ import useDeduction from "@SRC/QuickServe/composables/useDeduction";
 import useTime from "@SRC/QuickServe/composables/useMySQLTime";
 import useSalary from "@SRC/QuickServe/composables/useSalary";
 import { ApproveLeaveDetailType } from "@SRC/QuickServe/models/workRecord.model";
-import { approveLeaveDetailPreset, approveRejectedPreset } from "@SRC/QuickServe/presets/work_record/approveLeaveDetail.preset";
+import { approveLeaveDetailPreset, approveRejectedPreset } from "@SRC/QuickServe/presets/leave_detail/approveLeaveDetail.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 
 
 /**
- * Validates the request body and route parameter for ApproveLeaveDetailRecord.
+ * Validates the request body and route parameter for ApproveLeaveDetail.
  *
  * @param {Request} req - Express request object containing the request body and route parameter.
  * @returns {boolean} - Returns `true` if all required fields are present, otherwise `false`.
  */
-const ValidateApproveLeaveDetailRecord = (req: Request): boolean => {
-    const { leave_state } = req.body as ApproveLeaveDetailType;
+const ValidateApproveLeaveDetail = (req: Request): boolean => {
+    const { leave_detail_id, leave_state } = req.body as ApproveLeaveDetailType;
 
-    if (!leave_state)
+    if (!leave_state || !leave_detail_id)
         return false;
 
     const empId = req.params.empId;
@@ -44,17 +44,18 @@ const mysqlDatetime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
 const approveStatus = ['approved', 'pending', 'rejected'];
 
-export const ApproveLeaveDetailRecord = async (req: Request, res: Response): Promise<any> => {
+export const ApproveLeaveDetail = async (req: Request, res: Response): Promise<any> => {
     try {
-        console.log('ApproveLeaveDetailRecord : ', req.body);
+        console.log('ApproveLeaveDetail : ', req.body);
 
-        const shouldContinue = ValidateApproveLeaveDetailRecord(req);
+        const shouldContinue = ValidateApproveLeaveDetail(req);
         if (!shouldContinue) {
             return res.status(400).json({
                 message: "Invalid request format!",
-                quick_serve_name: 'ApproveLeaveDetailRecord',
+                quick_serve_name: 'ApproveLeaveDetail',
                 guide: {
-                    approve_state: "pending | approved | rejected",
+                    leave_detail_id: "number",
+                    leave_state: "pending | approved | rejected",
                 },
                 success: false
             });
@@ -66,7 +67,7 @@ export const ApproveLeaveDetailRecord = async (req: Request, res: Response): Pro
         if (!approveStatus.includes(bodyData.leave_state)) {
             return res.status(400).json({
                 message: "Invalid leave state!",
-                quick_serve_name: 'ApproveLeaveDetailRecord',
+                quick_serve_name: 'ApproveLeaveDetail',
                 details: `Unknown '${bodyData.leave_state}' approve state.`,
                 allowed: `${approveStatus.join(', ')}`,
                 success: false
@@ -76,7 +77,7 @@ export const ApproveLeaveDetailRecord = async (req: Request, res: Response): Pro
         const preset = approveLeaveDetailPreset(empIdParam, bodyData);
 
         const response = await StoreService(preset, 'edit');
-        console.log('ApproveLeaveDetailRecord (response) : ', response);
+        console.log('ApproveLeaveDetail (response) : ', response);
 
         if (bodyData.leave_state === "rejected") {
             await OnApproveLeaveRejected(req, res);
@@ -85,8 +86,8 @@ export const ApproveLeaveDetailRecord = async (req: Request, res: Response): Pro
         const currentDateTime = useTime().getLocalTimeAsISOString();
 
         return res.status(200).json({
-            message: "Successfully ApproveLeaveDetailRecord Served!",
-            quick_serve_name: 'ApproveLeaveDetailRecord',
+            message: "Successfully ApproveLeaveDetail Served!",
+            quick_serve_name: 'ApproveLeaveDetail',
             success: true,
             data: {
                 affectedRows: response.affectedRows,
@@ -94,12 +95,12 @@ export const ApproveLeaveDetailRecord = async (req: Request, res: Response): Pro
             }
         });
     } catch (error: any) {
-        console.log('ApproveLeaveDetailRecord (Error):', error);
+        console.log('ApproveLeaveDetail (Error):', error);
 
         if (error?.kind) {
             await errorHandles(error, res, { systemName: 'QuickServe', feature: 'approve-leave-work-record' });
         } else {
-            HandleError(res, error, 'ApproveLeaveDetailRecord');
+            HandleError(res, error, 'ApproveLeaveDetail');
         }
     }
 }
@@ -126,7 +127,7 @@ const OnApproveLeaveRejected = async (req: Request, res: Response): Promise<void
         }
 
         const response = await useDeduction().addNewOne(bodyDataToPreset);
-        console.log('ApproveLeaveDetailRecord (response) : ', response);
+        console.log('ApproveLeaveDetail (response) : ', response);
     } catch (error: any) {
         console.log('OnApproveLeaveRejected (Error):', error);
         throw error;
@@ -139,7 +140,7 @@ const OnApproveLeaveRejected = async (req: Request, res: Response): Promise<void
 
 
 /**
- * Handles errors for the ApproveLeaveDetailRecord controller.
+ * Handles errors for the ApproveLeaveDetail controller.
  * 
  * - Sends a 404 response if error kind is `not_found_data`.
  * - Sends a 500 response for other errors.

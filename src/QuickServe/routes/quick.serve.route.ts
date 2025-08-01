@@ -14,12 +14,17 @@ import {
     EndWorkRecord,
     StartWorkRecord,
     CreateLeaveDetail,
-    ApproveLeaveDetailRecord,
+    ApproveLeaveDetail,
     AddDeduction,
     GetOneWorkRecord,
     GetAllWorkRecord,
     GetOneLeaveDetail,
-    GetAllLeaveDetail
+    GetAllLeaveDetail,
+    AddBonus,
+    GetOneBonus,
+    GetAllBonus,
+    GetOneDeduction,
+    GetAllDeduction
 } from '../serveses';
 
 /**
@@ -46,14 +51,9 @@ const quickServeRoutes = (router: Router) => {
 
     // Level Details
     router.post('/quickserve/employee/leave-detail/add', JwtVerifyToken, CreateLeaveDetail);
-    router.patch('/quickserve/employee/:empId/leave-detail', JwtVerifyToken, ApproveLeaveDetailRecord);
+    router.patch('/quickserve/employee/:empId/leave-detail', JwtVerifyToken, ApproveLeaveDetail);
     router.get('/quickserve/employee/:empId/leave-detail/:leaveState', JwtVerifyToken, GetOneLeaveDetail);
     router.get('/quickserve/employee/leave-detail/:leaveState', JwtVerifyToken, GetAllLeaveDetail);
-
-    // Employee
-    router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);
-    router.get('/quickserve/employee/:empId', JwtVerifyToken, GetOneEmployee);
-    router.post('/quickserve/employee/add', JwtVerifyToken, CreateOneEmployee);
 
     // Position
     router.get('/quickserve/position', JwtVerifyToken, GetAllPosition);
@@ -64,7 +64,19 @@ const quickServeRoutes = (router: Router) => {
     router.get('/quickserve/department/:depId', JwtVerifyToken, GetOneDepartment);
 
     // Deduction
-    router.post('/quickserve/deduction/add', JwtVerifyToken, AddDeduction);
+    router.post('/quickserve/employee/deduction/add', JwtVerifyToken, AddDeduction);
+    router.get('/quickserve/employee/:empId/deduction', JwtVerifyToken, GetOneDeduction);
+    router.get('/quickserve/employee/deduction', JwtVerifyToken, GetAllDeduction);
+
+    // Bonus
+    router.post('/quickserve/employee/bonus/add', JwtVerifyToken, AddBonus);
+    router.get('/quickserve/employee/:empId/bonus', JwtVerifyToken, GetOneBonus);
+    router.get('/quickserve/employee/bonus', JwtVerifyToken, GetAllBonus);
+
+    // Employee
+    router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);
+    router.get('/quickserve/employee/:empId', JwtVerifyToken, GetOneEmployee);
+    router.post('/quickserve/employee/add', JwtVerifyToken, CreateOneEmployee);
 
     return router;
 }

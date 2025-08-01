@@ -72,7 +72,7 @@ export const AddDeduction = async (req: Request, res: Response): Promise<any> =>
         console.log('AddDeduction (Error):', error);
 
         if (error?.kind) {
-            await errorHandles(error, res, { systemName: 'QuickServe', feature: 'create-one-employee' });
+            await errorHandles(error, res, { systemName: 'QuickServe', feature: 'AddDeduction' });
         } else {
             HandleError(res, error, 'AddDeduction');
         }

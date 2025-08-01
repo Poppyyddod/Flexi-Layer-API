@@ -2,7 +2,7 @@
 
 import errorHandles from "@SRC/Helper/Data/Error";
 import { CreateLeaveDetailType } from "@SRC/QuickServe/models/workRecord.model";
-import { createLeaveDetailRequestPreset } from "@SRC/QuickServe/presets/work_record/leaveWorkRecord.preset";
+import { createLeaveDetailRequestPreset } from "@SRC/QuickServe/presets/leave_detail/createLeaveDetail.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 

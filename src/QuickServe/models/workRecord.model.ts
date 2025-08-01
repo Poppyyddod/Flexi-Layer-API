@@ -22,5 +22,6 @@ export type CreateLeaveDetailType = {
 
 
 export type ApproveLeaveDetailType = {
+    leave_detail_id: number;
     leave_state: 'pending' | 'approved' | 'rejected';
 }
