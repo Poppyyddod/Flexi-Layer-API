@@ -24,16 +24,22 @@ import {
     GetOneBonus,
     GetAllBonus,
     GetOneDeduction,
-    GetAllDeduction
+    GetAllDeduction,
+    AddPosition,
+    AddDepartment
 } from '../serveses';
 
+
+
 /**
- * @function storeRoutes - ສຳຫຼັບການກຳໜົດ Route ຂອງ Store
- * @param router - express router
- * @returns express || route
+ * Registers all QuickServe-related routes to the provided Express Router instance.
+ * Each route has rate limiting and JWT verification enabled.
+ *
+ * @param {Router} router - An instance of Express Router to attach the QuickServe routes to.
+ * @returns {Router} - The modified router with QuickServe routes registered.
  */
 
-const quickServeRoutes = (router: Router) => {
+const quickServeRoutes = (router: Router): Router => {
     // console.log('Store routes');
 
     // My Data
@@ -56,10 +62,12 @@ const quickServeRoutes = (router: Router) => {
     router.get('/quickserve/employee/leave-detail/:leaveState', JwtVerifyToken, GetAllLeaveDetail);
 
     // Position
+    router.post('/quickserve/position/add', JwtVerifyToken, AddPosition);
     router.get('/quickserve/position', JwtVerifyToken, GetAllPosition);
     router.get('/quickserve/position/:posId', JwtVerifyToken, GetOnePosition);
 
     // Department
+    router.post('/quickserve/department/add', JwtVerifyToken, AddDepartment);
     router.get('/quickserve/department', JwtVerifyToken, GetAllDepartment);
     router.get('/quickserve/department/:depId', JwtVerifyToken, GetOneDepartment);
 
@@ -74,9 +82,9 @@ const quickServeRoutes = (router: Router) => {
     router.get('/quickserve/employee/bonus', JwtVerifyToken, GetAllBonus);
 
     // Employee
-    router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);
-    router.get('/quickserve/employee/:empId', JwtVerifyToken, GetOneEmployee);
     router.post('/quickserve/employee/add', JwtVerifyToken, CreateOneEmployee);
+    router.get('/quickserve/employee/:empId', JwtVerifyToken, GetOneEmployee);
+    router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);
 
     return router;
 }

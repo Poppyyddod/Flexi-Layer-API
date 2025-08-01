@@ -79,9 +79,10 @@ export const ApproveLeaveDetail = async (req: Request, res: Response): Promise<a
         const response = await StoreService(preset, 'edit');
         console.log('ApproveLeaveDetail (response) : ', response);
 
-        if (bodyData.leave_state === "rejected") {
-            await OnApproveLeaveRejected(req, res);
-        }
+        // In Testing
+        // if (bodyData.leave_state === "rejected") {
+        //     await OnApproveLeaveRejected(req, res);
+        // }
 
         const currentDateTime = useTime().getLocalTimeAsISOString();
 
@@ -97,11 +98,13 @@ export const ApproveLeaveDetail = async (req: Request, res: Response): Promise<a
     } catch (error: any) {
         console.log('ApproveLeaveDetail (Error):', error);
 
-        if (error?.kind) {
-            await errorHandles(error, res, { systemName: 'QuickServe', feature: 'approve-leave-work-record' });
-        } else {
-            HandleError(res, error, 'ApproveLeaveDetail');
-        }
+        // if (error?.kind) {
+        //     await errorHandles(error, res, { systemName: 'QuickServe', feature: 'approve-leave-work-record' });
+        // } else {
+        //     HandleError(res, error, 'ApproveLeaveDetail');
+        // }
+
+        HandleError(res, error, 'ApproveLeaveDetail');
     }
 }
 
@@ -109,30 +112,30 @@ export const ApproveLeaveDetail = async (req: Request, res: Response): Promise<a
 
 
 
-const OnApproveLeaveRejected = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const empIdParam = req.params.empId;
+// const OnApproveLeaveRejected = async (req: Request, res: Response): Promise<void> => {
+//     try {
+//         const empIdParam = req.params.empId;
 
-        const baseSalary = await useSalary().getEmployeeBaseSalary(empIdParam);
-        console.log('OnApproveLeaveRejected (baseSalary) : ', baseSalary);
+//         const baseSalary = await useSalary().getEmployeeBaseSalary(empIdParam);
+//         console.log('OnApproveLeaveRejected (baseSalary) : ', baseSalary);
 
-        const deductionAmount = useDeduction().deductionCounter(baseSalary, "absent");
-        console.log('OnApproveLeaveRejected (deductionAmount) : ', deductionAmount);
+//         const deductionAmount = useDeduction().deductionCounter(baseSalary, "absent");
+//         console.log('OnApproveLeaveRejected (deductionAmount) : ', deductionAmount);
 
-        const bodyDataToPreset = {
-            emp_id: parseInt(empIdParam),
-            deduction_type: "absent",
-            amount: deductionAmount,
-            note: "Work record `Leave` has rejected."
-        }
+//         const bodyDataToPreset = {
+//             emp_id: parseInt(empIdParam),
+//             deduction_type: "absent",
+//             amount: deductionAmount,
+//             note: "Work record `Leave` has rejected."
+//         }
 
-        const response = await useDeduction().addNewOne(bodyDataToPreset);
-        console.log('ApproveLeaveDetail (response) : ', response);
-    } catch (error: any) {
-        console.log('OnApproveLeaveRejected (Error):', error);
-        throw error;
-    }
-}
+//         const response = await useDeduction().addNewOne(bodyDataToPreset);
+//         console.log('ApproveLeaveDetail (response) : ', response);
+//     } catch (error: any) {
+//         console.log('OnApproveLeaveRejected (Error):', error);
+//         throw error;
+//     }
+// }
 
 
 
@@ -153,6 +156,14 @@ const OnApproveLeaveRejected = async (req: Request, res: Response): Promise<void
 const HandleError = (res: Response, error: any, quick_serve_name: string): Record<string, any> => {
     if (error?.code === "ER_NO_REFERENCED_ROW_2") {
         return NoReferenceRow2(error, res, quick_serve_name);
+    }
+
+    if (error?.kind === "not_found_data") {
+        return res.status(404).json({
+            message: "Unknown param employee id or leave detail id!",
+            quick_serve_name,
+            success: false
+        });
     }
 
     if (error?.code === "WARN_DATA_TRUNCATED" && error?.sqlState === "01000") {

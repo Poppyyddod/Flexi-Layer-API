@@ -5,6 +5,19 @@ import { getAllLeaveDetailRequestPreset, getOneLeaveDetailRequestPreset } from "
 
 
 
+
+/**
+ * Handles the API request to retrieve a single leave detail by employee ID and leave state.
+ *
+ * - Expects `empId` and `leaveState` as route parameters.
+ * - Validates the presence of both parameters and checks if `leaveState` is valid.
+ * - Fetches leave detail data using `getOneLeaveDetailRequestPreset`.
+ * - Returns the leave detail data in the response if found.
+ *
+ * @param {Request} req - Express request object containing `empId` and `leaveState` in route parameters.
+ * @param {Response} res - Express response object for sending the result.
+ * @returns {Promise<any>} - JSON response containing leave detail data or error message.
+ */
 export const GetOneLeaveDetail = async (req: Request, res: Response): Promise<any> => {
     try {
         console.log('GetOneLeaveDetail : ', req.body);
@@ -17,7 +30,6 @@ export const GetOneLeaveDetail = async (req: Request, res: Response): Promise<an
                 success: false
             });
         }
-
         const paramApproveState = req.params.leaveState;
         if (!useWorkRecord().paramApproveStateArr.includes(paramApproveState)) {
             return res.status(400).json({
@@ -50,6 +62,19 @@ export const GetOneLeaveDetail = async (req: Request, res: Response): Promise<an
 
 
 
+
+/**
+ * Handles the API request to retrieve all leave details by leave state.
+ *
+ * - Expects `leaveState` as route parameter.
+ * - Validates the presence of this parameter and checks if `leaveState` is valid.
+ * - Fetches leave detail data using `getAllLeaveDetailRequestPreset`.
+ * - Returns the leave detail data in the response if found.
+ *
+ * @param {Request} req - Express request object containing `leaveState` in route parameters.
+ * @param {Response} res - Express response object for sending the result.
+ * @returns {Promise<any>} - JSON response containing leave detail data or error message.
+ */
 export const GetAllLeaveDetail = async (req: Request, res: Response): Promise<any> => {
     try {
         console.log('GetAllLeaveDetail : ', req.body);
@@ -93,6 +118,18 @@ export const GetAllLeaveDetail = async (req: Request, res: Response): Promise<an
 
 
 
+
+/**
+ * Handles errors for the GetAllLeaveDetail controller.
+ * 
+ * - Sends a 404 response if the error kind is `not_found_data`.
+ * - Sends a 500 response for other errors.
+ * 
+ * @param {Response} res - Express response object used to return the result.
+ * @param {any} error - The error object caught.
+ * @param {string} quick_serve_name - Identifier of the quick serve feature for logging.
+ * @returns {Response} - Express response with error JSON.
+ */
 
 const HandleError = (res: Response, error: any, quick_serve_name: string) => {
     const { kind } = error;

@@ -2,17 +2,20 @@ import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 import { getAllPositionsRequestPreset, getOnePositionRequestPreset } from "../../presets/position/getPositions.preset";
 
+
+
+
+
 /**
- * Controller to fetch a single position by its ID.
- * 
- * - Reads `posId` from route parameters.
- * - Validates presence of `posId`.
- * - Queries the database using `getOnePositionRequestPreset`.
- * - Returns the position data or error response.
- * 
- * @param {Request} req - Express request object.
- * @param {Response} res - Express response object.
- * @returns {Promise<void>} - Sends JSON response with position data or error.
+ * Handles the API request to retrieve a single position by its ID.
+ *
+ * - Expects a route parameter `posId`.
+ * - Fetches position data using `getOnePositionRequestPreset`.
+ * - Returns the position data in the response if found.
+ *
+ * @param {Request} req - Express request object, expects `posId` in route params.
+ * @param {Response} res - Express response object for sending the result.
+ * @returns {Promise<any>} - JSON response containing position data or error message.
  */
 export const GetOnePosition = async (req: Request, res: Response): Promise<any> => {
     try {
@@ -42,16 +45,21 @@ export const GetOnePosition = async (req: Request, res: Response): Promise<any> 
     }
 };
 
+
+
+
 /**
- * Controller to fetch all positions.
- * 
- * - Queries the database using `getAllPositionsRequestPreset`.
- * - Returns all position records or a message if table is empty.
- * 
+ * Handles the API request to retrieve a list of all positions.
+ *
  * @param {Request} req - Express request object.
- * @param {Response} res - Express response object.
- * @returns {Promise<void>} - Sends JSON response with positions data or error.
+ * @param {Response} res - Express response object for sending the result.
+ *
+ * @returns {Promise<any>} - JSON response containing the list of positions or an error message.
+ *
+ * @example
+ * GET /quickserve/position
  */
+
 export const GetAllPosition = async (req: Request, res: Response): Promise<any> => {
     try {
         console.log('GetAllPosition : ', req.body);
@@ -80,18 +88,21 @@ export const GetAllPosition = async (req: Request, res: Response): Promise<any> 
     }
 };
 
+
+
+
 /**
- * Handles errors for the position controllers.
- * 
- * - Sends a 404 response if error kind is `not_found_data`.
- * - Sends a 500 response for other errors.
- * 
+ * Handles errors for position-related requests.
+ *
+ * - If the error is of kind `not_found_data`, returns 404 with a specific message.
+ * - Otherwise, returns 500 with a general failure message.
+ *
  * @param {Response} res - Express response object.
- * @param {any} error - The error object caught.
- * @param {string} quick_serve_name - Identifier of the quick serve feature for logging.
- * @returns {Response} - Express response with error JSON.
+ * @param {any} error - The error object thrown during the request.
+ * @param {string} quick_serve_name - The name of the current quick serve feature.
+ * @returns {Response} - The formatted HTTP error response.
  */
-const HandleError = (res: Response, error: any, quick_serve_name: string) => {
+const HandleError = (res: Response, error: any, quick_serve_name: string): Record<string, any> => {
     const { kind } = error;
     if (kind === "not_found_data") {
         return res.status(404).json({
