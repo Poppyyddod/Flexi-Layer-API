@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { JwtVerifyToken } from '@Helper/Middlewares';
-import { GetMe } from '../serveses/my_data';
+import { GetAllEmployeeAuth, GetMe } from '../serveses/my_data';
 import { CreateOneEmployee, DeleteOneEmployee, GetAllEmployee, GetAllSalaryCounter, GetOneEmployee, GetOneSalaryCounter, UpdateEmployee } from '../serveses/employee';
 import { DeleteOneWorkRecord, EndWorkRecord, GetAllWorkRecord, GetOneWorkRecord, StartWorkRecord } from '../serveses/work_record';
 import { ApproveLeaveDetail, CreateLeaveDetail, DeleteOneLeaveDetail, GetAllLeaveDetail, GetOneLeaveDetail } from '../serveses/leave_detail';
@@ -80,6 +80,7 @@ const quickServeRoutes = (router: Router): Router => {
     router.delete('/quickserve/employee/:empId/delete', JwtVerifyToken, DeleteOneEmployee);
     router.patch('/quickserve/employee/:empId/update', JwtVerifyToken, UpdateEmployee);
     router.post('/quickserve/employee/add', JwtVerifyToken, CreateOneEmployee);
+    router.get('/quickserve/employee/auth', JwtVerifyToken, GetAllEmployeeAuth);
     router.get('/quickserve/employee/:empId', JwtVerifyToken, GetOneEmployee);
     router.get('/quickserve/employee', JwtVerifyToken, GetAllEmployee);
 

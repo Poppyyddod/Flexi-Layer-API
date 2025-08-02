@@ -48,3 +48,18 @@ export const getMeEmployeeRequestPreset = (userId: number | string): IMyRequestD
 
     return preset;
 };
+
+
+
+export const getAllUserIdAndUsernameRequestPreset = (): IMyRequestData => {
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "user_auth",
+        where: {
+            user_role_id: 1
+        },
+        field_list: ["user_id", "user_name"]
+    }
+
+    return preset;
+}
