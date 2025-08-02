@@ -8,6 +8,7 @@ import { AddPosition, DeleteOnePosition, GetAllPosition, GetOnePosition, UpdateP
 import { AddDepartment, DeleteOneDepartment, GetAllDepartment, GetOneDepartment, UpdateDepartment } from '../serveses/department';
 import { AddDeduction, DeleteOneDeduction, GetAllDeduction, GetOneDeduction, UpdateDeduction } from '../serveses/deduction';
 import { AddBonus, DeleteOneBonus, GetAllBonus, GetOneBonus, UpdateBonus } from '../serveses/bonus';
+import { PayOneSalary } from '../serveses/resetSalary.serve';
 
 
 
@@ -22,6 +23,9 @@ import { AddBonus, DeleteOneBonus, GetAllBonus, GetOneBonus, UpdateBonus } from 
 
 const quickServeRoutes = (router: Router): Router => {
     // console.log('Store routes');
+
+    // Pay Salary
+    router.post('/quickserve/employee/salary/pay', JwtVerifyToken, PayOneSalary);
 
     // Work Record
     router.delete('/quickserve/employee/work-record/:workId/delete', JwtVerifyToken, DeleteOneWorkRecord);
