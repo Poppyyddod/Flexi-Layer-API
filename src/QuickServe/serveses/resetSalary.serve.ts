@@ -2,9 +2,10 @@ import errorHandles from "@SRC/Helper/Data/Error";
 import { isString } from "@SRC/Helper/Utils";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
-import { createSalaryHistoryRequestPreset } from "../presets/resetSalary.preset";
+import { createSalaryRequestPreset } from "../presets/resetSalary.preset";
 import { CreateSalaryHistory } from "../models/resetSalary.model";
 import { IMyRequestData } from "@SRC/Helper/Model/global.model";
+
 
 
 
@@ -87,10 +88,10 @@ const ValidatePayOneSalary = (req: Request, res: Response): boolean => {
 
     if (bodyData.emp_id === undefined || bodyData.emp_id === null) return false;
     if (bodyData.base_salary === undefined || bodyData.base_salary === null) return false;
-    if (bodyData.bonus === undefined || bodyData.bonus === null) return false;
-    if (bodyData.allowance === undefined || bodyData.allowance === null) return false;
-    if (bodyData.ot_payment === undefined || bodyData.ot_payment === null) return false;
-    if (bodyData.deduction === undefined || bodyData.deduction === null) return false;
+    // if (bodyData.bonus === undefined || bodyData.bonus === null) return false;
+    // if (bodyData.allowance === undefined || bodyData.allowance === null) return false;
+    if (bodyData.ot_payments === undefined || bodyData.ot_payments === null) return false;
+    if (bodyData.deductions === undefined || bodyData.deductions === null) return false;
     if (!bodyData.salary_month) return false;
     if (!bodyData.reset === undefined || bodyData.reset === null) return false;
 
@@ -111,8 +112,6 @@ export const PayOneSalary = async (req: Request, res: Response) => {
                 guide: {
                     emp_id: "number",
                     base_salary: "number",
-                    bonus: "number",
-                    allowance: "number",
                     ot_payment: "number",
                     deduction: "number",
                     salary_month: "string",
@@ -122,7 +121,7 @@ export const PayOneSalary = async (req: Request, res: Response) => {
             });
         }
 
-        const response = await StoreService(createSalaryHistoryRequestPreset(bodyData), 'create');
+        const response = await StoreService(createSalaryRequestPreset(bodyData), 'create');
         console.log('PayOneSalary (response) : ', response);
 
         if (response && bodyData.reset) {

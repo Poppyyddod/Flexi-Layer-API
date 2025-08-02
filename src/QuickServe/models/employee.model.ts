@@ -24,6 +24,7 @@ export type CreateEmployee = {
     emp_religion: string;
     emp_tel: string;
     emp_birth_date: string;
+    emp_day_off: string[];
 };
 
 

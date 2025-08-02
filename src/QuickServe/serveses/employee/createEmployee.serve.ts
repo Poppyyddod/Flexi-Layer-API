@@ -1,5 +1,6 @@
 import errorHandles from "@SRC/Helper/Data/Error";
-import { CreateEmployeeImage } from "@SRC/QuickServe/models/employee.model";
+import { isArray } from "@SRC/Helper/Utils";
+import { CreateEmployee, CreateEmployeeImage } from "@SRC/QuickServe/models/employee.model";
 import { createOneEmployeeImageRequestPreset, createOneEmployeeRequestPreset } from "@SRC/QuickServe/presets/employee.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
@@ -12,10 +13,13 @@ import { Request, Response } from "express";
  * @returns {boolean} - Returns `true` if all required fields are present, otherwise `false`.
  */
 const ValidateCreateOneEmployee = (req: Request, res: Response): boolean => {
-    const { user_id, emp_name, emp_department_id, emp_position_id, emp_img, emp_email, emp_gender, emp_religion, emp_tel, emp_birth_date } = req.body;
+    const { user_id, emp_name, emp_department_id, emp_position_id, emp_img, emp_email, emp_gender, emp_religion, emp_tel, emp_birth_date, emp_day_off } = req.body as CreateEmployee;
 
-    if (!user_id || !emp_name || !emp_department_id || !emp_position_id || !emp_img || !emp_email || !emp_gender || !emp_religion || !emp_tel || !emp_birth_date) return false;
+    if (!user_id || !emp_name || !emp_department_id || !emp_position_id || !emp_img || !emp_email || !emp_gender || !emp_religion || !emp_tel || !emp_birth_date || !emp_day_off) return false;
 
+    if (isArray(emp_day_off) && !emp_day_off.length) return false;
+
+    req.body.emp_day_off = req.body.emp_day_off.join(',');
     return true;
 };
 
@@ -54,16 +58,18 @@ export const CreateOneEmployee = async (req: Request, res: Response): Promise<an
         }
 
         const preset = createOneEmployeeRequestPreset(req.body);
+        console.log('CreateEmployee (preset) : ', req.body);
+
         const response = await StoreService(preset, 'create');
         console.log('CreateEmployee (response) : ', response);
 
-        const imagePayload: CreateEmployeeImage = {
-            emp_id: response[0].emp_id,
-            image_name: response[0].emp_img
-        }
+        // const imagePayload: CreateEmployeeImage = {
+        //     emp_id: response[0].emp_id,
+        //     image_name: response[0].emp_img
+        // }
 
-        const imageResponse = await CreateOneEmployeeImage(imagePayload);
-        console.log('CreateOneEmployeeImage (response) : ', imageResponse);
+        // const imageResponse = await CreateOneEmployeeImage(imagePayload);
+        // console.log('CreateOneEmployeeImage (response) : ', imageResponse);
 
         res.status(201).json({
             message: "Successfully CreateOneEmployee Served!",
