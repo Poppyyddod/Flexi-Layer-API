@@ -13,6 +13,7 @@
  * @property {number} emp_department_id - The ID referencing the employee’s department.
  */
 export type CreateEmployee = {
+    user_id: number;
     emp_name: string;
     emp_position_id: number;
     emp_department_id: number;
