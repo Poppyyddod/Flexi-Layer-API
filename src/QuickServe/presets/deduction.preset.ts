@@ -48,18 +48,36 @@ export const getAllDeductionRequestPreset = (): IMyRequestData => {
 
 
 
-export const updateDeductionRequestPreset = (depId: number | string, bodyData: UpdateDeductionType): IMyRequestData => {
-    if (isString(depId))
-        depId = parseInt(depId);
+export const updateDeductionRequestPreset = (dedudctionId: number | string, bodyData: UpdateDeductionType): IMyRequestData => {
+    if (isString(dedudctionId))
+        dedudctionId = parseInt(dedudctionId);
 
     const preset: IMyRequestData = {
         db_type: "mysql",
         store_code: "deductions",
         where: {
-            deduction_id: depId
+            deduction_id: dedudctionId
         },
         set: bodyData
     };
 
     return preset;
 }
+
+
+
+export const deleteOneDeductionRequestPreset = (deductionId: string | number): IMyRequestData => {
+    if (isString(deductionId)) {
+        deductionId = parseInt(deductionId);
+    }
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "deductions",
+        where: {
+            deduction_id: deductionId
+        }
+    };
+
+    return preset;
+};

@@ -75,3 +75,23 @@ export const updateDepartmentRequestPreset = (departmentId: number | string, bod
 
     return preset;
 }
+
+
+
+
+
+export const deleteOneDepartmentRequestPreset = (departmentId: string | number): IMyRequestData => {
+    if (isString(departmentId)) {
+        departmentId = parseInt(departmentId);
+    }
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "departments",
+        where: {
+            department_id: departmentId
+        }
+    };
+
+    return preset;
+};

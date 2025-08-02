@@ -153,3 +153,21 @@ export const endWorkRecordRequestPreset = (empId: number | string, bodyData: End
 
     return preset;
 }
+
+
+
+export const deleteOneWorkRecordRequestPreset = (workId: string | number): IMyRequestData => {
+    if (isString(workId)) {
+        workId = parseInt(workId);
+    }
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "work_record",
+        where: {
+            work_record_id: workId
+        }
+    };
+
+    return preset;
+};

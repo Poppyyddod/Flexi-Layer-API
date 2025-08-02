@@ -67,3 +67,18 @@ export const updateBonusRequestPreset = (bonusId: number | string, bodyData: Upd
 
 
 
+export const deleteOneBonusRequestPreset = (bonusId: string | number): IMyRequestData => {
+    if (isString(bonusId)) {
+        bonusId = parseInt(bonusId);
+    }
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "bonuses",
+        where: {
+            bonus_id: bonusId
+        }
+    };
+
+    return preset;
+};

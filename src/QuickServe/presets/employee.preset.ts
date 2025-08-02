@@ -48,7 +48,7 @@ export const getAllEmployeesRequestPreset = (): IMyRequestData => {
 
 
 
-import { CreateEmployee, CreateEmployeeImage } from "@SRC/QuickServe/models/employee.model";
+import { CreateEmployee, CreateEmployeeImage, UpdateEmployeeType } from "@SRC/QuickServe/models/employee.model";
 
 /**
  * Generates a request preset to create a new employee record.
@@ -76,6 +76,41 @@ export const createOneEmployeeImageRequestPreset = (setData: CreateEmployeeImage
         store_code: "image_details",
         set: setData
     }
+
+    return preset;
+};
+
+
+
+export const updateEmployeeRequestPreset = (empId: number | string, bodyData: UpdateEmployeeType): IMyRequestData => {
+    if (isString(empId))
+        empId = parseInt(empId);
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "employees",
+        where: {
+            emp_id: empId
+        },
+        set: bodyData
+    };
+
+    return preset;
+}
+
+
+export const deleteOneEmployeeRequestPreset = (employeeId: string | number): IMyRequestData => {
+    if (isString(employeeId)) {
+        employeeId = parseInt(employeeId);
+    }
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "employees",
+        where: {
+            emp_id: employeeId
+        }
+    };
 
     return preset;
 };

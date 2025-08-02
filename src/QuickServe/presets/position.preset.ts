@@ -78,3 +78,23 @@ export const updatePositionRequestPreset = (posId: number | string, bodyData: Up
 
     return preset;
 }
+
+
+
+
+
+export const deleteOnePositionRequestPreset = (positionId: string | number): IMyRequestData => {
+    if (isString(positionId)) {
+        positionId = parseInt(positionId);
+    }
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "positions",
+        where: {
+            position_id: positionId
+        }
+    };
+
+    return preset;
+};

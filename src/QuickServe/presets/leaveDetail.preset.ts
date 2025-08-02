@@ -124,3 +124,21 @@ export const approveRejectedPreset = (bodyData: ApproveLeaveDetailType): IMyRequ
 
     return preset
 }
+
+
+
+export const deleteOneLeaveDetailRequestPreset = (leaveDetailId: string | number): IMyRequestData => {
+    if (isString(leaveDetailId)) {
+        leaveDetailId = parseInt(leaveDetailId);
+    }
+
+    const preset: IMyRequestData = {
+        db_type: "mysql",
+        store_code: "leave_details",
+        where: {
+            leave_detail_id: leaveDetailId
+        }
+    };
+
+    return preset;
+};

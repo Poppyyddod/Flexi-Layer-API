@@ -1,16 +1,20 @@
 import errorHandles from "@SRC/Helper/Data/Error";
 import useTime from "@SRC/QuickServe/composables/useMySQLTime";
-import { UpdateDeductionType } from "@SRC/QuickServe/models/deduction.model";
-import { updateDeductionRequestPreset } from "@SRC/QuickServe/presets/deduction.preset";
+import { UpdateEmployeeType } from "@SRC/QuickServe/models/employee.model";
+import { updateEmployeeRequestPreset } from "@SRC/QuickServe/presets/employee.preset";
 import StoreService from "@SRC/Store/services";
 import { Request, Response } from "express";
 
 
 
-const ValidateUpdateDeduction = (req: Request, res: Response): boolean => {
-    const { emp_id, salary_month, deduction_type, amount } = req.body as UpdateDeductionType;
+const ValidateUpdateEmployee = (req: Request, res: Response): boolean => {
+    const { emp_name, emp_position_id, emp_department_id, emp_bank_account, emp_img, emp_email, emp_gender, emp_religion, emp_tel, emp_birth_date } = req.body as UpdateEmployeeType;
 
-    if (!emp_id && !salary_month && !deduction_type && !amount) return false;
+    if (!emp_name && !emp_position_id 
+        && !emp_department_id && !emp_bank_account 
+        && !emp_img && !emp_email 
+        && !emp_gender && !emp_religion 
+        && !emp_tel && !emp_birth_date) return false;
 
     return true;
 };
@@ -18,42 +22,48 @@ const ValidateUpdateDeduction = (req: Request, res: Response): boolean => {
 
 
 
-export const UpdateDeduction = async (req: Request, res: Response): Promise<any> => {
+export const UpdateEmployee = async (req: Request, res: Response): Promise<any> => {
     try {
-        console.log('UpdateDeduction : ', req.body);
+        console.log('UpdateEmployee : ', req.body);
 
-        const shouldContinue = ValidateUpdateDeduction(req, res);
+        const shouldContinue = ValidateUpdateEmployee(req, res);
         if (!shouldContinue) {
             return res.status(400).json({
                 message: "Invalid request format!",
-                quick_serve_name: 'UpdateDeduction',
+                quick_serve_name: 'UpdateEmployee',
                 guide: {
-                    emp_id: "number(Optional)",
-                    salary_month: "string(Optional)",
-                    deduction_type: "string(Optional)",
-                    amount: "number(Optional)"
+                    emp_name: "string(Optional)",
+                    emp_position_id: "number(Optional)",
+                    emp_department_id: "number(Optional)",
+                    emp_bank_account: "string(Optional)",
+                    emp_img: "string(Optional)",
+                    emp_email: "string(Optional)",
+                    emp_gender: "string(Optional)",
+                    emp_religion: "string(Optional)",
+                    emp_tel: "string(Optional)",
+                    emp_birth_date: "string(Optional)",
                 },
                 success: false
             });
         }
 
-        const dedId = req.params.dedId;
-        if (!dedId) {
+        const empId = req.params.empId;
+        if (!empId) {
             return res.status(400).json({
-                message: "Param dedId is required",
-                quick_serve_name: 'UpdateDeduction',
+                message: "Param empId is required",
+                quick_serve_name: 'UpdateEmployee',
                 success: false
             });
         }
 
-        const bodyData = req.body as UpdateDeductionType;
-        const preset = updateDeductionRequestPreset(dedId, bodyData);
+        const bodyData = req.body as UpdateEmployeeType;
+        const preset = updateEmployeeRequestPreset(empId, bodyData);
 
         const response = await StoreService(preset, 'edit');
 
         return res.status(200).json({
-            message: "Successfully UpdateDeduction Served!",
-            quick_serve_name: 'UpdateDeduction',
+            message: "Successfully UpdateEmployee Served!",
+            quick_serve_name: 'UpdateEmployee',
             success: true,
             data: {
                 affectedRows: response.affectedRows,
@@ -61,12 +71,12 @@ export const UpdateDeduction = async (req: Request, res: Response): Promise<any>
             }
         });
     } catch (error: any) {
-        console.log('UpdateDeduction (Error):', error);
+        console.log('UpdateEmployee (Error):', error);
 
         if (error?.kind) {
-            await errorHandles(error, res, { systemName: 'QuickServe', feature: 'UpdateDeduction' });
+            await errorHandles(error, res, { systemName: 'QuickServe', feature: 'UpdateEmployee' });
         } else {
-            HandleError(res, error, 'UpdateDeduction');
+            HandleError(res, error, 'UpdateEmployee');
         }
     }
 };
