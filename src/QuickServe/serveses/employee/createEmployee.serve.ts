@@ -1,4 +1,5 @@
 import errorHandles from "@SRC/Helper/Data/Error";
+import { IMyRequestData } from "@SRC/Helper/Model/global.model";
 import { isArray } from "@SRC/Helper/Utils";
 import { CreateEmployee, CreateEmployeeImage } from "@SRC/QuickServe/models/employee.model";
 import { createOneEmployeeImageRequestPreset, createOneEmployeeRequestPreset } from "@SRC/QuickServe/presets/employee.preset";
@@ -70,6 +71,20 @@ export const CreateOneEmployee = async (req: Request, res: Response): Promise<an
 
         // const imageResponse = await CreateOneEmployeeImage(imagePayload);
         // console.log('CreateOneEmployeeImage (response) : ', imageResponse);
+
+        const updateUserRolePayload: IMyRequestData = {
+            db_type: "mysql",
+            store_code: "user_auth",
+            where: {
+                user_id: req.body.user_id
+            },
+            set: {
+                user_role_id: 3
+            }
+        }
+
+        await StoreService(updateUserRolePayload, 'edit');
+        // console.log('CreateOneEmployee (updateUserRoleRes) : ', updateUserRoleRes);
 
         res.status(201).json({
             message: "Successfully CreateOneEmployee Served!",
