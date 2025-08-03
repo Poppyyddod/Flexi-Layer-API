@@ -18,7 +18,7 @@ export type CreateEmployee = {
     emp_position_id: number;
     emp_department_id: number;
     emp_bank_account: string;
-    emp_img: string;
+    emp_img?: string;
     emp_email: string;
     emp_gender: string;
     emp_religion: string;

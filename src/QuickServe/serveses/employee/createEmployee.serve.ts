@@ -13,9 +13,9 @@ import { Request, Response } from "express";
  * @returns {boolean} - Returns `true` if all required fields are present, otherwise `false`.
  */
 const ValidateCreateOneEmployee = (req: Request, res: Response): boolean => {
-    const { user_id, emp_name, emp_department_id, emp_position_id, emp_img, emp_email, emp_gender, emp_religion, emp_tel, emp_birth_date, emp_day_off } = req.body as CreateEmployee;
+    const { user_id, emp_name, emp_department_id, emp_position_id, emp_email, emp_gender, emp_religion, emp_tel, emp_birth_date, emp_day_off } = req.body as CreateEmployee;
 
-    if (!user_id || !emp_name || !emp_department_id || !emp_position_id || !emp_img || !emp_email || !emp_gender || !emp_religion || !emp_tel || !emp_birth_date || !emp_day_off) return false;
+    if (!user_id || !emp_name || !emp_department_id || !emp_position_id || !emp_email || !emp_gender || !emp_religion || !emp_tel || !emp_birth_date || !emp_day_off) return false;
 
     if (isArray(emp_day_off) && !emp_day_off.length) return false;
 
