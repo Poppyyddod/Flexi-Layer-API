@@ -144,7 +144,7 @@ export const endWorkRecordRequestPreset = (empId: number | string, bodyData: End
             work_record_state: 'working'
         },
         set: {
-            end_at: mysqlDateTime,
+            end_at: useTime().getLocalMysqlDatetime(),
             end_latitude,
             end_longitude,
             work_record_state: "ended"
