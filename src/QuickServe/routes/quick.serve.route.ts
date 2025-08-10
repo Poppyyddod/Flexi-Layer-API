@@ -9,6 +9,7 @@ import { AddDepartment, DeleteOneDepartment, GetAllDepartment, GetOneDepartment,
 import { AddDeduction, DeleteOneDeduction, GetAllDeduction, GetOneDeduction, UpdateDeduction } from '../serveses/deduction';
 import { AddBonus, DeleteOneBonus, GetAllBonus, GetOneBonus, UpdateBonus } from '../serveses/bonus';
 import { PayOneSalary } from '../serveses/resetSalary.serve';
+import { GetAllEmployeeHolidays, GetOneEmployeeHolidays } from '../serveses/employee_holidays';
 
 
 
@@ -71,6 +72,10 @@ const quickServeRoutes = (router: Router): Router => {
 
     // My Data
     router.get('/quickserve/getMe/:userId', JwtVerifyToken, GetMe);
+
+    // Employee Holidays
+    router.get('/quickserve/employee/holidays', JwtVerifyToken, GetAllEmployeeHolidays);
+    router.get('/quickserve/employee/:empId/holidays', JwtVerifyToken, GetOneEmployeeHolidays);
 
     // Employee Salary Counter
     router.get('/quickserve/employee/salary-counter', JwtVerifyToken, GetAllSalaryCounter);

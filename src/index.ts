@@ -11,9 +11,13 @@ import GuiderRoutes from '@Helper/Routes';
 import { RunHttpsMiddleware } from './Helper/Middlewares/runner.https';
 import { RunHttpMiddleware } from './Helper/Middlewares/runner.http';
 import { imageStoragePath } from './Upload/utils/upload.utils';
+import nodeCron from 'node-cron';
+import { CheckAndHandleEndHoliday, CheckStartHolidayAndSet } from './QuickServe/serveses/employee_holidays';
 
 const app = express();
 const router = express.Router();
+
+
 
 (async () => {
     app.use(cors({
@@ -27,7 +31,22 @@ const router = express.Router();
     app.use('/v1', await GuiderRoutes(router));
     app.use('/storages/images', express.static(imageStoragePath));
     app.set('json spaces', 2);
+
+    // Delete it later
+    await CheckAndHandleEndHoliday();
+    await CheckStartHolidayAndSet();
+    //
 })();
+
+
+// Production
+nodeCron.schedule('1 0 * * *', async () => {
+    await CheckAndHandleEndHoliday();
+    await CheckStartHolidayAndSet();
+}, {
+    timezone: 'Asia/Vientiane'
+});
+
 
 
 let httpServer: any;
