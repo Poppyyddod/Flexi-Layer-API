@@ -16,6 +16,8 @@ export const getOneEmployeeHolidaysRequestPreset = (empId: string | number): IMy
         store_code: "employee_holidays",
         field_list: [
             "employee_holidays.*",
+            "employees.emp_name",
+            "departments.department_name",
             "holidays.holiday_name",
             "holidays.holiday_start_date",
             "holidays.holiday_end_date"
@@ -29,6 +31,20 @@ export const getOneEmployeeHolidaysRequestPreset = (empId: string | number): IMy
                 type: "left",
                 on: {
                     "holidays.holiday_id": "employee_holidays.holiday_id"
+                }
+            },
+            {
+                table: "employees",
+                type: "left",
+                on: {
+                    "employees.emp_id": "employee_holidays.emp_id"
+                }
+            },
+            {
+                table: "departments",
+                type: "left",
+                on: {
+                    "departments.department_id": "employees.emp_department_id"
                 }
             }
         ]
@@ -44,6 +60,8 @@ export const getAllEmployeeHolidaysRequestPreset = (): IMyRequestData => {
         store_code: "employee_holidays",
         field_list: [
             "employee_holidays.*",
+            "employees.emp_name",
+            "departments.department_name",
             "holidays.holiday_name",
             "holidays.holiday_start_date",
             "holidays.holiday_end_date"
@@ -54,6 +72,20 @@ export const getAllEmployeeHolidaysRequestPreset = (): IMyRequestData => {
                 type: "left",
                 on: {
                     "holidays.holiday_id": "employee_holidays.holiday_id"
+                }
+            },
+            {
+                table: "employees",
+                type: "left",
+                on: {
+                    "employees.emp_id": "employee_holidays.emp_id"
+                }
+            },
+            {
+                table: "departments",
+                type: "left",
+                on: {
+                    "departments.department_id": "employees.emp_department_id"
                 }
             }
         ]

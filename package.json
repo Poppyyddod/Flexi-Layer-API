@@ -28,7 +28,6 @@
     "test:prod:mysql:delete": "jest dist/src/Testing/Store/SQL/Database/MySQL/success/04-delete.test.js",
     "test:prod:mysql": "npm run test:prod:mysql:create && npm run test:prod:mysql:fetch && npm run test:prod:mysql:edit && npm run test:prod:mysql:delete",
     "// ----- builder -----": "Configs",
-    "postinstall": "module-alias",
     "clean": "if exist dist (rmdir /s /q dist) else (echo Folder dist does not exist.)",
     "build": "npm run clean && tsc --project tsconfig.json",
     "fix-alias-dev": "cross-env NODE_ENV=development node ./scripts/fix-alias.js",
